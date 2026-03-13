@@ -1,6 +1,6 @@
 # Acordes del Cuatro Venezolano
 
-Aplicación web para músicos del cuatro venezolano: transposición de acordes, digitaciones, diagramas de trastes, exploración de acordes y detección de progresiones armónicas.
+Aplicación web para músicos del cuatro venezolano: transposición de acordes, digitaciones, diagramas de trastes, exploración de acordes, detección de progresiones armónicas y reproducción de audio.
 
 **🌐 Live:** https://diodon.github.io/CuatroAcordes/
 
@@ -15,6 +15,8 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 - **Diagramas de trastes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
 - **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 15 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Dim, Aug, sus2, sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
+- **Reproducción de audio** — Escucha cualquier acorde con un clic: síntesis Web Audio API con tres armónicos y envolvente de decaimiento para imitar el sonido del cuatro. Botón ▶ Tocar en cada diagrama individual.
+- **Reproducción de secuencias** — Toca toda la progresión detectada o las columnas de diagramas originales y transpuestos en secuencia, con control de tempo (Lento / Normal / Rápido / Muy rápido) y resaltado de acorde activo.
 - **Notación latina / inglesa** — Alterna entre notación latina (Do, Re, Mi) e inglesa (C, D, E) en toda la interfaz.
 - **Modo oscuro** — Tema claro y oscuro en tonos azules con toggle de sol/luna.
 - **Sin dependencias** — Aplicación 100% cliente, sin servidor ni instalación. Un solo archivo HTML + JSON.
