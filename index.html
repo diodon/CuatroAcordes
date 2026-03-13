@@ -458,6 +458,36 @@ svg.fret-svg { display: block; margin: 0 auto; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Play Button ───────────────────────────────────── */
+.btn-play {
+  color: var(--accent);
+  font-size: 13px;
+  padding: 3px 7px;
+  border-radius: 5px;
+  transition: all 0.15s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.btn-play:hover { background: var(--accent-light); }
+.btn-play:active { transform: scale(0.92); }
+.diagram-play {
+  display: block;
+  margin: 6px auto 0;
+  padding: 4px 14px;
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.diagram-play:hover { background: var(--accent); color: white; }
+.diagram-play:active { transform: scale(0.95); }
+
 /* ── Chord Popup ───────────────────────────────────── */
 .td-chord-link, .td-trans-link {
   cursor: pointer;
@@ -846,6 +876,7 @@ svg.fret-svg { display: block; margin: 0 auto; }
     <div class="modal-chord-name" id="modalNombre"></div>
     <div id="modalDiagrama"></div>
     <div class="modal-fing" id="modalFing"></div>
+    <button class="diagram-play" id="modalPlayBtn" style="margin-top:14px">▶ Tocar</button>
   </div>
 </div>
 
@@ -1537,7 +1568,10 @@ function renderTabla(numOrigen, offset, modo) {
       <td class="td-fing-trans">${digTransStr}</td>
       <td class="td-notes"><input type="text" value="${fila.notas||''}" placeholder="…"
         onchange="filas[${idx}].notas=this.value"></td>
-      <td><button class="btn-del" onclick="eliminarFila(${idx})" title="${CFG.ui.eliminar}">×</button></td>
+      <td style="white-space:nowrap">
+        <button class="btn-play" onclick="tocarAcorde('${fila.nota}','${fila.calidad}')" title="Tocar acorde">▶</button>
+        <button class="btn-del" onclick="eliminarFila(${idx})" title="${CFG.ui.eliminar}">×</button>
+      </td>
     `;
     tbody.appendChild(tr);
   });
@@ -1583,6 +1617,7 @@ function renderDiagCol(containerId, fs, numOrigen, offset, modo) {
       <div class="diagram-name">${acorde}</div>
       ${svgDiagrama(dig)}
       <div class="diagram-fing">${dig.join('')}</div>
+      <button class="diagram-play" onclick="tocarAcorde('${notaNombre}','${fila.calidad}')">▶ Tocar</button>
     `;
     cont.appendChild(card);
   });
@@ -1945,6 +1980,7 @@ function mostrarTodosAcordes(nota) {
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px">${cal.nombre}</div>
       ${svgDiagrama(dig)}
       <div class="diagram-fing">${dig.join('')}</div>
+      <button class="diagram-play" onclick="tocarAcorde('${nota}','${key}')">▶ Tocar</button>
     `;
     grid.appendChild(card);
   });
@@ -1963,6 +1999,7 @@ function mostrarPopup(nota, calidad) {
   document.getElementById('modalNombre').textContent = displayAcorde(nota, calidad);
   document.getElementById('modalDiagrama').innerHTML = svgDiagrama(dig);
   document.getElementById('modalFing').textContent = dig.join('');
+  document.getElementById('modalPlayBtn').onclick = () => tocarAcorde(nota, calidad);
   document.getElementById('modalOverlay').classList.add('open');
 }
 
@@ -1987,6 +2024,81 @@ function toggleTema() {
   document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
   document.getElementById('iconSol').style.display  = dark ? '' : 'none';
   document.getElementById('iconLuna').style.display = dark ? 'none' : '';
+}
+
+// ── Audio Engine ──────────────────────────────────────────────────────────────
+// Open string frequencies: B3, F#4, D4, A3 (matches dig[] order)
+const OPEN_FREQS = [246.94, 369.99, 293.66, 220.00];
+
+let audioCtx = null;
+
+function getAudioCtx() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const comp = audioCtx.createDynamicsCompressor();
+    comp.threshold.setValueAtTime(-18, audioCtx.currentTime);
+    comp.ratio.setValueAtTime(6, audioCtx.currentTime);
+    comp.connect(audioCtx.destination);
+    audioCtx._master = comp;
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function tocarAcorde(nota, calidad) {
+  const numRaiz = notaANum(nota);
+  const dig = calcularDigitacion(numRaiz, calidad);
+  const ctx = getAudioCtx();
+  // Slight arpeggio — stagger each string by 40ms
+  dig.forEach((fret, i) => {
+    const freq = OPEN_FREQS[i] * Math.pow(2, fret / 12);
+    tocarCuerda(ctx, freq, i * 0.04);
+  });
+}
+
+function tocarCuerda(ctx, freq, delay) {
+  const t = ctx.currentTime + delay;
+  const master = ctx._master;
+
+  // ── Fundamental ─────────────────────────────────────
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.setValueAtTime(freq, t);
+  osc.detune.setValueAtTime((Math.random() - 0.5) * 5, t); // slight warmth
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.linearRampToValueAtTime(0.32, t + 0.003);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + 2.0);
+  osc.connect(gain);
+  gain.connect(master);
+  osc.start(t);
+  osc.stop(t + 2.1);
+
+  // ── 2nd harmonic (octave up, softer, faster decay) ──
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+  osc2.type = 'triangle';
+  osc2.frequency.setValueAtTime(freq * 2, t);
+  gain2.gain.setValueAtTime(0.0001, t);
+  gain2.gain.linearRampToValueAtTime(0.09, t + 0.002);
+  gain2.gain.exponentialRampToValueAtTime(0.0001, t + 0.8);
+  osc2.connect(gain2);
+  gain2.connect(master);
+  osc2.start(t);
+  osc2.stop(t + 0.9);
+
+  // ── 3rd harmonic (adds body, very short) ────────────
+  const osc3 = ctx.createOscillator();
+  const gain3 = ctx.createGain();
+  osc3.type = 'triangle';
+  osc3.frequency.setValueAtTime(freq * 3, t);
+  gain3.gain.setValueAtTime(0.0001, t);
+  gain3.gain.linearRampToValueAtTime(0.04, t + 0.001);
+  gain3.gain.exponentialRampToValueAtTime(0.0001, t + 0.4);
+  osc3.connect(gain3);
+  gain3.connect(master);
+  osc3.start(t);
+  osc3.stop(t + 0.5);
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
