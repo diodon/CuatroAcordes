@@ -446,6 +446,9 @@ svg.fret-svg { display: block; margin: 0 auto; }
       <h2 id="subtitulo"></h2>
     </div>
     <div class="header-controls">
+      <button class="btn-theme" id="btnNotacion" onclick="toggleNotacion()">
+        <span id="btnNotacionLabel">C D E</span>
+      </button>
       <button class="btn-theme" id="btnTema" onclick="toggleTema()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
         <span id="btnTemaLabel"></span>
@@ -950,6 +953,7 @@ const DATOS_ACORDES = {
 let CFG = null;      // loaded from JSON
 let filas = [];      // [{nota, calidad, notasLibres}]
 let MAX_FILAS = 12;
+let notacion = 'latin'; // 'latin' (Do Re Mi) or 'english' (C D E)
 
 // ── Load JSON ─────────────────────────────────────────────────────────────────
 function cargarConfig() {
@@ -1006,19 +1010,28 @@ function t(id, txt) { const el = document.getElementById(id); if (el) el.textCon
 // ── Selects ───────────────────────────────────────────────────────────────────
 function construirSelects() {
   const notas = CFG.notas.sostenidos;
-  const nombres = CFG.notas.nombres_display;
   ['selOrigen','selDestino'].forEach(id => {
     const sel = document.getElementById(id);
     notas.forEach(n => {
       const o = document.createElement('option');
       o.value = n;
-      o.textContent = nombres[n] || n;
+      o.textContent = displayNota(n);
       sel.appendChild(o);
     });
   });
   // Default: C origin, G destination
   document.getElementById('selOrigen').value = 'C';
   document.getElementById('selDestino').value = 'G';
+}
+
+function refrescarSelectsNota() {
+  const notas = CFG.notas.sostenidos;
+  ['selOrigen','selDestino'].forEach(id => {
+    const sel = document.getElementById(id);
+    Array.from(sel.options).forEach((opt, i) => {
+      opt.textContent = displayNota(notas[i]);
+    });
+  });
 }
 
 function construirCabecera() {
@@ -1055,6 +1068,16 @@ function nombreAcorde(nota, calidad) {
   const q = CFG.calidades[calidad];
   if (!q) return nota;
   return nota + q.simbolo;
+}
+
+function displayNota(nota) {
+  if (notacion === 'latin') return CFG.notas.nombres_display[nota] || nota;
+  return nota;
+}
+
+function displayAcorde(nota, calidad) {
+  const q = CFG.calidades[calidad];
+  return displayNota(nota) + (q ? q.simbolo : '');
 }
 
 function calcularGrado(raizNum, tonalidadNum) {
@@ -1166,8 +1189,8 @@ function renderTabla(numOrigen, offset, modo) {
     const numTrans = (numRaiz + offset + 12) % 12;
     const grado = calcularGradoSimple(numRaiz, numOrigen);
     const notaTrans = numANota(numTrans, modo);
-    const acorde = nombreAcorde(fila.nota, fila.calidad);
-    const acordeTrans = nombreAcorde(notaTrans, fila.calidad);
+    const acorde = displayAcorde(fila.nota, fila.calidad);
+    const acordeTrans = displayAcorde(notaTrans, fila.calidad);
     const dig = calcularDigitacion(numRaiz, fila.calidad);
     const digTrans = calcularDigitacion(numTrans, fila.calidad);
     const digStr = dig.join('');
@@ -1193,7 +1216,7 @@ function renderTabla(numOrigen, offset, modo) {
 
 function crearSelectNota(idx, valorActual) {
   const opts = CFG.notas.sostenidos.map(n =>
-    `<option value="${n}" ${n === valorActual ? 'selected' : ''}>${CFG.notas.nombres_display[n]||n}</option>`
+    `<option value="${n}" ${n === valorActual ? 'selected' : ''}>${displayNota(n)}</option>`
   ).join('');
   return `<select onchange="filas[${idx}].nota=this.value;actualizar()">${opts}</select>`;
 }
@@ -1223,7 +1246,7 @@ function renderDiagCol(containerId, fs, numOrigen, offset, modo) {
     if (!fila.nota) return;
     const numRaiz = (notaANum(fila.nota) + offset + 12) % 12;
     const notaNombre = numANota(numRaiz, modo);
-    const acorde = nombreAcorde(notaNombre, fila.calidad);
+    const acorde = displayAcorde(notaNombre, fila.calidad);
     const dig = calcularDigitacion(numRaiz, fila.calidad);
     const card = document.createElement('div');
     card.className = 'diagram-card';
@@ -1341,6 +1364,15 @@ function eliminarFila(idx) {
 
 function limpiarTodo() {
   filas = [{ nota: 'C', calidad: 'maj', notas: '' }];
+  actualizar();
+}
+
+// ── Notation ──────────────────────────────────────────────────────────────────
+function toggleNotacion() {
+  notacion = notacion === 'latin' ? 'english' : 'latin';
+  document.getElementById('btnNotacionLabel').textContent =
+    notacion === 'latin' ? 'C D E' : 'Do Re Mi';
+  refrescarSelectsNota();
   actualizar();
 }
 
