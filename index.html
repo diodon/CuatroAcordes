@@ -538,6 +538,96 @@ svg.fret-svg { display: block; margin: 0 auto; }
   color: var(--text3);
 }
 
+/* ── Help Modal ────────────────────────────────────── */
+.modal-help-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  max-width: 92vw;
+  max-height: 88vh;
+  width: 800px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.help-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border-light);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.help-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+.help-nav {
+  display: flex;
+  flex-direction: column;
+  width: 170px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border-light);
+  padding: 12px 8px;
+  gap: 4px;
+  overflow-y: auto;
+}
+.help-tab {
+  text-align: left;
+  padding: 9px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.help-tab:hover { background: var(--bg2); color: var(--text); }
+.help-tab.active { background: var(--accent-light); color: var(--accent); font-weight: 700; }
+.help-content {
+  flex: 1;
+  padding: 24px 28px;
+  overflow-y: auto;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text);
+}
+.help-content h3 {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.help-content p { margin-bottom: 10px; }
+.help-content ul { padding-left: 18px; margin-bottom: 10px; }
+.help-content li { margin-bottom: 6px; }
+.help-content strong { color: var(--text); }
+.help-content .help-badge {
+  display: inline-block;
+  background: var(--accent-light);
+  color: var(--accent);
+  border-radius: 5px;
+  padding: 1px 7px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+@media (max-width: 560px) {
+  .help-nav { width: 120px; }
+  .help-tab { font-size: 12px; padding: 8px 10px; }
+  .help-content { padding: 16px; }
+}
+
 /* ── Responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   section { padding: 18px 14px; }
@@ -581,6 +671,9 @@ svg.fret-svg { display: block; margin: 0 auto; }
       </div>
       <button class="btn-theme" id="btnNotacion" onclick="toggleNotacion()">
         <span id="btnNotacionLabel">C D E</span>
+      </button>
+      <button class="btn-icon" onclick="abrirHelp()" title="Ayuda">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg>
       </button>
       <button class="btn-icon" id="btnTema" onclick="toggleTema()" title="Cambiar tema">
         <svg id="iconSol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
@@ -694,6 +787,21 @@ svg.fret-svg { display: block; margin: 0 auto; }
   </footer>
 
 </div><!-- /app-shell -->
+
+<!-- Help Modal -->
+<div class="modal-overlay" id="modalHelpOverlay" onclick="cerrarHelp(event)">
+  <div class="modal-help-card">
+    <button class="modal-close" onclick="cerrarHelp(null)" title="Cerrar">×</button>
+    <div class="help-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg>
+      Ayuda — Acordes del Cuatro Venezolano
+    </div>
+    <div class="help-layout">
+      <nav class="help-nav" id="helpNav"></nav>
+      <div class="help-content" id="helpContent"></div>
+    </div>
+  </div>
+</div>
 
 <!-- All Qualities Modal -->
 <div class="modal-overlay" id="modalAllOverlay" onclick="cerrarPopupAll(event)">
@@ -1559,6 +1667,161 @@ function eliminarFila(idx) {
 function limpiarTodo() {
   filas = [{ nota: 'C', calidad: 'maj', notas: '' }];
   actualizar();
+}
+
+// ── Help ──────────────────────────────────────────────────────────────────────
+const HELP_SECTIONS = [
+  {
+    id: 'intro', label: '🎸 Introducción',
+    html: `<h3>Bienvenido</h3>
+    <p><strong>Acordes del Cuatro Venezolano</strong> es una herramienta para músicos que tocan el cuatro venezolano. Permite construir listas de acordes, transponerlas a cualquier tonalidad, visualizar las digitaciones en el diapasón y detectar progresiones armónicas.</p>
+    <p>El cuatro venezolano está afinado en <span class="help-badge">A3 — D4 — F#4 — B3</span> (de la cuerda más grave a la más aguda).</p>
+    <h3>Inicio rápido</h3>
+    <ul>
+      <li>Selecciona una <strong>Progresión</strong> del menú superior para llenar la tabla automáticamente.</li>
+      <li>Cambia la <strong>Tonalidad Origen</strong> para ver los acordes en otra clave.</li>
+      <li>Haz clic en cualquier acorde de la tabla para ver su diagrama de trastes.</li>
+      <li>Usa el menú <strong>Acordes</strong> para explorar todas las calidades de una nota.</li>
+    </ul>`
+  },
+  {
+    id: 'transposicion', label: '🎵 Transposición',
+    html: `<h3>Panel de Transposición</h3>
+    <ul>
+      <li><strong>Tonalidad Origen</strong> — La tonalidad original en la que están escritos los acordes.</li>
+      <li><strong>Tonalidad Destino</strong> — La tonalidad a la que deseas transponer.</li>
+      <li><strong>Intervalo</strong> — Diferencia en semitonos entre ambas tonalidades (positivo = sube, negativo = baja).</li>
+      <li><strong>Notación</strong> — Alterna entre nombres <em>Sostenidos (#)</em> o <em>Bemoles (b)</em> para las notas alteradas.</li>
+      <li><strong>Escala</strong> — <em>Mayor</em> o <em>Menor armónica</em>. Afecta las calidades de los acordes al aplicar una progresión.</li>
+    </ul>
+    <p>La columna <strong>Transpuesto</strong> de la tabla se actualiza en tiempo real al cambiar las tonalidades.</p>`
+  },
+  {
+    id: 'tabla', label: '📋 Tabla de Acordes',
+    html: `<h3>Tabla de Acordes</h3>
+    <p>Cada fila representa un acorde con los siguientes campos:</p>
+    <ul>
+      <li><strong>Nota</strong> — La nota raíz del acorde.</li>
+      <li><strong>Calidad</strong> — Mayor, Menor, 7ª, Maj7, Dim, etc. (15 calidades disponibles).</li>
+      <li><strong>Acorde</strong> — Nombre completo en la tonalidad original. <em>Clic para ver el diagrama.</em></li>
+      <li><strong>Grado</strong> — Grado romano del acorde respecto a la tonalidad origen (I, II, bVII…).</li>
+      <li><strong>Transpuesto</strong> — Nombre del acorde en la tonalidad destino. <em>Clic para ver el diagrama.</em></li>
+      <li><strong>Digitación / Dig. Trans.</strong> — Posición de los dedos en formato <span class="help-badge">XXXX</span> (cuerdas A·D·F#·B).</li>
+      <li><strong>Notas</strong> — Campo libre para anotaciones personales.</li>
+    </ul>
+    <p>Usa <strong>+ Agregar Acorde</strong> para añadir filas manualmente (máximo 12). El botón <strong>×</strong> elimina la fila.</p>`
+  },
+  {
+    id: 'progresiones', label: '🔄 Progresiones',
+    html: `<h3>Selector de Progresiones</h3>
+    <p>El menú desplegable <strong>Progresiones</strong> en la cabecera rellena la tabla automáticamente con los acordes de la progresión seleccionada, calculados para la tonalidad y escala activas.</p>
+    <h3>Escala Mayor vs. Menor</h3>
+    <ul>
+      <li><strong>Mayor (jónica)</strong> — I maj, II min, III min, IV maj, V7, VI min, VII dim.</li>
+      <li><strong>Menor armónica</strong> — I min, II dim, III maj, IV min, V7, bVI maj, VII dim.</li>
+    </ul>
+    <p>Cambiar la escala con una progresión activa la re-aplica automáticamente.</p>
+    <h3>Detección automática</h3>
+    <p>La sección inferior <strong>Detección de Progresión</strong> muestra los grados romanos de los acordes en la tabla e intenta identificar la progresión, incluyendo rotaciones del patrón.</p>`
+  },
+  {
+    id: 'diagramas', label: '🎸 Diagramas',
+    html: `<h3>Diagramas de Trastes</h3>
+    <p>La sección <strong>Diagramas de Trastes</strong> muestra los diagramas SVG de todos los acordes de la tabla, en la tonalidad original y en la transpuesta.</p>
+    <ul>
+      <li>Las cuerdas se muestran de izquierda a derecha: <span class="help-badge">A3 · D4 · F#4 · B</span>.</li>
+      <li><strong>Círculo relleno</strong> — Cuerda pisada. El número indica el traste.</li>
+      <li><strong>Círculo vacío</strong> — Cuerda al aire (sin pisar).</li>
+      <li>La digitación en formato numérico aparece debajo de cada diagrama (ej. <span class="help-badge">2010</span>).</li>
+    </ul>
+    <p>También puedes hacer <strong>clic en cualquier acorde</strong> de la tabla (columnas Acorde y Transpuesto) para ver su diagrama en un popup.</p>`
+  },
+  {
+    id: 'explorador', label: '🔍 Explorador',
+    html: `<h3>Explorador de Acordes</h3>
+    <p>El menú <strong>Acordes</strong> de la cabecera permite explorar todas las calidades disponibles para cualquier nota raíz.</p>
+    <p>Al seleccionar una nota se abre un popup con los <strong>15 tipos de acordes</strong>:</p>
+    <ul>
+      <li>Mayor, Menor, 7ª, Mayor 7, Menor 7</li>
+      <li>Disminuido, Aumentado, sus2, sus4</li>
+      <li>6ª, Menor 6, 9ª, Add9, Dim7, Semidisminuido (m7b5)</li>
+    </ul>
+    <p>Cada tarjeta muestra el nombre del acorde, su diagrama de trastes y la digitación numérica.</p>`
+  },
+  {
+    id: 'contacto', label: '🐛 Reportar / Sugerir',
+    html: `<h3>Reportar un problema</h3>
+    <p>Si encuentras un error o algo no funciona como esperas, puedes reportarlo directamente en el repositorio de GitHub:</p>
+    <ol style="padding-left:18px;margin-bottom:12px">
+      <li>Ve a <a href="https://github.com/diodon/CuatroAcordes/issues" target="_blank" rel="noopener" style="color:var(--accent);font-weight:700">github.com/diodon/CuatroAcordes/issues</a></li>
+      <li>Haz clic en <strong>New issue</strong>.</li>
+      <li>Describe el problema con el mayor detalle posible:
+        <ul style="margin-top:6px">
+          <li>¿Qué estabas haciendo cuando ocurrió?</li>
+          <li>¿Qué resultado esperabas?</li>
+          <li>¿Qué resultado obtuviste?</li>
+          <li>Navegador y sistema operativo que usas.</li>
+        </ul>
+      </li>
+      <li>Haz clic en <strong>Submit new issue</strong>.</li>
+    </ol>
+    <h3>Sugerir una nueva función</h3>
+    <p>¿Tienes una idea para mejorar la aplicación? ¡Es bienvenida! Sigue los mismos pasos que para reportar un problema, pero describe:</p>
+    <ul>
+      <li>Qué función te gustaría ver.</li>
+      <li>Por qué sería útil para los músicos del cuatro.</li>
+      <li>Algún ejemplo o referencia si aplica.</li>
+    </ul>
+    <p style="margin-top:14px">
+      <a href="https://github.com/diodon/CuatroAcordes/issues/new" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:white;padding:9px 18px;border-radius:20px;text-decoration:none;font-weight:700;font-size:13px;transition:opacity 0.2s"
+         onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        Abrir issue en GitHub
+      </a>
+    </p>`
+  },
+  {
+    id: 'interfaz', label: '⚙️ Interfaz',
+    html: `<h3>Controles de la Cabecera</h3>
+    <ul>
+      <li><strong>Progresiones</strong> — Rellena la tabla con una progresión predefinida.</li>
+      <li><strong>Acordes</strong> — Abre el explorador de calidades para una nota raíz.</li>
+      <li><strong>C D E / Do Re Mi</strong> — Alterna entre notación inglesa y latina en toda la interfaz.</li>
+      <li><strong>☀️ / 🌙</strong> — Cambia entre tema claro y oscuro.</li>
+      <li><strong>?</strong> — Abre esta ayuda.</li>
+    </ul>
+    <h3>Digitación numérica</h3>
+    <p>El formato <span class="help-badge">XXXX</span> representa los trastes de las 4 cuerdas en orden <strong>B · F# · D · A</strong> (de aguda a grave). El valor <span class="help-badge">0</span> indica cuerda al aire.</p>`
+  },
+];
+
+function abrirHelp() {
+  const nav = document.getElementById('helpNav');
+  nav.innerHTML = '';
+  HELP_SECTIONS.forEach((s, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'help-tab' + (i === 0 ? ' active' : '');
+    btn.textContent = s.label;
+    btn.onclick = () => mostrarSeccionHelp(s.id);
+    nav.appendChild(btn);
+  });
+  mostrarSeccionHelp(HELP_SECTIONS[0].id);
+  document.getElementById('modalHelpOverlay').classList.add('open');
+}
+
+function mostrarSeccionHelp(id) {
+  const sec = HELP_SECTIONS.find(s => s.id === id);
+  if (!sec) return;
+  document.getElementById('helpContent').innerHTML = sec.html;
+  document.querySelectorAll('.help-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === sec.label);
+  });
+}
+
+function cerrarHelp(e) {
+  if (e && e.target !== document.getElementById('modalHelpOverlay')) return;
+  document.getElementById('modalHelpOverlay').classList.remove('open');
 }
 
 // ── Progression Selector ──────────────────────────────────────────────────────
