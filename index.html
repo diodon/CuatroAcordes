@@ -417,6 +417,62 @@ svg.fret-svg { display: block; margin: 0 auto; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* ── Chord Popup ───────────────────────────────────── */
+.td-chord-link, .td-trans-link {
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  transition: opacity 0.15s;
+}
+.td-chord-link:hover, .td-trans-link:hover { opacity: 0.7; }
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  text-align: center;
+  min-width: 160px;
+}
+.modal-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 18px;
+  color: var(--text3);
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 5px;
+  transition: all 0.15s;
+}
+.modal-close:hover { color: var(--accent); background: var(--accent-light); }
+.modal-chord-name {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.modal-fing {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 8px;
+  letter-spacing: 2px;
+}
+
 /* ── Responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   section { padding: 18px 14px; }
@@ -546,6 +602,16 @@ svg.fret-svg { display: block; margin: 0 auto; }
   </footer>
 
 </div><!-- /app-shell -->
+
+<!-- Chord Popup Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="cerrarPopup(event)">
+  <div class="modal-card" id="modalCard">
+    <button class="modal-close" onclick="cerrarPopup(null)" title="Cerrar">×</button>
+    <div class="modal-chord-name" id="modalNombre"></div>
+    <div id="modalDiagrama"></div>
+    <div class="modal-fing" id="modalFing"></div>
+  </div>
+</div>
 
 <script>
 // ═══════════════════════════════════════════════════════════════════════════
@@ -1201,9 +1267,9 @@ function renderTabla(numOrigen, offset, modo) {
       <td>${idx + 1}</td>
       <td>${crearSelectNota(idx, fila.nota)}</td>
       <td>${crearSelectCalidad(idx, fila.calidad)}</td>
-      <td class="td-chord">${acorde}</td>
+      <td class="td-chord"><span class="td-chord-link" onclick="mostrarPopup('${fila.nota}','${fila.calidad}')">${acorde}</span></td>
       <td class="td-roman">${grado}</td>
-      <td class="td-trans">${acordeTrans}</td>
+      <td class="td-trans"><span class="td-trans-link" onclick="mostrarPopup('${notaTrans}','${fila.calidad}')">${acordeTrans}</span></td>
       <td class="td-fing">${digStr}</td>
       <td class="td-fing-trans">${digTransStr}</td>
       <td class="td-notes"><input type="text" value="${fila.notas||''}" placeholder="…"
@@ -1365,6 +1431,21 @@ function eliminarFila(idx) {
 function limpiarTodo() {
   filas = [{ nota: 'C', calidad: 'maj', notas: '' }];
   actualizar();
+}
+
+// ── Chord Popup ───────────────────────────────────────────────────────────────
+function mostrarPopup(nota, calidad) {
+  const numRaiz = notaANum(nota);
+  const dig = calcularDigitacion(numRaiz, calidad);
+  document.getElementById('modalNombre').textContent = displayAcorde(nota, calidad);
+  document.getElementById('modalDiagrama').innerHTML = svgDiagrama(dig);
+  document.getElementById('modalFing').textContent = dig.join('');
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+function cerrarPopup(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
 }
 
 // ── Notation ──────────────────────────────────────────────────────────────────
