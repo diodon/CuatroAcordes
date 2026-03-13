@@ -16,8 +16,8 @@
   --border:       #9ab4d8;
   --border-light: #bdd0e8;
   --text:         #0d1f3c;
-  --text2:        #2a4a78;
-  --text3:        #5878a8;
+  --text2:        #1a3868;
+  --text3:        #3a5a90;
   --accent:       #1a5bbf;
   --accent2:      #2e72d4;
   --accent-light: #dce8f8;
@@ -38,9 +38,9 @@
   --surface:      #1e2e50;
   --border:       #3a5888;
   --border-light: #2e4870;
-  --text:         #e8f0fc;
-  --text2:        #a8c0e0;
-  --text3:        #7898c0;
+  --text:         #e8f4ff;
+  --text2:        #b8d4f0;
+  --text3:        #90b0d8;
   --accent:       #6ab4ff;
   --accent2:      #88c8ff;
   --accent-light: #1e3460;
@@ -58,7 +58,8 @@ body {
   font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
-  font-size: 15px;
+  font-size: 16px;
+  font-weight: 400;
   line-height: 1.6;
   transition: background 0.3s, color 0.3s;
   min-height: 100vh;
@@ -76,7 +77,8 @@ select, input {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 6px 10px;
-  font-size: 14px;
+  font-size: 15px;
+  font-weight: 400;
   transition: border-color 0.2s;
 }
 select:focus, input:focus { outline: none; border-color: var(--accent); }
@@ -167,11 +169,11 @@ section {
 }
 .field-group { display: flex; flex-direction: column; gap: 5px; }
 .field-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--text3);
+  color: var(--text2);
 }
 .interval-badge {
   display: inline-flex;
@@ -194,12 +196,12 @@ select { width: 100%; }
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 13.5px;
+  font-size: 15px;
 }
 thead th {
   background: var(--bg2);
-  color: var(--text3);
-  font-size: 10.5px;
+  color: var(--text2);
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
@@ -218,36 +220,36 @@ td {
   vertical-align: middle;
 }
 td:first-child {
-  color: var(--text3);
-  font-size: 11px;
+  color: var(--text2);
+  font-size: 13px;
   font-weight: 700;
   width: 28px;
 }
 .td-roman {
   font-family: var(--font-display);
   font-style: italic;
-  font-size: 14px;
+  font-size: 15px;
   color: var(--accent);
   font-weight: 700;
 }
 .td-chord {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
 }
 .td-trans {
   color: var(--green);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 15px;
 }
 .td-fing {
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--text2);
+  font-size: 14px;
+  color: var(--text);
   letter-spacing: 2px;
 }
 .td-fing-trans {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 14px;
   color: var(--green);
   letter-spacing: 2px;
 }
@@ -255,7 +257,7 @@ td:first-child {
   width: 100%;
   min-width: 90px;
   padding: 4px 8px;
-  font-size: 12px;
+  font-size: 14px;
   border-radius: 5px;
 }
 .btn-del {
@@ -302,11 +304,11 @@ td:first-child {
 }
 @media (max-width: 600px) { .diagrams-wrap { grid-template-columns: 1fr; } }
 .diagram-col-title {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.8px;
-  color: var(--text3);
+  color: var(--text2);
   margin-bottom: 12px;
   padding-bottom: 6px;
   border-bottom: 1px dashed var(--border-light);
@@ -351,11 +353,11 @@ svg.fret-svg { display: block; margin: 0 auto; }
   min-width: 160px;
 }
 .prog-degrees-label {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.7px;
-  color: var(--text3);
+  color: var(--text2);
   margin-bottom: 6px;
 }
 .degrees-display {
@@ -372,7 +374,7 @@ svg.fret-svg { display: block; margin: 0 auto; }
   min-width: 200px;
 }
 .prog-match-name {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
   color: var(--green);
   background: rgba(45,106,79,0.1);
@@ -383,9 +385,9 @@ svg.fret-svg { display: block; margin: 0 auto; }
   margin-top: 20px;
 }
 .prog-none {
-  color: var(--text3);
+  color: var(--text2);
   font-style: italic;
-  font-size: 13px;
+  font-size: 14px;
   margin-top: 20px;
 }
 
