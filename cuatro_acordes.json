@@ -1,0 +1,135 @@
+{
+  "meta": {
+    "instrumento": "Cuatro Venezolano",
+    "afinacion": "A3-D4-F#4-B3",
+    "cuerdas_display": ["A3", "D4", "F#4", "B"],
+    "descripcion": "Base de datos de acordes para el cuatro venezolano. Editar este archivo para personalizar las digitaciones.",
+    "version": "1.0"
+  },
+
+  "algoritmo": {
+    "bases_cuerdas": [11, 6, 2, 9],
+    "orden_digitos": "digito[0]=B, digito[1]=F#, digito[2]=D, digito[3]=A",
+    "pesos": {
+      "nota_faltante":  10000,
+      "distintas":         20,
+      "escala_guia":       25,
+      "arrastre":           5,
+      "medio":             35,
+      "barre_puro":        16,
+      "amplitud":         100,
+      "maximo":            40
+    },
+    "notas": {
+      "descripcion": "La puntuacion = faltante*10000 + distintas*20 + guia*min_traste*25 + arrastre*5 + medio*35 + barre_puro*16 + amplitud*100 + maximo*40 + suma_trastes"
+    }
+  },
+
+  "notas": {
+    "sostenidos": ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"],
+    "bemoles":    ["C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B"],
+    "nombres_display": {
+      "C":  "Do",  "C#": "Do#", "Db": "Reb",
+      "D":  "Re",  "D#": "Re#", "Eb": "Mib",
+      "E":  "Mi",
+      "F":  "Fa",  "F#": "Fa#", "Gb": "Solb",
+      "G":  "Sol", "G#": "Sol#","Ab": "Lab",
+      "A":  "La",  "A#": "La#", "Bb": "Sib",
+      "B":  "Si"
+    }
+  },
+
+  "calidades": {
+    "maj":  { "nombre": "Mayor",        "simbolo": "",     "intervalos": [0, 4, 7] },
+    "min":  { "nombre": "Menor",        "simbolo": "m",    "intervalos": [0, 3, 7] },
+    "7":    { "nombre": "Séptima",      "simbolo": "7",    "intervalos": [0, 4, 7, 10] },
+    "maj7": { "nombre": "Mayor 7",      "simbolo": "Maj7", "intervalos": [0, 4, 7, 11] },
+    "min7": { "nombre": "Menor 7",      "simbolo": "m7",   "intervalos": [0, 3, 7, 10] },
+    "dim":  { "nombre": "Disminuido",   "simbolo": "dim",  "intervalos": [0, 3, 6] },
+    "aug":  { "nombre": "Aumentado",    "simbolo": "aug",  "intervalos": [0, 4, 8] },
+    "sus2": { "nombre": "Suspendida 2", "simbolo": "sus2", "intervalos": [0, 2, 7] },
+    "sus4": { "nombre": "Suspendida 4", "simbolo": "sus4", "intervalos": [0, 5, 7] },
+    "6":    { "nombre": "Sexta",        "simbolo": "6",    "intervalos": [0, 4, 7, 9] },
+    "m6":   { "nombre": "Menor 6",      "simbolo": "m6",   "intervalos": [0, 3, 7, 9] },
+    "9":    { "nombre": "Novena",       "simbolo": "9",     "intervalos": [0, 4, 7, 10, 2] },
+    "add9": { "nombre": "Add 9",        "simbolo": "add9", "intervalos": [0, 4, 7, 2] },
+    "dim7": { "nombre": "Dim7",         "simbolo": "dim7", "intervalos": [0, 3, 6, 9] },
+    "m7b5": { "nombre": "Semidismin.",  "simbolo": "m7b5", "intervalos": [0, 3, 6, 10] }
+  },
+
+  "digitaciones_override": {
+    "Am":  [1, 3, 2, 0],
+    "F":   [1, 3, 3, 0],
+    "F#m": [2, 3, 4, 4],
+    "Gbm": [2, 3, 4, 4]
+  },
+
+  "grados_romanos": {
+    "0":  { "mayor": "I",    "menor": "Im" },
+    "1":  { "mayor": "bII",  "menor": "bIIm" },
+    "2":  { "mayor": "II",   "menor": "IIm" },
+    "3":  { "mayor": "bIII", "menor": "bIIIm" },
+    "4":  { "mayor": "III",  "menor": "IIIm" },
+    "5":  { "mayor": "IV",   "menor": "IVm" },
+    "6":  { "mayor": "bV",   "menor": "bVm" },
+    "7":  { "mayor": "V",    "menor": "Vm" },
+    "8":  { "mayor": "bVI",  "menor": "bVIm" },
+    "9":  { "mayor": "VI",   "menor": "VIm" },
+    "10": { "mayor": "bVII", "menor": "bVIIm" },
+    "11": { "mayor": "VII",  "menor": "VIIm" }
+  },
+
+  "progresiones": [
+    { "patron": "I-V-VI-IV",    "nombre": "Pop (La de los 4 acordes)" },
+    { "patron": "I-IV-V",       "nombre": "Blues básico" },
+    { "patron": "I-VI-IV-V",    "nombre": "Do-Wop / 50s" },
+    { "patron": "II-V-I",       "nombre": "Jazz (cadencia)" },
+    { "patron": "I-V-VI-III-IV","nombre": "Canon de Pachelbel" },
+    { "patron": "I-IV-I-V",     "nombre": "Tradicional / Folk" },
+    { "patron": "I-II-IV-I",    "nombre": "Joropo básico" },
+    { "patron": "I-III-IV-V",   "nombre": "Paso doble" },
+    { "patron": "VI-IV-I-V",    "nombre": "Variante pop menor" },
+    { "patron": "I-VI-II-V",    "nombre": "Turnaround jazz" },
+    { "patron": "I-IV-V-IV",    "nombre": "Rock clásico" },
+    { "patron": "I-I-IV-IV-V-IV","nombre": "Blues de 12 compases" }
+  ],
+
+  "ui": {
+    "idioma": "es",
+    "titulo": "Analizador de Acordes",
+    "subtitulo": "Cuatro Venezolano",
+    "seccion_transposicion": "Transposición",
+    "tonalidad_origen": "Tonalidad Origen",
+    "tonalidad_destino": "Tonalidad Destino",
+    "intervalo": "Intervalo",
+    "semitonos": "semitonos",
+    "modo_display": "Notación",
+    "opcion_sostenido": "Sostenidos (#)",
+    "opcion_bemol": "Bemoles (b)",
+    "seccion_acordes": "Tabla de Acordes",
+    "agregar_acorde": "+ Agregar Acorde",
+    "col_num": "#",
+    "col_nota": "Nota",
+    "col_calidad": "Calidad",
+    "col_acorde": "Acorde",
+    "col_grado": "Grado",
+    "col_transpuesto": "Transpuesto",
+    "col_digitacion_orig": "Digitación",
+    "col_digitacion_trans": "Dig. Trans.",
+    "col_notas": "Notas",
+    "seccion_diagramas": "Diagramas de Trastes",
+    "diagramas_orig": "Original",
+    "diagramas_trans": "Transpuesto",
+    "seccion_progresion": "Detección de Progresión",
+    "grados_detectados": "Grados detectados",
+    "progresion_encontrada": "Progresión reconocida",
+    "sin_progresion": "Progresión no identificada",
+    "eliminar": "Eliminar",
+    "limpiar": "Limpiar todo",
+    "modo_oscuro": "Modo oscuro",
+    "modo_claro": "Modo claro",
+    "sin_acorde": "—",
+    "traste_abierto": "○",
+    "traste_mudo": "×"
+  }
+}

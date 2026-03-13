@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analizador de Acordes — Cuatro Venezolano</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Variables ─────────────────────────────────────── */
+:root {
+  --bg:           #f5f0e8;
+  --bg2:          #ede6d6;
+  --bg3:          #e4dbc8;
+  --surface:      #faf7f2;
+  --border:       #c8b99a;
+  --border-light: #ddd0b8;
+  --text:         #2c1f0e;
+  --text2:        #5a4428;
+  --text3:        #8a6d45;
+  --accent:       #b5430a;
+  --accent2:      #d4691e;
+  --accent-light: #f0e0d0;
+  --gold:         #c8952a;
+  --gold-light:   #f5e8c8;
+  --green:        #2d6a4f;
+  --radius:       8px;
+  --shadow:       0 2px 12px rgba(44,31,14,0.12);
+  --shadow-lg:    0 8px 32px rgba(44,31,14,0.18);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body:    'Lato', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+}
+[data-theme="dark"] {
+  --bg:           #1a1208;
+  --bg2:          #221808;
+  --bg3:          #2e2010;
+  --surface:      #251c0d;
+  --border:       #4a3520;
+  --border-light: #3a2a18;
+  --text:         #f0e4cc;
+  --text2:        #c8a878;
+  --text3:        #8a7058;
+  --accent:       #e8682a;
+  --accent2:      #f08040;
+  --accent-light: #3a2010;
+  --gold:         #d4a040;
+  --gold-light:   #2a2010;
+  --green:        #52b788;
+  --shadow:       0 2px 12px rgba(0,0,0,0.4);
+  --shadow-lg:    0 8px 32px rgba(0,0,0,0.5);
+}
+
+/* ── Reset & Base ──────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.6;
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+button {
+  cursor: pointer;
+  font-family: var(--font-body);
+  border: none;
+  background: none;
+}
+select, input {
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 6px 10px;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+select:focus, input:focus { outline: none; border-color: var(--accent); }
+
+/* ── Layout ────────────────────────────────────────── */
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px 60px;
+}
+
+/* ── Header ────────────────────────────────────────── */
+header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 28px 0 20px;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.header-title h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+.header-title h2 {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 2vw, 1.15rem);
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text3);
+  margin-top: 2px;
+}
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.btn-theme {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.btn-theme:hover { background: var(--bg3); color: var(--text); }
+
+/* ── Section ───────────────────────────────────────── */
+section {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+.section-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title svg { color: var(--accent); flex-shrink: 0; }
+
+/* ── Transposition Panel ───────────────────────────── */
+.trans-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  align-items: end;
+}
+.field-group { display: flex; flex-direction: column; gap: 5px; }
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text3);
+}
+.interval-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--gold-light);
+  border: 1px solid var(--gold);
+  border-radius: 20px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--gold);
+  font-size: 15px;
+  white-space: nowrap;
+}
+select { width: 100%; }
+
+/* ── Chord Table ───────────────────────────────────── */
+.table-wrapper { overflow-x: auto; }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+}
+thead th {
+  background: var(--bg2);
+  color: var(--text3);
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  padding: 9px 10px;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid var(--border-light);
+  transition: background 0.15s;
+}
+tbody tr:hover { background: var(--bg2); }
+td {
+  padding: 9px 10px;
+  vertical-align: middle;
+}
+td:first-child {
+  color: var(--text3);
+  font-size: 11px;
+  font-weight: 700;
+  width: 28px;
+}
+.td-roman {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
+  color: var(--accent);
+  font-weight: 700;
+}
+.td-chord {
+  font-weight: 700;
+  font-size: 14px;
+}
+.td-trans {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 14px;
+}
+.td-fing {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text2);
+  letter-spacing: 2px;
+}
+.td-fing-trans {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--green);
+  letter-spacing: 2px;
+}
+.td-notes input {
+  width: 100%;
+  min-width: 90px;
+  padding: 4px 8px;
+  font-size: 12px;
+  border-radius: 5px;
+}
+.btn-del {
+  color: var(--text3);
+  font-size: 16px;
+  padding: 4px 8px;
+  border-radius: 5px;
+  transition: all 0.15s;
+}
+.btn-del:hover { color: var(--accent); background: var(--accent-light); }
+.table-footer {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.btn-add {
+  padding: 8px 18px;
+  background: var(--accent);
+  color: white;
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.btn-add:hover { background: var(--accent2); transform: translateY(-1px); }
+.btn-clear {
+  padding: 8px 18px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  border-radius: 20px;
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+.btn-clear:hover { background: var(--bg3); }
+
+/* ── Diagrams ──────────────────────────────────────── */
+.diagrams-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 600px) { .diagrams-wrap { grid-template-columns: 1fr; } }
+.diagram-col-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text3);
+  margin-bottom: 12px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed var(--border-light);
+}
+.diagrams-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.diagram-card {
+  background: var(--bg2);
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+.diagram-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+.diagram-fing {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 5px;
+  letter-spacing: 2px;
+}
+svg.fret-svg { display: block; margin: 0 auto; }
+
+/* ── Progression ───────────────────────────────────── */
+.prog-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.prog-degrees {
+  flex: 1;
+  min-width: 160px;
+}
+.prog-degrees-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.7px;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+.degrees-display {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.4rem;
+  color: var(--accent);
+  font-weight: 700;
+  min-height: 2rem;
+  letter-spacing: 1px;
+}
+.prog-match {
+  flex: 2;
+  min-width: 200px;
+}
+.prog-match-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(45,106,79,0.1);
+  border: 1px solid rgba(45,106,79,0.3);
+  border-radius: 20px;
+  padding: 6px 16px;
+  display: inline-block;
+  margin-top: 20px;
+}
+.prog-none {
+  color: var(--text3);
+  font-style: italic;
+  font-size: 13px;
+  margin-top: 20px;
+}
+
+/* ── Loading ───────────────────────────────────────── */
+#loading {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  gap: 16px;
+  transition: opacity 0.4s;
+}
+#loading h2 {
+  font-family: var(--font-display);
+  color: var(--accent);
+  font-size: 1.5rem;
+}
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive ────────────────────────────────────── */
+@media (max-width: 768px) {
+  section { padding: 18px 14px; }
+  .trans-grid { grid-template-columns: 1fr 1fr; }
+  thead th:nth-child(8), thead th:nth-child(9),
+  td:nth-child(8), td:nth-child(9) { display: none; }
+}
+@media (max-width: 480px) {
+  .trans-grid { grid-template-columns: 1fr; }
+  thead th:nth-child(7), td:nth-child(7) { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <h2>Cargando acordes…</h2>
+</div>
+
+<div class="app-shell" id="app" style="display:none">
+
+  <!-- Header -->
+  <header>
+    <div class="header-title">
+      <h1 id="titulo"></h1>
+      <h2 id="subtitulo"></h2>
+    </div>
+    <div class="header-controls">
+      <button class="btn-theme" id="btnTema" onclick="toggleTema()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <span id="btnTemaLabel"></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Transposición -->
+  <section>
+    <div class="section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+      <span id="tituloTrans"></span>
+    </div>
+    <div class="trans-grid">
+      <div class="field-group">
+        <span class="field-label" id="labelOrigen"></span>
+        <select id="selOrigen" onchange="actualizar()"></select>
+      </div>
+      <div class="field-group">
+        <span class="field-label" id="labelDestino"></span>
+        <select id="selDestino" onchange="actualizar()"></select>
+      </div>
+      <div class="field-group">
+        <span class="field-label" id="labelIntervalo"></span>
+        <div class="interval-badge">
+          <span id="semitones">0</span>
+          <span id="labelSemitonos" style="font-family:var(--font-body);font-size:12px;font-weight:400"></span>
+        </div>
+      </div>
+      <div class="field-group">
+        <span class="field-label" id="labelModo"></span>
+        <select id="selModo" onchange="actualizar()">
+          <option value="sharp" id="optSostenido"></option>
+          <option value="flat"  id="optBemol"></option>
+        </select>
+      </div>
+    </div>
+  </section>
+
+  <!-- Acordes -->
+  <section>
+    <div class="section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18"/></svg>
+      <span id="tituloAcordes"></span>
+    </div>
+    <div class="table-wrapper">
+      <table id="tablaAcordes">
+        <thead><tr id="cabeceraRow"></tr></thead>
+        <tbody id="tbodyAcordes"></tbody>
+      </table>
+    </div>
+    <div class="table-footer">
+      <button class="btn-add" id="btnAgregar" onclick="agregarFila()"></button>
+      <button class="btn-clear" id="btnLimpiar" onclick="limpiarTodo()"></button>
+    </div>
+  </section>
+
+  <!-- Diagramas -->
+  <section>
+    <div class="section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="4" height="18"/><rect x="10" y="3" width="4" height="18"/><rect x="18" y="3" width="4" height="18"/><path d="M2 8h20M2 14h20"/></svg>
+      <span id="tituloDiagramas"></span>
+    </div>
+    <div class="diagrams-wrap">
+      <div>
+        <div class="diagram-col-title" id="diagramasOrig"></div>
+        <div class="diagrams-row" id="rowDiagOrig"></div>
+      </div>
+      <div>
+        <div class="diagram-col-title" id="diagramasTrans"></div>
+        <div class="diagrams-row" id="rowDiagTrans"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Progresión -->
+  <section>
+    <div class="section-title">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      <span id="tituloProgresion"></span>
+    </div>
+    <div class="prog-row">
+      <div class="prog-degrees">
+        <div class="prog-degrees-label" id="labelGrados"></div>
+        <div class="degrees-display" id="gradosDisplay">—</div>
+      </div>
+      <div class="prog-match">
+        <div id="progMatch"></div>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /app-shell -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// DATOS DE ACORDES — Editar aquí para personalizar el instrumento
+// ═══════════════════════════════════════════════════════════════════════════
+const DATOS_ACORDES = {
+  "meta": {
+    "instrumento": "Cuatro Venezolano",
+    "afinacion": "A3-D4-F#4-B3",
+    "cuerdas_display": [
+      "A3",
+      "D4",
+      "F#4",
+      "B"
+    ],
+    "descripcion": "Base de datos de acordes para el cuatro venezolano. Editar este archivo para personalizar las digitaciones.",
+    "version": "1.0"
+  },
+  "algoritmo": {
+    "bases_cuerdas": [
+      11,
+      6,
+      2,
+      9
+    ],
+    "orden_digitos": "digito[0]=B, digito[1]=F#, digito[2]=D, digito[3]=A",
+    "pesos": {
+      "nota_faltante": 10000,
+      "distintas": 20,
+      "escala_guia": 25,
+      "arrastre": 5,
+      "medio": 35,
+      "barre_puro": 16,
+      "amplitud": 100,
+      "maximo": 40
+    },
+    "notas": {
+      "descripcion": "La puntuacion = faltante*10000 + distintas*20 + guia*min_traste*25 + arrastre*5 + medio*35 + barre_puro*16 + amplitud*100 + maximo*40 + suma_trastes"
+    }
+  },
+  "notas": {
+    "sostenidos": [
+      "C",
+      "C#",
+      "D",
+      "D#",
+      "E",
+      "F",
+      "F#",
+      "G",
+      "G#",
+      "A",
+      "A#",
+      "B"
+    ],
+    "bemoles": [
+      "C",
+      "Db",
+      "D",
+      "Eb",
+      "E",
+      "F",
+      "Gb",
+      "G",
+      "Ab",
+      "A",
+      "Bb",
+      "B"
+    ],
+    "nombres_display": {
+      "C": "Do",
+      "C#": "Do#",
+      "Db": "Reb",
+      "D": "Re",
+      "D#": "Re#",
+      "Eb": "Mib",
+      "E": "Mi",
+      "F": "Fa",
+      "F#": "Fa#",
+      "Gb": "Solb",
+      "G": "Sol",
+      "G#": "Sol#",
+      "Ab": "Lab",
+      "A": "La",
+      "A#": "La#",
+      "Bb": "Sib",
+      "B": "Si"
+    }
+  },
+  "calidades": {
+    "maj": {
+      "nombre": "Mayor",
+      "simbolo": "",
+      "intervalos": [
+        0,
+        4,
+        7
+      ]
+    },
+    "min": {
+      "nombre": "Menor",
+      "simbolo": "m",
+      "intervalos": [
+        0,
+        3,
+        7
+      ]
+    },
+    "7": {
+      "nombre": "Séptima",
+      "simbolo": "7",
+      "intervalos": [
+        0,
+        4,
+        7,
+        10
+      ]
+    },
+    "maj7": {
+      "nombre": "Mayor 7",
+      "simbolo": "Maj7",
+      "intervalos": [
+        0,
+        4,
+        7,
+        11
+      ]
+    },
+    "min7": {
+      "nombre": "Menor 7",
+      "simbolo": "m7",
+      "intervalos": [
+        0,
+        3,
+        7,
+        10
+      ]
+    },
+    "dim": {
+      "nombre": "Disminuido",
+      "simbolo": "dim",
+      "intervalos": [
+        0,
+        3,
+        6
+      ]
+    },
+    "aug": {
+      "nombre": "Aumentado",
+      "simbolo": "aug",
+      "intervalos": [
+        0,
+        4,
+        8
+      ]
+    },
+    "sus2": {
+      "nombre": "Suspendida 2",
+      "simbolo": "sus2",
+      "intervalos": [
+        0,
+        2,
+        7
+      ]
+    },
+    "sus4": {
+      "nombre": "Suspendida 4",
+      "simbolo": "sus4",
+      "intervalos": [
+        0,
+        5,
+        7
+      ]
+    },
+    "6": {
+      "nombre": "Sexta",
+      "simbolo": "6",
+      "intervalos": [
+        0,
+        4,
+        7,
+        9
+      ]
+    },
+    "m6": {
+      "nombre": "Menor 6",
+      "simbolo": "m6",
+      "intervalos": [
+        0,
+        3,
+        7,
+        9
+      ]
+    },
+    "9": {
+      "nombre": "Novena",
+      "simbolo": "9",
+      "intervalos": [
+        0,
+        4,
+        7,
+        10,
+        2
+      ]
+    },
+    "add9": {
+      "nombre": "Add 9",
+      "simbolo": "add9",
+      "intervalos": [
+        0,
+        4,
+        7,
+        2
+      ]
+    },
+    "dim7": {
+      "nombre": "Dim7",
+      "simbolo": "dim7",
+      "intervalos": [
+        0,
+        3,
+        6,
+        9
+      ]
+    },
+    "m7b5": {
+      "nombre": "Semidismin.",
+      "simbolo": "m7b5",
+      "intervalos": [
+        0,
+        3,
+        6,
+        10
+      ]
+    }
+  },
+  "digitaciones_override": {
+    "Am": [
+      1,
+      3,
+      2,
+      0
+    ],
+    "F": [
+      1,
+      3,
+      3,
+      0
+    ],
+    "F#m": [
+      2,
+      3,
+      4,
+      4
+    ],
+    "Gbm": [
+      2,
+      3,
+      4,
+      4
+    ]
+  },
+  "grados_romanos": {
+    "0": {
+      "mayor": "I",
+      "menor": "Im"
+    },
+    "1": {
+      "mayor": "bII",
+      "menor": "bIIm"
+    },
+    "2": {
+      "mayor": "II",
+      "menor": "IIm"
+    },
+    "3": {
+      "mayor": "bIII",
+      "menor": "bIIIm"
+    },
+    "4": {
+      "mayor": "III",
+      "menor": "IIIm"
+    },
+    "5": {
+      "mayor": "IV",
+      "menor": "IVm"
+    },
+    "6": {
+      "mayor": "bV",
+      "menor": "bVm"
+    },
+    "7": {
+      "mayor": "V",
+      "menor": "Vm"
+    },
+    "8": {
+      "mayor": "bVI",
+      "menor": "bVIm"
+    },
+    "9": {
+      "mayor": "VI",
+      "menor": "VIm"
+    },
+    "10": {
+      "mayor": "bVII",
+      "menor": "bVIIm"
+    },
+    "11": {
+      "mayor": "VII",
+      "menor": "VIIm"
+    }
+  },
+  "progresiones": [
+    {
+      "patron": "I-V-VI-IV",
+      "nombre": "Pop (La de los 4 acordes)"
+    },
+    {
+      "patron": "I-IV-V",
+      "nombre": "Blues básico"
+    },
+    {
+      "patron": "I-VI-IV-V",
+      "nombre": "Do-Wop / 50s"
+    },
+    {
+      "patron": "II-V-I",
+      "nombre": "Jazz (cadencia)"
+    },
+    {
+      "patron": "I-V-VI-III-IV",
+      "nombre": "Canon de Pachelbel"
+    },
+    {
+      "patron": "I-IV-I-V",
+      "nombre": "Tradicional / Folk"
+    },
+    {
+      "patron": "I-II-IV-I",
+      "nombre": "Joropo básico"
+    },
+    {
+      "patron": "I-III-IV-V",
+      "nombre": "Paso doble"
+    },
+    {
+      "patron": "VI-IV-I-V",
+      "nombre": "Variante pop menor"
+    },
+    {
+      "patron": "I-VI-II-V",
+      "nombre": "Turnaround jazz"
+    },
+    {
+      "patron": "I-IV-V-IV",
+      "nombre": "Rock clásico"
+    },
+    {
+      "patron": "I-I-IV-IV-V-IV",
+      "nombre": "Blues de 12 compases"
+    }
+  ],
+  "ui": {
+    "idioma": "es",
+    "titulo": "Analizador de Acordes",
+    "subtitulo": "Cuatro Venezolano",
+    "seccion_transposicion": "Transposición",
+    "tonalidad_origen": "Tonalidad Origen",
+    "tonalidad_destino": "Tonalidad Destino",
+    "intervalo": "Intervalo",
+    "semitonos": "semitonos",
+    "modo_display": "Notación",
+    "opcion_sostenido": "Sostenidos (#)",
+    "opcion_bemol": "Bemoles (b)",
+    "seccion_acordes": "Tabla de Acordes",
+    "agregar_acorde": "+ Agregar Acorde",
+    "col_num": "#",
+    "col_nota": "Nota",
+    "col_calidad": "Calidad",
+    "col_acorde": "Acorde",
+    "col_grado": "Grado",
+    "col_transpuesto": "Transpuesto",
+    "col_digitacion_orig": "Digitación",
+    "col_digitacion_trans": "Dig. Trans.",
+    "col_notas": "Notas",
+    "seccion_diagramas": "Diagramas de Trastes",
+    "diagramas_orig": "Original",
+    "diagramas_trans": "Transpuesto",
+    "seccion_progresion": "Detección de Progresión",
+    "grados_detectados": "Grados detectados",
+    "progresion_encontrada": "Progresión reconocida",
+    "sin_progresion": "Progresión no identificada",
+    "eliminar": "Eliminar",
+    "limpiar": "Limpiar todo",
+    "modo_oscuro": "Modo oscuro",
+    "modo_claro": "Modo claro",
+    "sin_acorde": "—",
+    "traste_abierto": "○",
+    "traste_mudo": "×"
+  }
+};
+// ═══════════════════════════════════════════════════════════════════════════
+
+// ── App State ─────────────────────────────────────────────────────────────────
+let CFG = null;      // loaded from JSON
+let filas = [];      // [{nota, calidad, notasLibres}]
+let MAX_FILAS = 12;
+
+// ── Load JSON ─────────────────────────────────────────────────────────────────
+function cargarConfig() {
+  // Datos cargados desde la constante DATOS_ACORDES (ver arriba)
+  CFG = DATOS_ACORDES;
+  init();
+}
+
+function init() {
+  aplicarTextos();
+  construirSelects();
+  construirCabecera();
+  // Start with 4 example chords in C major
+  filas = [
+    { nota: 'C',  calidad: 'maj', notas: '' },
+    { nota: 'G',  calidad: 'maj', notas: '' },
+    { nota: 'A',  calidad: 'min', notas: '' },
+    { nota: 'F',  calidad: 'maj', notas: '' },
+  ];
+  actualizar();
+  document.getElementById('loading').style.opacity = '0';
+  setTimeout(() => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = '';
+  }, 400);
+}
+
+// ── UI Text ───────────────────────────────────────────────────────────────────
+function aplicarTextos() {
+  const ui = CFG.ui;
+  document.title = `${ui.titulo} — ${ui.subtitulo}`;
+  t('titulo',           ui.titulo);
+  t('subtitulo',        ui.subtitulo);
+  t('tituloTrans',      ui.seccion_transposicion);
+  t('labelOrigen',      ui.tonalidad_origen);
+  t('labelDestino',     ui.tonalidad_destino);
+  t('labelIntervalo',   ui.intervalo);
+  t('labelSemitonos',   ui.semitonos);
+  t('labelModo',        ui.modo_display);
+  t('optSostenido',     ui.opcion_sostenido);
+  t('optBemol',         ui.opcion_bemol);
+  t('tituloAcordes',    ui.seccion_acordes);
+  t('tituloDiagramas',  ui.seccion_diagramas);
+  t('diagramasOrig',    ui.diagramas_orig);
+  t('diagramasTrans',   ui.diagramas_trans);
+  t('tituloProgresion', ui.seccion_progresion);
+  t('labelGrados',      ui.grados_detectados);
+  t('btnAgregar',       ui.agregar_acorde);
+  t('btnLimpiar',       ui.limpiar);
+  t('btnTemaLabel',     ui.modo_oscuro);
+}
+function t(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
+
+// ── Selects ───────────────────────────────────────────────────────────────────
+function construirSelects() {
+  const notas = CFG.notas.sostenidos;
+  const nombres = CFG.notas.nombres_display;
+  ['selOrigen','selDestino'].forEach(id => {
+    const sel = document.getElementById(id);
+    notas.forEach(n => {
+      const o = document.createElement('option');
+      o.value = n;
+      o.textContent = nombres[n] || n;
+      sel.appendChild(o);
+    });
+  });
+  // Default: C origin, G destination
+  document.getElementById('selOrigen').value = 'C';
+  document.getElementById('selDestino').value = 'G';
+}
+
+function construirCabecera() {
+  const ui = CFG.ui;
+  const cols = [
+    ui.col_num, ui.col_nota, ui.col_calidad, ui.col_acorde,
+    ui.col_grado, ui.col_transpuesto,
+    ui.col_digitacion_orig, ui.col_digitacion_trans,
+    ui.col_notas, ''
+  ];
+  const tr = document.getElementById('cabeceraRow');
+  cols.forEach(c => {
+    const th = document.createElement('th');
+    th.textContent = c;
+    tr.appendChild(th);
+  });
+}
+
+// ── Music Engine ──────────────────────────────────────────────────────────────
+const STRING_BASES = [11, 6, 2, 9]; // B, F#, D, A
+
+function notaANum(nota) {
+  const idx = CFG.notas.sostenidos.indexOf(nota);
+  if (idx >= 0) return idx;
+  return CFG.notas.bemoles.indexOf(nota);
+}
+
+function numANota(num, modo) {
+  num = ((num % 12) + 12) % 12;
+  return modo === 'flat' ? CFG.notas.bemoles[num] : CFG.notas.sostenidos[num];
+}
+
+function nombreAcorde(nota, calidad) {
+  const q = CFG.calidades[calidad];
+  if (!q) return nota;
+  return nota + q.simbolo;
+}
+
+function calcularGrado(raizNum, tonalidadNum) {
+  const semis = ((raizNum - tonalidadNum) % 12 + 12) % 12;
+  const entrada = CFG.grados_romanos[String(semis)];
+  if (!entrada) return '?';
+  const q = CFG.calidades[filas[0]?.calidad] || {};
+  return entrada.mayor; // simplified: always show major degree form
+}
+
+function calcularDigitacion(raizNum, calidad) {
+  const q = CFG.calidades[calidad];
+  if (!q) return [0,0,0,0];
+  const intervalos = q.intervalos;
+  const notasAcorde = new Set(intervalos.map(i => ((raizNum + i) % 12 + 12) % 12));
+
+  // Check overrides first
+  const notaNombre = CFG.notas.sostenidos[raizNum];
+  const nombreChord = nombreAcorde(notaNombre, calidad);
+  const override = CFG.digitaciones_override[nombreChord];
+  if (override) return override;
+  // Also check flat name
+  const notaNombreB = CFG.notas.bemoles[raizNum];
+  const nombreChordB = nombreAcorde(notaNombreB, calidad);
+  const overrideB = CFG.digitaciones_override[nombreChordB];
+  if (overrideB) return overrideB;
+
+  const w = CFG.algoritmo.pesos;
+
+  // Generate all valid fingering combos
+  const opciones = STRING_BASES.map(base =>
+    Array.from({length: 10}, (_, f) => f).filter(f => notasAcorde.has((base + f) % 12))
+  );
+  // Fallback open string if no option
+  opciones.forEach((op, s) => { if (op.length === 0) op.push(0); });
+
+  let mejor = null, mejorPuntuacion = Infinity;
+
+  function iterar(s, combo) {
+    if (s === 4) {
+      const cubiertos = new Set(STRING_BASES.map((b, i) => (b + combo[i]) % 12));
+      if (!cubiertos.has(raizNum % 12)) return;
+      const faltantes = [...notasAcorde].filter(n => !cubiertos.has(n)).length;
+      const presionados = combo.filter(f => f > 0);
+      const distinto = new Set(presionados).size;
+      const fspan = presionados.length > 0 ? Math.max(...presionados) - Math.min(...presionados) : 0;
+      const fp = combo.map((f,i) => f > 0 ? i : -1).filter(i => i >= 0);
+      const op = combo.map((f,i) => f === 0 ? i : -1).filter(i => i >= 0);
+      const guia  = op.filter(i => fp.length === 0 || i < fp[0]).length;
+      const arrastre = op.filter(i => fp.length === 0 || i > fp[fp.length-1]).length;
+      const medio = op.filter(i => fp.length > 0 && i > fp[0] && i < fp[fp.length-1]).length;
+      const minTraste = presionados.length > 0 ? Math.min(...presionados) : 0;
+      const barrePuro = (presionados.length > 0 && new Set(presionados).size === 1) ? presionados[0] : 0;
+      const mx = Math.max(...combo);
+      const sm = combo.reduce((a,b)=>a+b,0);
+      const puntuacion = faltantes * w.nota_faltante
+        + distinto * w.distintas
+        + guia * minTraste * w.escala_guia
+        + arrastre * w.arrastre
+        + medio * w.medio
+        + barrePuro * w.barre_puro
+        + fspan * w.amplitud
+        + mx * w.maximo
+        + sm;
+      if (puntuacion < mejorPuntuacion) {
+        mejorPuntuacion = puntuacion;
+        mejor = [...combo];
+      }
+      return;
+    }
+    for (const f of opciones[s]) {
+      combo[s] = f;
+      iterar(s + 1, combo);
+    }
+  }
+  iterar(0, [0,0,0,0]);
+  return mejor || [0,0,0,0];
+}
+
+// ── Main Update ───────────────────────────────────────────────────────────────
+function actualizar() {
+  const origen  = document.getElementById('selOrigen').value;
+  const destino = document.getElementById('selDestino').value;
+  const modo    = document.getElementById('selModo').value;
+
+  const numOrigen  = notaANum(origen);
+  const numDestino = notaANum(destino);
+  const offset = ((numDestino - numOrigen) % 12 + 12) % 12;
+
+  document.getElementById('semitones').textContent =
+    (offset > 6 ? offset - 12 : offset) + (offset === 0 ? '' : '');
+  document.getElementById('semitones').textContent = offset === 0 ? '0' :
+    (offset > 6 ? `${offset - 12}` : `+${offset}`);
+
+  renderTabla(numOrigen, offset, modo);
+  renderDiagramas(numOrigen, offset, modo);
+  renderProgresion(numOrigen);
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+function renderTabla(numOrigen, offset, modo) {
+  const tbody = document.getElementById('tbodyAcordes');
+  tbody.innerHTML = '';
+  const nombres = CFG.notas.nombres_display;
+
+  filas.forEach((fila, idx) => {
+    if (!fila.nota) return;
+    const numRaiz = notaANum(fila.nota);
+    const numTrans = (numRaiz + offset + 12) % 12;
+    const grado = calcularGradoSimple(numRaiz, numOrigen);
+    const notaTrans = numANota(numTrans, modo);
+    const acorde = nombreAcorde(fila.nota, fila.calidad);
+    const acordeTrans = nombreAcorde(notaTrans, fila.calidad);
+    const dig = calcularDigitacion(numRaiz, fila.calidad);
+    const digTrans = calcularDigitacion(numTrans, fila.calidad);
+    const digStr = dig.join('');
+    const digTransStr = digTrans.join('');
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td>${crearSelectNota(idx, fila.nota)}</td>
+      <td>${crearSelectCalidad(idx, fila.calidad)}</td>
+      <td class="td-chord">${acorde}</td>
+      <td class="td-roman">${grado}</td>
+      <td class="td-trans">${acordeTrans}</td>
+      <td class="td-fing">${digStr}</td>
+      <td class="td-fing-trans">${digTransStr}</td>
+      <td class="td-notes"><input type="text" value="${fila.notas||''}" placeholder="…"
+        onchange="filas[${idx}].notas=this.value"></td>
+      <td><button class="btn-del" onclick="eliminarFila(${idx})" title="${CFG.ui.eliminar}">×</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function crearSelectNota(idx, valorActual) {
+  const opts = CFG.notas.sostenidos.map(n =>
+    `<option value="${n}" ${n === valorActual ? 'selected' : ''}>${CFG.notas.nombres_display[n]||n}</option>`
+  ).join('');
+  return `<select onchange="filas[${idx}].nota=this.value;actualizar()">${opts}</select>`;
+}
+
+function crearSelectCalidad(idx, valorActual) {
+  const opts = Object.entries(CFG.calidades).map(([k,v]) =>
+    `<option value="${k}" ${k === valorActual ? 'selected' : ''}>${v.nombre}</option>`
+  ).join('');
+  return `<select onchange="filas[${idx}].calidad=this.value;actualizar()">${opts}</select>`;
+}
+
+function calcularGradoSimple(numRaiz, numOrigen) {
+  const semis = ((numRaiz - numOrigen) % 12 + 12) % 12;
+  return CFG.grados_romanos[String(semis)]?.mayor || '?';
+}
+
+// ── Fret Diagrams ─────────────────────────────────────────────────────────────
+function renderDiagramas(numOrigen, offset, modo) {
+  renderDiagCol('rowDiagOrig', filas, numOrigen, 0,      modo);
+  renderDiagCol('rowDiagTrans', filas, numOrigen, offset, modo);
+}
+
+function renderDiagCol(containerId, fs, numOrigen, offset, modo) {
+  const cont = document.getElementById(containerId);
+  cont.innerHTML = '';
+  fs.forEach(fila => {
+    if (!fila.nota) return;
+    const numRaiz = (notaANum(fila.nota) + offset + 12) % 12;
+    const notaNombre = numANota(numRaiz, modo);
+    const acorde = nombreAcorde(notaNombre, fila.calidad);
+    const dig = calcularDigitacion(numRaiz, fila.calidad);
+    const card = document.createElement('div');
+    card.className = 'diagram-card';
+    card.innerHTML = `
+      <div class="diagram-name">${acorde}</div>
+      ${svgDiagrama(dig)}
+      <div class="diagram-fing">${dig.join('')}</div>
+    `;
+    cont.appendChild(card);
+  });
+}
+
+function svgDiagrama(dig) {
+  // dig order: [B, F#, D, A] → display left-to-right: A D F# B
+  // display order: A=dig[3], D=dig[2], F#=dig[1], B=dig[0]
+  const displayOrder = [3, 2, 1, 0]; // indices into dig[]
+  const strings = CFG.meta.cuerdas_display; // ['A3','D4','F#4','B']
+
+  const W = 100, stringsN = 4, frets = 9;
+  const padL = 10, padR = 10, padT = 26, padH = 16;
+  const strW = (W - padL - padR) / (stringsN - 1);
+  const fretH = 16;
+  const H = padT + frets * fretH + padH;
+
+  const displayFrets = displayOrder.map(i => dig[i]);
+  const maxFret = Math.max(...displayFrets.filter(f=>f>0), 0);
+
+  let lines = [`<svg class="fret-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`];
+
+  // String labels
+  displayOrder.forEach((di, si) => {
+    const x = padL + si * strW;
+    lines.push(`<text x="${x}" y="14" text-anchor="middle"
+      font-family="var(--font-mono)" font-size="8" fill="var(--text3)">${strings[si]}</text>`);
+  });
+
+  // Nut
+  lines.push(`<rect x="${padL}" y="${padT}" width="${W-padL-padR}" height="3" fill="var(--text2)"/>`);
+
+  // Fret lines
+  for (let f = 1; f <= frets; f++) {
+    const y = padT + f * fretH;
+    lines.push(`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"
+      stroke="var(--border)" stroke-width="1"/>`);
+  }
+
+  // String lines
+  for (let s = 0; s < stringsN; s++) {
+    const x = padL + s * strW;
+    lines.push(`<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + frets * fretH}"
+      stroke="var(--text2)" stroke-width="1.5"/>`);
+  }
+
+  // Markers
+  displayFrets.forEach((f, si) => {
+    const x = padL + si * strW;
+    if (f === 0) {
+      // Open circle above nut
+      lines.push(`<circle cx="${x}" cy="${padT - 6}" r="4"
+        fill="none" stroke="var(--text2)" stroke-width="1.5"/>`);
+    } else {
+      const y = padT + (f - 0.5) * fretH;
+      lines.push(`<circle cx="${x}" cy="${y}" r="6" fill="var(--accent)"/>`);
+      lines.push(`<text x="${x}" y="${y+4}" text-anchor="middle"
+        font-family="var(--font-mono)" font-size="8" fill="white">${f}</text>`);
+    }
+  });
+
+  lines.push('</svg>');
+  return lines.join('\n');
+}
+
+// ── Progression ───────────────────────────────────────────────────────────────
+function renderProgresion(numOrigen) {
+  const grados = filas
+    .filter(f => f.nota)
+    .map(f => calcularGradoSimple(notaANum(f.nota), numOrigen));
+
+  document.getElementById('gradosDisplay').textContent =
+    grados.length ? grados.join(' — ') : '—';
+
+  const patron = grados.join('-');
+  const match = CFG.progresiones.find(p => {
+    // Try matching any rotation
+    const pg = p.patron.split('-');
+    for (let r = 0; r < grados.length; r++) {
+      const rotated = grados.slice(r).concat(grados.slice(0,r));
+      if (rotated.join('-') === pg.join('-')) return true;
+    }
+    return patron.includes(p.patron) || p.patron.includes(patron);
+  });
+
+  const matchEl = document.getElementById('progMatch');
+  const ui = CFG.ui;
+  if (match) {
+    matchEl.innerHTML = `<div class="prog-match-name">✓ ${match.nombre} <em style="font-style:normal;opacity:0.7">(${match.patron})</em></div>`;
+  } else if (grados.length >= 2) {
+    matchEl.innerHTML = `<div class="prog-none">${ui.sin_progresion}</div>`;
+  } else {
+    matchEl.innerHTML = '';
+  }
+}
+
+// ── Row Management ────────────────────────────────────────────────────────────
+function agregarFila() {
+  if (filas.length >= MAX_FILAS) return;
+  filas.push({ nota: 'C', calidad: 'maj', notas: '' });
+  actualizar();
+}
+
+function eliminarFila(idx) {
+  filas.splice(idx, 1);
+  actualizar();
+}
+
+function limpiarTodo() {
+  filas = [{ nota: 'C', calidad: 'maj', notas: '' }];
+  actualizar();
+}
+
+// ── Theme ─────────────────────────────────────────────────────────────────────
+function toggleTema() {
+  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+  document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
+  document.getElementById('btnTemaLabel').textContent = dark ? CFG.ui.modo_oscuro : CFG.ui.modo_claro;
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+// Los datos están incrustados directamente — no se necesita servidor.
+// Para editarlos, busca la constante DATOS_ACORDES al inicio del script.
+CFG = DATOS_ACORDES;
+init();
+</script>
+</body>
+</html>
