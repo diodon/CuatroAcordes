@@ -27,7 +27,7 @@
   --radius:       8px;
   --shadow:       0 2px 12px rgba(13,31,60,0.12);
   --shadow-lg:    0 8px 32px rgba(13,31,60,0.18);
-  --font-display: 'Playfair Display', Georgia, serif;
+  --font-display: 'Lato', sans-serif;
   --font-body:    'Lato', sans-serif;
   --font-mono:    'IBM Plex Mono', monospace;
 }
@@ -229,6 +229,8 @@ section {
   white-space: nowrap;
 }
 select { width: 100%; }
+td:nth-child(2), th:nth-child(2) { min-width: 75px; }
+td:nth-child(3), th:nth-child(3) { min-width: 95px; }
 
 /* ── Chord Table ───────────────────────────────────── */
 .table-wrapper { overflow-x: auto; }
@@ -758,7 +760,7 @@ svg.fret-svg { display: block; margin: 0 auto; }
         </select>
       </div>
       <button class="btn-theme" id="btnNotacion" onclick="toggleNotacion()">
-        <span id="btnNotacionLabel">C D E</span>
+        <span id="btnNotacionLabel">Do Re Mi</span>
       </button>
       <button class="btn-icon" onclick="abrirHelp()" title="Ayuda">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17" stroke-width="3"/></svg>
@@ -1356,7 +1358,7 @@ const DATOS_ACORDES = {
 let CFG = null;      // loaded from JSON
 let filas = [];      // [{nota, calidad, notasLibres}]
 let MAX_FILAS = 12;
-let notacion = 'latin'; // 'latin' (Do Re Mi) or 'english' (C D E)
+let notacion = 'english'; // 'latin' (Do Re Mi) or 'english' (C D E)
 let escala = 'mayor';   // 'mayor' or 'menor'
 let ultimaProgresion = null;
 let diagChords = { orig: [], trans: [] }; // chord list for diagram column players
@@ -1633,7 +1635,7 @@ function crearSelectNota(idx, valorActual) {
 
 function crearSelectCalidad(idx, valorActual) {
   const opts = Object.entries(CFG.calidades).map(([k,v]) =>
-    `<option value="${k}" ${k === valorActual ? 'selected' : ''}>${v.nombre}</option>`
+    `<option value="${k}" ${k === valorActual ? 'selected' : ''}>${v.simbolo || k}</option>`
   ).join('');
   return `<select onchange="filas[${idx}].calidad=this.value;actualizar()">${opts}</select>`;
 }
