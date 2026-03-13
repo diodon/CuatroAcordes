@@ -89,9 +89,15 @@
     { "patron": "I-II-IV-I",    "nombre": "Joropo básico" },
     { "patron": "I-III-IV-V",   "nombre": "Paso doble" },
     { "patron": "VI-IV-I-V",    "nombre": "Variante pop menor" },
-    { "patron": "I-VI-II-V",    "nombre": "Turnaround jazz" },
+    { "patron": "I-VI-II-V",    "nombre": "Valse Venezolano / Turnaround jazz" },
     { "patron": "I-IV-V-IV",    "nombre": "Rock clásico" },
-    { "patron": "I-I-IV-IV-V-IV","nombre": "Blues de 12 compases" }
+    { "patron": "I-I-IV-IV-V-IV","nombre": "Blues de 12 compases" },
+    { "patron": "I-IV-V-I",     "nombre": "Joropo en Seis" },
+    { "patron": "I-V-I-V",      "nombre": "Joropo Recio" },
+    { "patron": "I-bVII-IV-I",  "nombre": "Merengue Venezolano" },
+    { "patron": "I-bVII-bVI-V", "nombre": "Tonada Llanera" },
+    { "patron": "I-V-IV-I",     "nombre": "Gaita Zuliana" },
+    { "patron": "I-IV-bVII-I",  "nombre": "Polo Llanero" }
   ],
 
   "ui": {
