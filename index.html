@@ -430,6 +430,24 @@ svg.fret-svg { display: block; margin: 0 auto; }
   margin-top: 20px;
 }
 
+/* ── Progression Player ────────────────────────────── */
+.prog-play-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+#tbodyAcordes tr.prog-active {
+  background: var(--accent-light) !important;
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+#tbodyAcordes tr.prog-active .td-chord,
+#tbodyAcordes tr.prog-active .td-roman {
+  color: var(--accent);
+}
+
 /* ── Loading ───────────────────────────────────────── */
 #loading {
   position: fixed;
@@ -828,6 +846,16 @@ svg.fret-svg { display: block; margin: 0 auto; }
       <div class="prog-match">
         <div id="progMatch"></div>
       </div>
+    </div>
+    <div class="prog-play-row">
+      <select id="selTempo" style="width:auto">
+        <option value="2.0">♩ Lento</option>
+        <option value="1.5" selected>♩ Moderado</option>
+        <option value="1.0">♩ Rápido</option>
+        <option value="0.75">♩ Muy rápido</option>
+      </select>
+      <button id="btnTocarProg" class="btn-add" onclick="tocarProgresion()">▶ Tocar progresión</button>
+      <button id="btnDetenerProg" class="btn-clear" onclick="detenerProgresion()" style="display:none">⏹ Detener</button>
     </div>
   </section>
 
@@ -2024,6 +2052,53 @@ function toggleTema() {
   document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
   document.getElementById('iconSol').style.display  = dark ? '' : 'none';
   document.getElementById('iconLuna').style.display = dark ? 'none' : '';
+}
+
+// ── Progression Player ────────────────────────────────────────────────────────
+let progPlayId = 0;
+let progTimeouts = [];
+
+function tocarProgresion() {
+  detenerProgresion();
+  const chords = filas.filter(f => f.nota);
+  if (chords.length === 0) return;
+
+  const tempo = parseFloat(document.getElementById('selTempo').value) * 1000;
+  const playId = ++progPlayId;
+
+  document.getElementById('btnTocarProg').style.display = 'none';
+  document.getElementById('btnDetenerProg').style.display = '';
+
+  chords.forEach((chord, i) => {
+    progTimeouts.push(setTimeout(() => {
+      if (progPlayId !== playId) return;
+      tocarAcorde(chord.nota, chord.calidad);
+      // Highlight active row
+      document.querySelectorAll('#tbodyAcordes tr').forEach((tr, ri) => {
+        tr.classList.toggle('prog-active', ri === i);
+      });
+      // Last chord — reset after it finishes
+      if (i === chords.length - 1) {
+        progTimeouts.push(setTimeout(() => {
+          if (progPlayId !== playId) return;
+          document.querySelectorAll('#tbodyAcordes tr').forEach(tr => tr.classList.remove('prog-active'));
+          document.getElementById('btnTocarProg').style.display = '';
+          document.getElementById('btnDetenerProg').style.display = 'none';
+        }, tempo));
+      }
+    }, i * tempo));
+  });
+}
+
+function detenerProgresion() {
+  progPlayId++;
+  progTimeouts.forEach(clearTimeout);
+  progTimeouts = [];
+  document.querySelectorAll('#tbodyAcordes tr').forEach(tr => tr.classList.remove('prog-active'));
+  const btnPlay = document.getElementById('btnTocarProg');
+  const btnStop = document.getElementById('btnDetenerProg');
+  if (btnPlay) btnPlay.style.display = '';
+  if (btnStop) btnStop.style.display = 'none';
 }
 
 // ── Audio Engine ──────────────────────────────────────────────────────────────
