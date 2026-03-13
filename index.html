@@ -473,6 +473,45 @@ svg.fret-svg { display: block; margin: 0 auto; }
   letter-spacing: 2px;
 }
 
+/* ── All-qualities Modal ───────────────────────────── */
+.modal-all-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 24px 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  max-width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+  width: 720px;
+}
+.modal-all-title {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-bottom: 20px;
+  text-align: center;
+}
+.modal-all-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+}
+.header-acorde-sel {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.header-acorde-sel .field-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text3);
+}
+
 /* ── Responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   section { padding: 18px 14px; }
@@ -502,6 +541,12 @@ svg.fret-svg { display: block; margin: 0 auto; }
       <h2 id="subtitulo"></h2>
     </div>
     <div class="header-controls">
+      <div class="header-acorde-sel">
+        <span class="field-label">Acordes</span>
+        <select id="selAcordeRef" onchange="mostrarTodosAcordes(this.value);this.value=''">
+          <option value="">— Seleccionar —</option>
+        </select>
+      </div>
       <button class="btn-theme" id="btnNotacion" onclick="toggleNotacion()">
         <span id="btnNotacionLabel">C D E</span>
       </button>
@@ -602,6 +647,15 @@ svg.fret-svg { display: block; margin: 0 auto; }
   </footer>
 
 </div><!-- /app-shell -->
+
+<!-- All Qualities Modal -->
+<div class="modal-overlay" id="modalAllOverlay" onclick="cerrarPopupAll(event)">
+  <div class="modal-all-card" id="modalAllCard">
+    <button class="modal-close" onclick="cerrarPopupAll(null)" title="Cerrar">×</button>
+    <div class="modal-all-title" id="modalAllTitulo"></div>
+    <div class="modal-all-grid" id="modalAllGrid"></div>
+  </div>
+</div>
 
 <!-- Chord Popup Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarPopup(event)">
@@ -1031,6 +1085,7 @@ function cargarConfig() {
 function init() {
   aplicarTextos();
   construirSelects();
+  construirSelAcordeRef();
   construirCabecera();
   // Start with 4 example chords in C major
   filas = [
@@ -1433,6 +1488,45 @@ function limpiarTodo() {
   actualizar();
 }
 
+// ── All Qualities Popup ────────────────────────────────────────────────────────
+function construirSelAcordeRef() {
+  const sel = document.getElementById('selAcordeRef');
+  // remove any previously built options (keep placeholder)
+  while (sel.options.length > 1) sel.remove(1);
+  CFG.notas.sostenidos.forEach(n => {
+    const o = document.createElement('option');
+    o.value = n;
+    o.textContent = displayNota(n);
+    sel.appendChild(o);
+  });
+}
+
+function mostrarTodosAcordes(nota) {
+  if (!nota) return;
+  const numRaiz = notaANum(nota);
+  document.getElementById('modalAllTitulo').textContent = displayNota(nota);
+  const grid = document.getElementById('modalAllGrid');
+  grid.innerHTML = '';
+  Object.entries(CFG.calidades).forEach(([key, cal]) => {
+    const dig = calcularDigitacion(numRaiz, key);
+    const card = document.createElement('div');
+    card.className = 'diagram-card';
+    card.innerHTML = `
+      <div class="diagram-name">${displayAcorde(nota, key)}</div>
+      <div style="font-size:10px;color:var(--text3);margin-bottom:4px">${cal.nombre}</div>
+      ${svgDiagrama(dig)}
+      <div class="diagram-fing">${dig.join('')}</div>
+    `;
+    grid.appendChild(card);
+  });
+  document.getElementById('modalAllOverlay').classList.add('open');
+}
+
+function cerrarPopupAll(e) {
+  if (e && e.target !== document.getElementById('modalAllOverlay')) return;
+  document.getElementById('modalAllOverlay').classList.remove('open');
+}
+
 // ── Chord Popup ───────────────────────────────────────────────────────────────
 function mostrarPopup(nota, calidad) {
   const numRaiz = notaANum(nota);
@@ -1454,6 +1548,7 @@ function toggleNotacion() {
   document.getElementById('btnNotacionLabel').textContent =
     notacion === 'latin' ? 'C D E' : 'Do Re Mi';
   refrescarSelectsNota();
+  construirSelAcordeRef();
   actualizar();
 }
 
