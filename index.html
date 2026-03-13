@@ -1786,7 +1786,7 @@ const HELP_SECTIONS = [
   {
     id: 'intro', label: '🎸 Introducción',
     html: `<h3>Bienvenido</h3>
-    <p><strong>Acordes del Cuatro Venezolano</strong> es una herramienta para músicos que tocan el cuatro venezolano. Permite construir listas de acordes, transponerlas a cualquier tonalidad, visualizar las digitaciones en el diapasón y detectar progresiones armónicas.</p>
+    <p><strong>Acordes del Cuatro Venezolano</strong> es una herramienta para músicos que tocan el cuatro venezolano. Permite construir listas de acordes, transponerlas a cualquier tonalidad, visualizar las digitaciones en el diapasón, detectar progresiones armónicas y escuchar los acordes y progresiones en audio.</p>
     <p>El cuatro venezolano está afinado en <span class="help-badge">A3 — D4 — F#4 — B3</span> (de la cuerda más grave a la más aguda).</p>
     <h3>Inicio rápido</h3>
     <ul>
@@ -1794,6 +1794,7 @@ const HELP_SECTIONS = [
       <li>Cambia la <strong>Tonalidad Origen</strong> para ver los acordes en otra clave.</li>
       <li>Haz clic en cualquier acorde de la tabla para ver su diagrama de trastes.</li>
       <li>Usa el menú <strong>Acordes</strong> para explorar todas las calidades de una nota.</li>
+      <li>Pulsa <strong>▶ Tocar</strong> en cualquier diagrama o progresión para escuchar el sonido.</li>
     </ul>`
   },
   {
@@ -1845,6 +1846,8 @@ const HELP_SECTIONS = [
       <li><strong>Círculo relleno</strong> — Cuerda pisada. El número indica el traste.</li>
       <li><strong>Círculo vacío</strong> — Cuerda al aire (sin pisar).</li>
       <li>La digitación en formato numérico aparece debajo de cada diagrama (ej. <span class="help-badge">2010</span>).</li>
+      <li>El botón <strong>▶ Tocar</strong> debajo de cada tarjeta reproduce el sonido del acorde.</li>
+      <li>El botón <strong>▶ Tocar</strong> en la cabecera de cada columna reproduce todos los acordes de esa columna en secuencia.</li>
     </ul>
     <p>También puedes hacer <strong>clic en cualquier acorde</strong> de la tabla (columnas Acorde y Transpuesto) para ver su diagrama en un popup.</p>`
   },
@@ -1858,7 +1861,32 @@ const HELP_SECTIONS = [
       <li>Disminuido, Aumentado, sus2, sus4</li>
       <li>6ª, Menor 6, 9ª, Add9, Dim7, Semidisminuido (m7b5)</li>
     </ul>
-    <p>Cada tarjeta muestra el nombre del acorde, su diagrama de trastes y la digitación numérica.</p>`
+    <p>Cada tarjeta muestra el nombre del acorde, su diagrama de trastes, la digitación numérica y un botón <strong>▶ Tocar</strong> para escuchar el acorde.</p>`
+  },
+  {
+    id: 'audio', label: '🔊 Audio',
+    html: `<h3>Reproducción de Acordes</h3>
+    <p>La aplicación sintetiza el sonido del cuatro venezolano directamente en el navegador usando la <strong>Web Audio API</strong>, sin necesidad de archivos de audio externos.</p>
+    <ul>
+      <li>Cada cuerda se simula con tres armónicos (fundamental, octava y tercera) y un envolvente de decaimiento para imitar el sonido pulsado del cuatro.</li>
+      <li>Las cuatro cuerdas suenan en arpegio con 40 ms de separación para un sonido natural.</li>
+    </ul>
+    <h3>Botones ▶ Tocar</h3>
+    <ul>
+      <li><strong>En cada diagrama</strong> — Reproduce ese acorde individual.</li>
+      <li><strong>En la cabecera de la columna Original / Transpuesto</strong> — Reproduce todos los acordes de esa columna en secuencia.</li>
+      <li><strong>En la sección Detección de Progresión</strong> — Reproduce toda la progresión de la tabla en secuencia, resaltando el acorde activo.</li>
+    </ul>
+    <h3>Control de Tempo</h3>
+    <p>El selector de tempo en la sección de detección de progresión controla la velocidad de reproducción de todas las secuencias:</p>
+    <ul>
+      <li><strong>Lento</strong> — 2 s por acorde</li>
+      <li><strong>Normal</strong> — 1.5 s por acorde</li>
+      <li><strong>Rápido</strong> — 1 s por acorde</li>
+      <li><strong>Muy rápido</strong> — 0.75 s por acorde</li>
+    </ul>
+    <p>El botón <strong>⏹</strong> detiene cualquier secuencia en curso. Iniciar una nueva secuencia detiene automáticamente la anterior.</p>
+    <p><em>Nota: algunos navegadores requieren una interacción del usuario (clic) antes de permitir la reproducción de audio. Si no suena, haz clic en cualquier parte de la página primero.</em></p>`
   },
   {
     id: 'contacto', label: '🐛 Reportar / Sugerir',
@@ -1898,10 +1926,17 @@ const HELP_SECTIONS = [
     html: `<h3>Controles de la Cabecera</h3>
     <ul>
       <li><strong>Progresiones</strong> — Rellena la tabla con una progresión predefinida.</li>
+      <li><strong>M / m</strong> — Alterna entre escala Mayor y menor armónica.</li>
       <li><strong>Acordes</strong> — Abre el explorador de calidades para una nota raíz.</li>
       <li><strong>C D E / Do Re Mi</strong> — Alterna entre notación inglesa y latina en toda la interfaz.</li>
       <li><strong>☀️ / 🌙</strong> — Cambia entre tema claro y oscuro.</li>
       <li><strong>?</strong> — Abre esta ayuda.</li>
+    </ul>
+    <h3>Sección de Detección de Progresión</h3>
+    <ul>
+      <li><strong>Tempo</strong> — Velocidad de reproducción de las secuencias de audio.</li>
+      <li><strong>▶ Tocar progresión</strong> — Reproduce todos los acordes de la tabla en orden.</li>
+      <li><strong>⏹ Detener</strong> — Para la reproducción en curso.</li>
     </ul>
     <h3>Digitación numérica</h3>
     <p>El formato <span class="help-badge">XXXX</span> representa los trastes de las 4 cuerdas en orden <strong>B · F# · D · A</strong> (de aguda a grave). El valor <span class="help-badge">0</span> indica cuerda al aire.</p>`
