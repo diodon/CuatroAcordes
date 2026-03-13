@@ -119,7 +119,7 @@ header {
 }
 .header-controls {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 10px;
 }
 .btn-theme {
@@ -1032,8 +1032,8 @@ const DATOS_ACORDES = {
   ],
   "ui": {
     "idioma": "es",
-    "titulo": "Analizador de Acordes",
-    "subtitulo": "Cuatro Venezolano",
+    "titulo": "Acordes del Cuatro Venezolano",
+    "subtitulo": "Transposición, digitación y progresiones armónicas",
     "seccion_transposicion": "Transposición",
     "tonalidad_origen": "Tonalidad Origen",
     "tonalidad_destino": "Tonalidad Destino",
@@ -1388,10 +1388,10 @@ function svgDiagrama(dig) {
   const displayOrder = [3, 2, 1, 0]; // indices into dig[]
   const strings = CFG.meta.cuerdas_display; // ['A3','D4','F#4','B']
 
-  const W = 100, stringsN = 4, frets = 9;
-  const padL = 10, padR = 10, padT = 26, padH = 16;
+  const W = 110, stringsN = 4, frets = 9;
+  const padL = 12, padR = 12, padT = 28, padH = 16;
   const strW = (W - padL - padR) / (stringsN - 1);
-  const fretH = 16;
+  const fretH = 18;
   const H = padT + frets * fretH + padH;
 
   const displayFrets = displayOrder.map(i => dig[i]);
@@ -1402,8 +1402,8 @@ function svgDiagrama(dig) {
   // String labels
   displayOrder.forEach((di, si) => {
     const x = padL + si * strW;
-    lines.push(`<text x="${x}" y="14" text-anchor="middle"
-      font-family="var(--font-mono)" font-size="8" fill="var(--text3)">${strings[si]}</text>`);
+    lines.push(`<text x="${x}" y="15" text-anchor="middle"
+      font-family="var(--font-mono)" font-size="10" font-weight="700" fill="var(--text2)">${strings[si]}</text>`);
   });
 
   // Nut
@@ -1428,13 +1428,13 @@ function svgDiagrama(dig) {
     const x = padL + si * strW;
     if (f === 0) {
       // Open circle above nut
-      lines.push(`<circle cx="${x}" cy="${padT - 6}" r="4"
-        fill="none" stroke="var(--text2)" stroke-width="1.5"/>`);
+      lines.push(`<circle cx="${x}" cy="${padT - 7}" r="5"
+        fill="none" stroke="var(--text)" stroke-width="2"/>`);
     } else {
       const y = padT + (f - 0.5) * fretH;
-      lines.push(`<circle cx="${x}" cy="${y}" r="6" fill="var(--accent)"/>`);
+      lines.push(`<circle cx="${x}" cy="${y}" r="8" fill="var(--accent)"/>`);
       lines.push(`<text x="${x}" y="${y+4}" text-anchor="middle"
-        font-family="var(--font-mono)" font-size="8" fill="white">${f}</text>`);
+        font-family="var(--font-mono)" font-size="10" font-weight="700" fill="white">${f}</text>`);
     }
   });
 
