@@ -608,6 +608,13 @@ svg.fret-svg { display: block; margin: 0 auto; }
           <option value="flat"  id="optBemol"></option>
         </select>
       </div>
+      <div class="field-group">
+        <span class="field-label">Escala</span>
+        <select id="selEscala" onchange="cambiarEscala(this.value)">
+          <option value="mayor">Mayor</option>
+          <option value="menor">Menor</option>
+        </select>
+      </div>
     </div>
   </section>
 
@@ -1120,6 +1127,8 @@ let CFG = null;      // loaded from JSON
 let filas = [];      // [{nota, calidad, notasLibres}]
 let MAX_FILAS = 12;
 let notacion = 'latin'; // 'latin' (Do Re Mi) or 'english' (C D E)
+let escala = 'mayor';   // 'mayor' or 'menor'
+let ultimaProgresion = null;
 
 // ── Load JSON ─────────────────────────────────────────────────────────────────
 function cargarConfig() {
@@ -1535,7 +1544,7 @@ function limpiarTodo() {
 }
 
 // ── Progression Selector ──────────────────────────────────────────────────────
-const DEGREE_MAP = {
+const DEGREE_MAP = { // Major scale (Ionian)
   'I':    { semi: 0,  calidad: 'maj' },
   'bII':  { semi: 1,  calidad: 'maj' },
   'II':   { semi: 2,  calidad: 'min' },
@@ -1543,12 +1552,32 @@ const DEGREE_MAP = {
   'III':  { semi: 4,  calidad: 'min' },
   'IV':   { semi: 5,  calidad: 'maj' },
   'bV':   { semi: 6,  calidad: 'dim' },
-  'V':    { semi: 7,  calidad: '7'   }, // dominant seventh — standard in Venezuelan music
+  'V':    { semi: 7,  calidad: '7'   },
   'bVI':  { semi: 8,  calidad: 'maj' },
   'VI':   { semi: 9,  calidad: 'min' },
   'bVII': { semi: 10, calidad: 'maj' },
   'VII':  { semi: 11, calidad: 'dim' },
 };
+
+const DEGREE_MAP_MENOR = { // Harmonic minor scale
+  'I':    { semi: 0,  calidad: 'min' },
+  'bII':  { semi: 1,  calidad: 'maj' },
+  'II':   { semi: 2,  calidad: 'dim' },
+  'bIII': { semi: 3,  calidad: 'maj' },
+  'III':  { semi: 4,  calidad: 'maj' },
+  'IV':   { semi: 5,  calidad: 'min' },
+  'bV':   { semi: 6,  calidad: 'maj' },
+  'V':    { semi: 7,  calidad: '7'   },  // dominant 7th (raised 7th of harmonic minor)
+  'bVI':  { semi: 8,  calidad: 'maj' },
+  'VI':   { semi: 9,  calidad: 'min' },
+  'bVII': { semi: 10, calidad: 'maj' },
+  'VII':  { semi: 11, calidad: 'dim' },
+};
+
+function cambiarEscala(val) {
+  escala = val;
+  if (ultimaProgresion) aplicarProgresion(ultimaProgresion);
+}
 
 function construirSelProgresion() {
   const sel = document.getElementById('selProgresion');
@@ -1563,11 +1592,13 @@ function construirSelProgresion() {
 
 function aplicarProgresion(patron) {
   if (!patron) return;
+  ultimaProgresion = patron;
+  const map = escala === 'menor' ? DEGREE_MAP_MENOR : DEGREE_MAP;
   const origen = document.getElementById('selOrigen').value;
   const modo   = document.getElementById('selModo').value;
   const numOrigen = notaANum(origen);
   filas = patron.split('-').map(g => {
-    const entry = DEGREE_MAP[g];
+    const entry = map[g];
     if (!entry) return { nota: 'C', calidad: 'maj', notas: '' };
     const numNota = (numOrigen + entry.semi + 12) % 12;
     return { nota: numANota(numNota, modo), calidad: entry.calidad, notas: '' };
