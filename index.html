@@ -505,6 +505,12 @@ svg.fret-svg { display: block; margin: 0 auto; }
 }
 .diagram-play:hover { background: var(--accent); color: white; }
 .diagram-play:active { transform: scale(0.95); }
+.diag-col-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
 
 /* ── Chord Popup ───────────────────────────────────── */
 .td-chord-link, .td-trans-link {
@@ -822,11 +828,23 @@ svg.fret-svg { display: block; margin: 0 auto; }
     </div>
     <div class="diagrams-wrap">
       <div>
-        <div class="diagram-col-title" id="diagramasOrig"></div>
+        <div class="diag-col-header">
+          <div class="diagram-col-title" id="diagramasOrig"></div>
+          <div style="display:flex;gap:6px">
+            <button id="btnTocarDiag_orig" class="diagram-play" style="margin:0" onclick="tocarSecuenciaCol('orig')">▶ Tocar</button>
+            <button id="btnDetenerDiag_orig" class="btn-clear" style="display:none;padding:3px 10px;font-size:12px" onclick="detenerTodo()">⏹</button>
+          </div>
+        </div>
         <div class="diagrams-row" id="rowDiagOrig"></div>
       </div>
       <div>
-        <div class="diagram-col-title" id="diagramasTrans"></div>
+        <div class="diag-col-header">
+          <div class="diagram-col-title" id="diagramasTrans"></div>
+          <div style="display:flex;gap:6px">
+            <button id="btnTocarDiag_trans" class="diagram-play" style="margin:0" onclick="tocarSecuenciaCol('trans')">▶ Tocar</button>
+            <button id="btnDetenerDiag_trans" class="btn-clear" style="display:none;padding:3px 10px;font-size:12px" onclick="detenerTodo()">⏹</button>
+          </div>
+        </div>
         <div class="diagrams-row" id="rowDiagTrans"></div>
       </div>
     </div>
@@ -855,7 +873,7 @@ svg.fret-svg { display: block; margin: 0 auto; }
         <option value="0.75">♩ Muy rápido</option>
       </select>
       <button id="btnTocarProg" class="btn-add" onclick="tocarProgresion()">▶ Tocar progresión</button>
-      <button id="btnDetenerProg" class="btn-clear" onclick="detenerProgresion()" style="display:none">⏹ Detener</button>
+      <button id="btnDetenerProg" class="btn-clear" onclick="detenerTodo()" style="display:none">⏹ Detener</button>
     </div>
   </section>
 
@@ -1341,6 +1359,7 @@ let MAX_FILAS = 12;
 let notacion = 'latin'; // 'latin' (Do Re Mi) or 'english' (C D E)
 let escala = 'mayor';   // 'mayor' or 'menor'
 let ultimaProgresion = null;
+let diagChords = { orig: [], trans: [] }; // chord list for diagram column players
 
 // ── Load JSON ─────────────────────────────────────────────────────────────────
 function cargarConfig() {
@@ -1633,12 +1652,15 @@ function renderDiagramas(numOrigen, offset, modo) {
 function renderDiagCol(containerId, fs, numOrigen, offset, modo) {
   const cont = document.getElementById(containerId);
   cont.innerHTML = '';
+  const colKey = containerId === 'rowDiagOrig' ? 'orig' : 'trans';
+  diagChords[colKey] = [];
   fs.forEach(fila => {
     if (!fila.nota) return;
     const numRaiz = (notaANum(fila.nota) + offset + 12) % 12;
     const notaNombre = numANota(numRaiz, modo);
     const acorde = displayAcorde(notaNombre, fila.calidad);
     const dig = calcularDigitacion(numRaiz, fila.calidad);
+    diagChords[colKey].push({ nota: notaNombre, calidad: fila.calidad });
     const card = document.createElement('div');
     card.className = 'diagram-card';
     card.innerHTML = `
@@ -2054,51 +2076,71 @@ function toggleTema() {
   document.getElementById('iconLuna').style.display = dark ? 'none' : '';
 }
 
-// ── Progression Player ────────────────────────────────────────────────────────
-let progPlayId = 0;
-let progTimeouts = [];
+// ── Sequence Player ────────────────────────────────────────────────────────────
+let seqPlayId = 0;
+let seqTimeouts = [];
 
-function tocarProgresion() {
-  detenerProgresion();
-  const chords = filas.filter(f => f.nota);
+// Generic sequence engine. chords = [{nota, calidad}]
+// btnPlayId/btnStopId = element IDs to show/hide.
+// highlightFn(i) optional — called on each chord to highlight something.
+function iniciarSecuencia(chords, btnPlayId, btnStopId, highlightFn, clearFn) {
+  detenerTodo();
   if (chords.length === 0) return;
 
   const tempo = parseFloat(document.getElementById('selTempo').value) * 1000;
-  const playId = ++progPlayId;
+  const playId = ++seqPlayId;
 
-  document.getElementById('btnTocarProg').style.display = 'none';
-  document.getElementById('btnDetenerProg').style.display = '';
+  document.getElementById(btnPlayId).style.display = 'none';
+  document.getElementById(btnStopId).style.display = '';
 
   chords.forEach((chord, i) => {
-    progTimeouts.push(setTimeout(() => {
-      if (progPlayId !== playId) return;
+    seqTimeouts.push(setTimeout(() => {
+      if (seqPlayId !== playId) return;
       tocarAcorde(chord.nota, chord.calidad);
-      // Highlight active row
-      document.querySelectorAll('#tbodyAcordes tr').forEach((tr, ri) => {
-        tr.classList.toggle('prog-active', ri === i);
-      });
-      // Last chord — reset after it finishes
+      if (highlightFn) highlightFn(i);
       if (i === chords.length - 1) {
-        progTimeouts.push(setTimeout(() => {
-          if (progPlayId !== playId) return;
-          document.querySelectorAll('#tbodyAcordes tr').forEach(tr => tr.classList.remove('prog-active'));
-          document.getElementById('btnTocarProg').style.display = '';
-          document.getElementById('btnDetenerProg').style.display = 'none';
+        seqTimeouts.push(setTimeout(() => {
+          if (seqPlayId !== playId) return;
+          if (clearFn) clearFn();
+          document.getElementById(btnPlayId).style.display = '';
+          document.getElementById(btnStopId).style.display = 'none';
         }, tempo));
       }
     }, i * tempo));
   });
 }
 
-function detenerProgresion() {
-  progPlayId++;
-  progTimeouts.forEach(clearTimeout);
-  progTimeouts = [];
+function detenerTodo() {
+  seqPlayId++;
+  seqTimeouts.forEach(clearTimeout);
+  seqTimeouts = [];
+  // Reset progression table highlight
   document.querySelectorAll('#tbodyAcordes tr').forEach(tr => tr.classList.remove('prog-active'));
-  const btnPlay = document.getElementById('btnTocarProg');
-  const btnStop = document.getElementById('btnDetenerProg');
-  if (btnPlay) btnPlay.style.display = '';
-  if (btnStop) btnStop.style.display = 'none';
+  // Reset all play/stop button pairs
+  ['btnTocarProg', 'btnTocarDiag_orig', 'btnTocarDiag_trans'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = '';
+  });
+  ['btnDetenerProg', 'btnDetenerDiag_orig', 'btnDetenerDiag_trans'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+}
+
+function tocarProgresion() {
+  const chords = filas.filter(f => f.nota).map(f => ({ nota: f.nota, calidad: f.calidad }));
+  iniciarSecuencia(
+    chords,
+    'btnTocarProg', 'btnDetenerProg',
+    i => document.querySelectorAll('#tbodyAcordes tr').forEach((tr, ri) => tr.classList.toggle('prog-active', ri === i)),
+    () => document.querySelectorAll('#tbodyAcordes tr').forEach(tr => tr.classList.remove('prog-active'))
+  );
+}
+
+function tocarSecuenciaCol(col) {
+  const btnPlay = 'btnTocarDiag_' + col;
+  const btnStop = 'btnDetenerDiag_' + col;
+  iniciarSecuencia(diagChords[col] || [], btnPlay, btnStop, null, null);
 }
 
 // ── Audio Engine ──────────────────────────────────────────────────────────────
