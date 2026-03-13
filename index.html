@@ -98,8 +98,12 @@ header {
   padding: 28px 0 20px;
   border-bottom: 2px solid var(--border);
   margin-bottom: 32px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
+}
+.header-title {
+  flex-shrink: 1;
+  min-width: 0;
 }
 .header-title h1 {
   font-family: var(--font-display);
@@ -121,6 +125,12 @@ header {
   display: flex;
   align-items: flex-end;
   gap: 10px;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+}
+#btnNotacion {
+  min-width: 72px;
+  justify-content: center;
 }
 .btn-theme {
   display: flex;
