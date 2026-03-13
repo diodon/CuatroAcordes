@@ -136,6 +136,20 @@ header {
   transition: all 0.2s;
 }
 .btn-theme:hover { background: var(--bg3); color: var(--text); }
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  color: var(--text2);
+  transition: all 0.2s;
+  cursor: pointer;
+}
+.btn-icon:hover { background: var(--bg3); color: var(--accent); }
 
 /* ── Section ───────────────────────────────────────── */
 section {
@@ -544,6 +558,12 @@ svg.fret-svg { display: block; margin: 0 auto; }
     </div>
     <div class="header-controls">
       <div class="header-acorde-sel">
+        <span class="field-label">Progresiones</span>
+        <select id="selProgresion" onchange="aplicarProgresion(this.value);this.value=''">
+          <option value="">— Seleccionar —</option>
+        </select>
+      </div>
+      <div class="header-acorde-sel">
         <span class="field-label">Acordes</span>
         <select id="selAcordeRef" onchange="mostrarTodosAcordes(this.value);this.value=''">
           <option value="">— Seleccionar —</option>
@@ -552,9 +572,9 @@ svg.fret-svg { display: block; margin: 0 auto; }
       <button class="btn-theme" id="btnNotacion" onclick="toggleNotacion()">
         <span id="btnNotacionLabel">C D E</span>
       </button>
-      <button class="btn-theme" id="btnTema" onclick="toggleTema()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
-        <span id="btnTemaLabel"></span>
+      <button class="btn-icon" id="btnTema" onclick="toggleTema()" title="Cambiar tema">
+        <svg id="iconSol" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg id="iconLuna" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
     </div>
   </header>
@@ -1112,6 +1132,7 @@ function init() {
   aplicarTextos();
   construirSelects();
   construirSelAcordeRef();
+  construirSelProgresion();
   construirCabecera();
   // Start with 4 example chords in C major
   filas = [
@@ -1150,7 +1171,6 @@ function aplicarTextos() {
   t('labelGrados',      ui.grados_detectados);
   t('btnAgregar',       ui.agregar_acorde);
   t('btnLimpiar',       ui.limpiar);
-  t('btnTemaLabel',     ui.modo_oscuro);
 }
 function t(id, txt) { const el = document.getElementById(id); if (el) el.textContent = txt; }
 
@@ -1514,6 +1534,47 @@ function limpiarTodo() {
   actualizar();
 }
 
+// ── Progression Selector ──────────────────────────────────────────────────────
+const DEGREE_MAP = {
+  'I':    { semi: 0,  calidad: 'maj' },
+  'bII':  { semi: 1,  calidad: 'maj' },
+  'II':   { semi: 2,  calidad: 'min' },
+  'bIII': { semi: 3,  calidad: 'maj' },
+  'III':  { semi: 4,  calidad: 'min' },
+  'IV':   { semi: 5,  calidad: 'maj' },
+  'bV':   { semi: 6,  calidad: 'dim' },
+  'V':    { semi: 7,  calidad: '7'   }, // dominant seventh — standard in Venezuelan music
+  'bVI':  { semi: 8,  calidad: 'maj' },
+  'VI':   { semi: 9,  calidad: 'min' },
+  'bVII': { semi: 10, calidad: 'maj' },
+  'VII':  { semi: 11, calidad: 'dim' },
+};
+
+function construirSelProgresion() {
+  const sel = document.getElementById('selProgresion');
+  while (sel.options.length > 1) sel.remove(1);
+  CFG.progresiones.forEach(p => {
+    const o = document.createElement('option');
+    o.value = p.patron;
+    o.textContent = `${p.nombre}  (${p.patron})`;
+    sel.appendChild(o);
+  });
+}
+
+function aplicarProgresion(patron) {
+  if (!patron) return;
+  const origen = document.getElementById('selOrigen').value;
+  const modo   = document.getElementById('selModo').value;
+  const numOrigen = notaANum(origen);
+  filas = patron.split('-').map(g => {
+    const entry = DEGREE_MAP[g];
+    if (!entry) return { nota: 'C', calidad: 'maj', notas: '' };
+    const numNota = (numOrigen + entry.semi + 12) % 12;
+    return { nota: numANota(numNota, modo), calidad: entry.calidad, notas: '' };
+  });
+  actualizar();
+}
+
 // ── All Qualities Popup ────────────────────────────────────────────────────────
 function construirSelAcordeRef() {
   const sel = document.getElementById('selAcordeRef');
@@ -1582,7 +1643,8 @@ function toggleNotacion() {
 function toggleTema() {
   const dark = document.documentElement.getAttribute('data-theme') === 'dark';
   document.documentElement.setAttribute('data-theme', dark ? '' : 'dark');
-  document.getElementById('btnTemaLabel').textContent = dark ? CFG.ui.modo_oscuro : CFG.ui.modo_claro;
+  document.getElementById('iconSol').style.display  = dark ? '' : 'none';
+  document.getElementById('iconLuna').style.display = dark ? 'none' : '';
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
