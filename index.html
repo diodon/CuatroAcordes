@@ -881,6 +881,12 @@ svg.fret-svg { display: block; margin: 0 auto; }
 
   <footer style="text-align:center;padding:24px 0 8px;font-size:12px;color:var(--text3);border-top:1px solid var(--border-light);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;">
     <span>Aplicación creada por Eduardo Klein con el uso de Claude (claude-sonnet-4-6)</span>
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener"
+       style="display:inline-flex;align-items:center;gap:5px;color:var(--text2);text-decoration:none;font-weight:700;transition:color 0.2s;"
+       onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'"
+       title="Creative Commons Attribution-NonCommercial-ShareAlike 4.0">
+      CC BY-NC-SA 4.0
+    </a>
     <a href="https://github.com/diodon/CuatroAcordes" target="_blank" rel="noopener"
        style="display:inline-flex;align-items:center;gap:6px;color:var(--text2);text-decoration:none;font-weight:700;transition:color 0.2s;"
        onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text2)'">
@@ -1942,6 +1948,31 @@ const HELP_SECTIONS = [
     </ul>
     <h3>Digitación numérica</h3>
     <p>El formato <span class="help-badge">XXXX</span> representa los trastes de las 4 cuerdas en orden <strong>B · F# · D · A</strong> (de aguda a grave). El valor <span class="help-badge">0</span> indica cuerda al aire.</p>`
+  },
+  {
+    id: 'licencia', label: '⚖️ Licencia',
+    html: `<h3>Licencia CC BY-NC-SA 4.0</h3>
+    <p>CuatroAcordes se distribuye bajo la licencia <strong>Creative Commons Attribution-NonCommercial-ShareAlike 4.0 Internacional</strong>.</p>
+    <h3>Qué puedes hacer</h3>
+    <ul>
+      <li><strong>Usar libremente</strong> — La aplicación es de uso libre para cualquier persona.</li>
+      <li><strong>Compartir</strong> — Puedes copiar y redistribuir el material en cualquier formato.</li>
+      <li><strong>Adaptar</strong> — Puedes modificar, transformar y crear a partir del código fuente.</li>
+      <li><strong>Clases y enseñanza</strong> — Puedes usar la aplicación en clases privadas o colectivas, aunque sean de pago.</li>
+    </ul>
+    <h3>Condiciones</h3>
+    <ul>
+      <li><strong>Atribución</strong> — Debes dar crédito al autor original (Eduardo Klein), indicar si realizaste cambios y enlazar la licencia.</li>
+      <li><strong>No Comercial</strong> — No puedes vender la aplicación, cobrar por el acceso a ella ni usarla como base de un producto o servicio comercial.</li>
+      <li><strong>CompartirIgual</strong> — Si modificas o creas a partir de este código, debes distribuir tu obra bajo la misma licencia.</li>
+    </ul>
+    <p style="margin-top:14px">
+      <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener"
+         style="display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:white;padding:9px 18px;border-radius:20px;text-decoration:none;font-weight:700;font-size:13px;transition:opacity 0.2s"
+         onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        Ver licencia completa
+      </a>
+    </p>`
   },
 ];
 
