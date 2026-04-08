@@ -57,12 +57,72 @@ index.html
 
 O visita la versión en línea: https://diodon.github.io/CuatroAcordes/
 
+## Herramienta de línea de comandos — `cuatro_diagramas.py`
+
+Script Python (sin dependencias externas) que genera diagramas ASCII de acordes y escalas para el cuatro venezolano directamente en la terminal.
+
+### Uso básico
+
+```bash
+# Un acorde
+python cuatro_diagramas.py Am
+
+# Varios acordes
+python cuatro_diagramas.py C G Am F
+
+# Acordes de 7ª
+python cuatro_diagramas.py Dm7 G7 Cmaj7
+
+# Diagrama más grande
+python cuatro_diagramas.py --ancho Bb7
+
+# Los 12 acordes de una calidad
+python cuatro_diagramas.py --todos m7
+
+# Ver calidades disponibles
+python cuatro_diagramas.py --lista
+```
+
+### Escalas y modos
+
+```bash
+# Escala mayor (tríadas)
+python cuatro_diagramas.py --escala C
+
+# Menor natural
+python cuatro_diagramas.py --escala A --tipo menor
+
+# Menor armónica con 7ªs y dominantes secundarios
+python cuatro_diagramas.py --escala A --tipo armonica --sep --dom
+
+# Modo dórico
+python cuatro_diagramas.py --escala D --tipo dorica
+```
+
+Tipos de escala disponibles: `mayor`, `menor`, `armonica`, `melodica`, `dorica`, `frigia`, `lidia`, `mixolidia`, `locria` (también acepta nombres en inglés: `major`, `minor`, `dorian`, etc.)
+
+### Opciones
+
+| Opción | Descripción |
+|---|---|
+| `--escala NOTA` | Muestra los acordes diatónicos de la escala |
+| `--tipo TIPO` | Tipo de escala o modo (default: `mayor`) |
+| `--sep` | Con `--escala`: usa acordes de 7ª en lugar de tríadas |
+| `--dom` | Con `--escala`: añade dominantes secundarios |
+| `--ancho` | Diagrama más grande con más detalle |
+| `--todos CALIDAD` | Los 12 acordes de una calidad (ej: `--todos m7`) |
+| `--columnas N` | Número de columnas en el display (default: 4) |
+| `--lista` | Muestra todas las calidades y tipos disponibles |
+
+---
+
 ## Archivos
 
 | Archivo | Descripción |
 |---|---|
-| `index.html` | Aplicación completa (HTML + CSS + JS) |
+| `index.html` | Aplicación web completa (HTML + CSS + JS) |
 | `cuatro_acordes.json` | Base de datos de acordes, calidades y progresiones |
+| `cuatro_diagramas.py` | Herramienta CLI: diagramas ASCII de acordes y escalas |
 
 ## Créditos
 
