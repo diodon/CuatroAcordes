@@ -1687,10 +1687,10 @@ function svgDiagrama(dig) {
   const displayOrder = [3, 2, 1, 0]; // indices into dig[]
   const strings = CFG.meta.cuerdas_display; // ['A3','D4','F#4','B']
 
-  const W = 110, stringsN = 4, frets = 9;
+  const W = 110, stringsN = 4, frets = 8;
   const padL = 12, padR = 12, padT = 28, padH = 16;
   const strW = (W - padL - padR) / (stringsN - 1);
-  const fretH = 18;
+  const fretH = 20.25;  // 9*18/8 — same total height, one fewer fret space
   const H = padT + frets * fretH + padH;
 
   const displayFrets = displayOrder.map(i => dig[i]);
