@@ -202,7 +202,7 @@ def diagrama_ascii(nombre, dig, compact=False):
     # Reordenar para visualización
     frets_display = [dig[i] for i in DISPLAY_ORDER]  # A D F# B
     max_fret = max(f for f in frets_display if f > 0) if any(f > 0 for f in frets_display) else 0
-    show_frets = max(max_fret, 4)  # Mínimo 4 trastes visibles
+    show_frets = max(max_fret, 3)  # Mínimo 3 trastes visibles
 
     lines = []
     ancho_nombre = max(len(nombre), 13)
@@ -239,8 +239,9 @@ def diagrama_ascii(nombre, dig, compact=False):
                 fila += '   ║'
         lines.append(fila)
 
-        # Línea separadora de traste (excepto el último)
+        # Espacio extra y separador de traste (excepto el último)
         if traste < show_frets:
+            lines.append('  ║   ║   ║   ║   ║')
             lines.append('  ╠═══╬═══╬═══╬═══╣')
 
     # ── Cierre ──
@@ -257,7 +258,7 @@ def diagrama_ancho(nombre, dig):
     """Versión más ancha con números de traste y más espacio."""
     frets_display = [dig[i] for i in DISPLAY_ORDER]
     max_fret = max((f for f in frets_display if f > 0), default=0)
-    show_frets = max(max_fret, 5)
+    show_frets = max(max_fret, 4)
 
     lines = []
 
@@ -284,6 +285,7 @@ def diagrama_ancho(nombre, dig):
             row += (' ◉  │' if f == t else '    │')
         lines.append(row)
         if t < show_frets:
+            lines.append('    │    │    │    │    │')
             lines.append('    ├────┼────┼────┼────┤')
 
     lines.append('    └────┴────┴────┴────┘')
