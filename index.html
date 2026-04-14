@@ -1691,7 +1691,9 @@ function svgDiagrama(dig) {
   const padL = 12, padR = 12, padT = 28, padH = 16;
   const strW = (W - padL - padR) / (stringsN - 1);
   const fretH = 22;
-  const H = padT + frets * fretH + padH;
+  const nutH = 3;                               // nut rect height
+  const gridT = padT + nutH;                    // top of first fret cell
+  const H = gridT + frets * fretH + padH;
 
   const displayFrets = displayOrder.map(i => dig[i]);
   const maxFret = Math.max(...displayFrets.filter(f=>f>0), 0);
@@ -1710,7 +1712,7 @@ function svgDiagrama(dig) {
 
   // Fret lines
   for (let f = 1; f <= frets; f++) {
-    const y = padT + f * fretH;
+    const y = gridT + f * fretH;
     lines.push(`<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}"
       stroke="var(--border)" stroke-width="1"/>`);
   }
@@ -1718,7 +1720,7 @@ function svgDiagrama(dig) {
   // String lines
   for (let s = 0; s < stringsN; s++) {
     const x = padL + s * strW;
-    lines.push(`<line x1="${x}" y1="${padT}" x2="${x}" y2="${padT + frets * fretH}"
+    lines.push(`<line x1="${x}" y1="${padT}" x2="${x}" y2="${gridT + frets * fretH}"
       stroke="var(--text2)" stroke-width="1.5"/>`);
   }
 
@@ -1730,7 +1732,7 @@ function svgDiagrama(dig) {
       lines.push(`<circle cx="${x}" cy="${padT - 7}" r="5"
         fill="none" stroke="var(--text)" stroke-width="2"/>`);
     } else {
-      const y = padT + (f - 0.5) * fretH;
+      const y = gridT + (f - 0.5) * fretH;
       lines.push(`<circle cx="${x}" cy="${y}" r="8" fill="var(--accent)"/>`);
       lines.push(`<text x="${x}" y="${y+4}" text-anchor="middle"
         font-family="var(--font-mono)" font-size="10" font-weight="700" fill="white">${f}</text>`);
