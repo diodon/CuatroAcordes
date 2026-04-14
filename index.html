@@ -1690,7 +1690,7 @@ function svgDiagrama(dig) {
   const W = 110, stringsN = 4, frets = 8;
   const padL = 12, padR = 12, padT = 28, padH = 16;
   const strW = (W - padL - padR) / (stringsN - 1);
-  const fretH = 20.25;  // 9*18/8 — same total height, one fewer fret space
+  const fretH = 22;
   const H = padT + frets * fretH + padH;
 
   const displayFrets = displayOrder.map(i => dig[i]);
