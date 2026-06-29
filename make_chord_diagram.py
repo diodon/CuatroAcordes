@@ -28,7 +28,7 @@ String order on the cuatro neck (left → right):  A  D  F#  B
 """
 
 import argparse
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageColor
 import os, sys
 
 CHORD_DIR   = "/home/eklein/Documents/Cuatro/CuatroAcordes/Lista de acordes_files/"
@@ -52,7 +52,7 @@ def _try_font(path, size):
 # ── Core diagram function ─────────────────────────────────────────────────────
 
 def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
-                       output_path=None, scale=2, n_frets=4):
+                       output_path=None, scale=2, n_frets=4, name_color='black'):
     """
     Parameters
     ----------
@@ -63,6 +63,7 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     output_path: str | None
     scale      : int   size multiplier (base 55×75 px)
     n_frets    : int   number of frets to draw (4–15); image grows taller to keep cell size constant
+    name_color : str   color name for the chord label (e.g. 'black', 'red', 'navy')
     """
     BG     = (255, 255, 255)
     LINE   = (45,  45,  45)
@@ -128,7 +129,7 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
 
     # ── Chord name ────────────────────────────────────────────────────────────
     draw.text((W // 2, int(2 * scale) + name_h // 2),
-              chord_name, fill=(180, 0, 0), font=f_name, anchor='mm')
+              chord_name, fill=name_color, font=f_name, anchor='mm')
 
     # ── Nut or fret indicator ─────────────────────────────────────────────────
     if from_nut:
@@ -204,12 +205,19 @@ if __name__ == '__main__':
                    help='4-digit barre frets A-D-F#-B, e.g. 3333')
     p.add_argument('--nfrets', type=int, default=4, metavar='N',
                    help='Number of frets to draw (default 4, min 4, max 15)')
+    p.add_argument('--color',  default='black', metavar='COLOR',
+                   help='Color of the chord name label (default: black). '
+                        'Use plain names: black, red, navy, darkgreen, etc.')
     p.add_argument('--scale',  type=int, default=1,
                    help='Size multiplier (default 1 → 55×75 px, same as micuatro.com)')
     args = p.parse_args()
 
     if not (4 <= args.nfrets <= 15):
         p.error(f'--nfrets must be between 4 and 15, got {args.nfrets}')
+    try:
+        ImageColor.getrgb(args.color)
+    except ValueError:
+        p.error(f'unknown color name: {args.color!r}')
 
     out = args.output
     if out is None:
@@ -219,5 +227,5 @@ if __name__ == '__main__':
         out = os.path.join(CREATED_DIR, out)
 
     make_chord_diagram(args.chord_name, args.fret, args.finger, args.barre, out, args.scale,
-                       n_frets=args.nfrets)
+                       n_frets=args.nfrets, name_color=args.color)
     print(f"Saved: {out}")
