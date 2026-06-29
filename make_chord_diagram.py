@@ -109,9 +109,9 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     fb_top   = name_h + int(3 * scale) + (nut_t if from_nut else 0)
     fb_h     = n_frets * cell_h
     fb_bot   = fb_top + fb_h
-    W        = 55 * scale
+    W        = 58 * scale          # 3 extra units on right so B-string dots don't clip
     H        = fb_bot + int(4 * scale)
-    fb_right = W - int(4 * scale)
+    fb_right = W - int(7 * scale)  # keeps fretboard at same position as original
     fb_w     = fb_right - fb_left
 
     f_name = _try_font(SANS_B, int(13 * scale))
