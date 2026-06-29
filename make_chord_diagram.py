@@ -152,7 +152,7 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
             x1 = str_xs[min(barre_strings)]
             x2 = str_xs[max(barre_strings)]
             barre_r = int(dot_r * 0.75)
-            draw.rectangle([x1, cy - barre_r, x2, cy + barre_r], fill=DOT_F)
+            _capsule(draw, x1, x2, cy, barre_r, DOT_F)
 
     # ── Individual dots and open-string markers ────────────────────────────────
     for i, f in enumerate(frets):
