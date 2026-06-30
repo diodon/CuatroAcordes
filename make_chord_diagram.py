@@ -36,6 +36,9 @@ import os, sys
 CHORD_DIR   = "/home/eklein/Documents/Cuatro/CuatroAcordes/Lista de acordes_files/"
 CREATED_DIR = "/home/eklein/Documents/Cuatro/CuatroAcordes/CreatedDiagrams/"
 
+SHARP_NOTES  = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
+STRING_OPEN  = [9, 2, 6, 11]   # open-string semitones for A, D, F#, B (C=0)
+
 
 # ── Drawing helpers ────────────────────────────────────────────────────────────
 
@@ -54,7 +57,8 @@ def _try_font(path, size):
 # ── Core diagram function ─────────────────────────────────────────────────────
 
 def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
-                       output_path=None, scale=2, n_frets=4, name_color='black'):
+                       output_path=None, scale=2, n_frets=4, name_color='black',
+                       show_notes=True):
     """
     Parameters
     ----------
@@ -110,15 +114,17 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     fb_left  = int(10 * scale)
     fb_top   = name_h + int(3 * scale) + (nut_t if from_nut else 0)
     fb_h     = n_frets * cell_h
-    fb_bot   = fb_top + fb_h
+    fb_bot       = fb_top + fb_h
+    note_area_h  = int(10 * scale) if show_notes else 0
     W        = 58 * scale          # 3 extra units on right so B-string dots don't clip
-    H        = fb_bot + int(4 * scale)
+    H        = fb_bot + note_area_h
     fb_right = W - int(7 * scale)  # keeps fretboard at same position as original
     fb_w     = fb_right - fb_left
 
     f_name = _try_font(SANS_B, int(13 * scale))
     f_fr   = _try_font(SANS_R, int(9 * scale))   # was 6.5 — larger fret indicator
     f_dot  = _try_font(SANS_B, int(8 * scale))   # was 6.5 — larger finger numbers
+    f_note = _try_font(SANS_R, int(6 * scale))
 
     # ── Canvas ────────────────────────────────────────────────────────────────
     img  = Image.new('RGB', (W, H), BG)
@@ -174,6 +180,14 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
                 if fn_s:
                     draw.text((x, cy), fn_s, fill=DOT_T, font=f_dot, anchor='mm')
 
+    # ── String note labels ────────────────────────────────────────────────────
+    if show_notes:
+        note_y = fb_bot + note_area_h // 2
+        for i, f in enumerate(frets):
+            note_semi = (STRING_OPEN[i] + f) % 12
+            draw.text((str_xs[i], note_y), SHARP_NOTES[note_semi],
+                      fill=TEXT_C, font=f_note, anchor='mm')
+
     if output_path:
         img.save(output_path, 'JPEG', quality=95)
     return img
@@ -215,6 +229,10 @@ if __name__ == '__main__':
     p.add_argument('-R', action='store_true',
                    help='Reverse string order: read --fret/--finger/--barre as B-F#-D-A '
                         'instead of the default A-D-F#-B')
+    p.add_argument('--names', dest='show_notes', action='store_true', default=True,
+                   help='Show note names below the diagram (default: on)')
+    p.add_argument('--no-names', dest='show_notes', action='store_false',
+                   help='Hide note names below the diagram')
     args = p.parse_args()
 
     if args.R:
@@ -239,5 +257,6 @@ if __name__ == '__main__':
         out = os.path.join(CREATED_DIR, out)
 
     make_chord_diagram(args.chord_name, args.fret, args.finger, args.barre, out, args.scale,
-                       n_frets=args.nfrets, name_color=args.color)
+                       n_frets=args.nfrets, name_color=args.color,
+                       show_notes=args.show_notes)
     print(f"Saved: {out}")

@@ -21,7 +21,7 @@ N_FRETS        = 6
 DIAGRAM_SCALE  = 2
 # Aspect ratio W/H for a 6-fret from-nut diagram at any scale:
 #   W = 55*s,  H = (13 + 3 + 2.5 + N_FRETS*13 + 4)*s
-IMG_ASPECT = 58 / (13 + 3 + 2.5 + N_FRETS * 13 + 4)   # ≈ 0.577
+IMG_ASPECT = 58 / (13 + 3 + 2.5 + N_FRETS * 13 + 10)   # ≈ 0.541 (includes note-label row)
 
 SHARP_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 FLAT_NOTES  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']

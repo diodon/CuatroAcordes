@@ -19,7 +19,7 @@ PAGE_W, PAGE_H = A4[1], A4[0]   # Landscape A4 (~842 × 595 pts)
 
 N_FRETS        = 6
 DIAGRAM_SCALE  = 2
-IMG_ASPECT     = 58 / (13 + 3 + 2.5 + N_FRETS * 13 + 4)   # ≈ 0.577
+IMG_ASPECT     = 58 / (13 + 3 + 2.5 + N_FRETS * 13 + 10)   # ≈ 0.541 (includes note-label row)
 
 SHARP_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 FLAT_NOTES  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B']
