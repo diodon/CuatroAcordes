@@ -23,6 +23,8 @@ output       Output filename.  If no directory given, saved to chord files folde
 --nfrets N      Number of frets to draw (default 4, min 4, max 15).
                 Image height grows to keep cell size constant.
 --scale N       Size multiplier (default 1 → 55×75 px JPEG, same as micuatro.com).
+-R              Reverse input order: treat --fret/--finger/--barre as B-F#-D-A
+                instead of the default A-D-F#-B.
 
 String order on the cuatro neck (left → right):  A  D  F#  B
 """
@@ -210,7 +212,17 @@ if __name__ == '__main__':
                         'Use plain names: black, red, navy, darkgreen, etc.')
     p.add_argument('--scale',  type=int, default=1,
                    help='Size multiplier (default 1 → 55×75 px, same as micuatro.com)')
+    p.add_argument('-R', action='store_true',
+                   help='Reverse string order: read --fret/--finger/--barre as B-F#-D-A '
+                        'instead of the default A-D-F#-B')
     args = p.parse_args()
+
+    if args.R:
+        args.fret = args.fret[::-1]
+        if args.finger:
+            args.finger = args.finger[::-1]
+        if args.barre:
+            args.barre = args.barre[::-1]
 
     if not (4 <= args.nfrets <= 15):
         p.error(f'--nfrets must be between 4 and 15, got {args.nfrets}')
