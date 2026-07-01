@@ -12,7 +12,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
 from make_chord_diagram import make_chord_diagram
 
-CSV_PATH  = os.path.join(SCRIPT_DIR, 'chords.csv')
+CSV_PATH  = os.path.join(SCRIPT_DIR, 'chords_v2.csv')
 OUT_PDF   = "/home/eklein/Documents/Cuatro/00-Clases/Practicas/acordes_por_tonalidad_mayor.pdf"
 
 PAGE_W, PAGE_H = A4[1], A4[0]   # Landscape A4 (~842 × 595 pts)
@@ -116,22 +116,18 @@ def to_csv_key(root_semi, quality):
 
 
 def csv_to_params(row):
-    """Return (frets, fingers) in A,D,F#,B order from a CSV row."""
-    frets   = [int(row['A']), int(row['D']), int(row['F#']), int(row['B'])]
-    fg      = row['Fingering']          # 4 chars in B,F#,D,A order
+    """Return (frets, fingers, barre) in A,D,F#,B order from a CSV row."""
+    fr = row['Fret']        # 4 chars in B,F#,D,A order
+    fg = row['Fingering']   # 4 chars in B,F#,D,A order
+    ba = row['Barre']       # 4 chars in B,F#,D,A order, or empty
+    frets   = [int(fr[3]), int(fr[2]), int(fr[1]), int(fr[0])]
     fingers = [int(fg[3]), int(fg[2]), int(fg[1]), int(fg[0])]
-    return frets, fingers
-
-
-def detect_barre(frets, fingers):
-    """Return barre list [A,D,F#,B] or None."""
-    f1 = [i for i in range(4) if fingers[i] == 1 and frets[i] > 0]
-    if len(f1) < 2:
-        return None
-    if len({frets[i] for i in f1}) != 1:
-        return None
-    bf = frets[f1[0]]
-    return [bf if i in f1 else 0 for i in range(4)]
+    if ba:
+        barre = [int(ba[3]), int(ba[2]), int(ba[1]), int(ba[0])]
+        barre = barre if any(b > 0 for b in barre) else None
+    else:
+        barre = None
+    return frets, fingers, barre
 
 
 def make_img_reader(root_semi, quality, display_name, chords):
@@ -141,8 +137,7 @@ def make_img_reader(root_semi, quality, display_name, chords):
         print(f'  Warning: {csv_key!r} not found in chords CSV', file=sys.stderr)
         return None
     row = chords[csv_key]
-    frets, fingers = csv_to_params(row)
-    barre = detect_barre(frets, fingers)
+    frets, fingers, barre = csv_to_params(row)
     img = make_chord_diagram(display_name, frets, fingers, barre,
                              output_path=None, scale=DIAGRAM_SCALE,
                              n_frets=N_FRETS, name_color='darkred')
@@ -198,6 +193,9 @@ def main():
     foot_y   = y(PAGE_H - BM - 4)
 
     c = canvas.Canvas(OUT_PDF, pagesize=(PAGE_W, PAGE_H))
+    c.setTitle('Acordes por Tonalidad - Mayor (con dominantes secundarias)')
+    c.setAuthor('E. Klein')
+    c.setSubject('Cuatro Venezolano')
 
     # ── Title ─────────────────────────────────────────────────────────────────
     c.setFont('Helvetica-Bold', 13)

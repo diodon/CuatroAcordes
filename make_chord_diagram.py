@@ -22,7 +22,7 @@ output       Output filename.  If no directory given, saved to chord files folde
                 e.g. --barre 3333 → full barre at fret 3 across all strings.
 --nfrets N      Number of frets to draw (default 4, min 4, max 15).
                 Image height grows to keep cell size constant.
---scale N       Size multiplier (default 1 → 55×75 px JPEG, same as micuatro.com).
+--scale N       Size multiplier (default 2 → ~116×200 px JPEG).
 -R              Reverse input order: treat --fret/--finger/--barre as B-F#-D-A
                 instead of the default A-D-F#-B.
 
@@ -115,7 +115,7 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     fb_top   = name_h + int(3 * scale) + (nut_t if from_nut else 0)
     fb_h     = n_frets * cell_h
     fb_bot       = fb_top + fb_h
-    note_area_h  = int(10 * scale) if show_notes else 0
+    note_area_h  = max(12, int(10 * scale)) if show_notes else 0
     W        = 58 * scale          # 3 extra units on right so B-string dots don't clip
     H        = fb_bot + note_area_h
     fb_right = W - int(7 * scale)  # keeps fretboard at same position as original
@@ -124,7 +124,7 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     f_name = _try_font(SANS_B, int(13 * scale))
     f_fr   = _try_font(SANS_R, int(9 * scale))   # was 6.5 — larger fret indicator
     f_dot  = _try_font(SANS_B, int(8 * scale))   # was 6.5 — larger finger numbers
-    f_note = _try_font(SANS_R, int(6 * scale))
+    f_note = _try_font(SANS_R, max(9, int(7 * scale)))
 
     # ── Canvas ────────────────────────────────────────────────────────────────
     img  = Image.new('RGB', (W, H), BG)
@@ -224,8 +224,8 @@ if __name__ == '__main__':
     p.add_argument('--color',  default='black', metavar='COLOR',
                    help='Color of the chord name label (default: black). '
                         'Use plain names: black, red, navy, darkgreen, etc.')
-    p.add_argument('--scale',  type=int, default=1,
-                   help='Size multiplier (default 1 → 55×75 px, same as micuatro.com)')
+    p.add_argument('--scale',  type=int, default=2,
+                   help='Size multiplier (default 2 → 116×200 px approx)')
     p.add_argument('-R', action='store_true',
                    help='Reverse string order: read --fret/--finger/--barre as B-F#-D-A '
                         'instead of the default A-D-F#-B')

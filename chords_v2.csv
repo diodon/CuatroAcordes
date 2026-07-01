@@ -1,0 +1,181 @@
+Chord,Root_en,Root_es,Quality,Symbol,Fret,Fingering,Barre
+Cmaj,C,Do,Mayor,maj,1123,1123,1100
+Cm,C,Do,Menor,m,1113,1113,1111
+C7,C,Do,Séptima,7,1121,1121,1111
+CMaj7,C,Do,Mayor 7,Maj7,0123,0123,
+Cm7,C,Do,Menor 7,m7,1111,1111,1111
+Cdim,C,Do,Disminuido,dim,1010,3020,
+Caug,C,Do,Aumentado,aug,1223,1324,
+Csus2,C,Do,Suspendida 2,sus2,1103,1103,1111
+Csus4,C,Do,Suspendida 4,sus4,1133,1132,1100
+C6,C,Do,Sexta,6,1120,1120,1100
+Cm6,C,Do,Menor 6,m6,1110,1110,1110
+C9,C,Do,Novena,9,3121,3121,1111
+Cadd9,C,Do,Add 9,add9,3123,4123,
+Cdim7,C,Do,Dim7,dim7,1010,2010,
+Cm7b5,C,Do,Semidismin.,m7b5,1011,3021,
+C#maj,C#,Do#,Mayor,maj,2234,1123,1100
+C#m,C#,Do#,Menor,m,2224,1113,2222
+C#7,C#,Do#,Séptima,7,2232,1121,2222
+C#Maj7,C#,Do#,Mayor 7,Maj7,1234,1234,
+C#m7,C#,Do#,Menor 7,m7,0224,0214,
+C#dim,C#,Do#,Disminuido,dim,2120,3120,
+C#aug,C#,Do#,Aumentado,aug,2330,1320,
+C#sus2,C#,Do#,Suspendida 2,sus2,2210,3210,
+C#sus4,C#,Do#,Suspendida 4,sus4,2244,1132,2222
+C#6,C#,Do#,Sexta,6,2231,3241,
+C#m6,C#,Do#,Menor 6,m6,2221,4321,
+C#9,C#,Do#,Novena,9,4232,3121,2222
+C#add9,C#,Do#,Add 9,add9,4234,4123,
+C#dim7,C#,Do#,Dim7,dim7,2121,4231,
+C#m7b5,C#,Do#,Semidismin.,m7b5,2122,4132,
+Dmaj,D,Re,Mayor,maj,3000,4000,
+Dm,D,Re,Menor,m,3330,4320,
+D7,D,Re,Séptima,7,1000,2000,
+DMaj7,D,Re,Mayor 7,Maj7,2000,2000,
+Dm7,D,Re,Menor 7,m7,3333,1111,3333
+Ddim,D,Re,Disminuido,dim,3230,3120,
+Daug,D,Re,Aumentado,aug,3001,3001,
+Dsus2,D,Re,Suspendida 2,sus2,5300,3100,
+Dsus4,D,Re,Suspendida 4,sus4,3100,3100,
+D6,D,Re,Sexta,6,0000,0000,
+Dm6,D,Re,Menor 6,m6,3332,4321,
+D9,D,Re,Novena,9,1020,1020,
+Dadd9,D,Re,Add 9,add9,5000,4000,
+Ddim7,D,Re,Dim7,dim7,3232,4231,
+Dm7b5,D,Re,Semidismin.,m7b5,3233,4132,
+D#maj,D#,Re#,Mayor,maj,4111,4111,1111
+D#m,D#,Re#,Menor,m,4011,4021,
+D#7,D#,Re#,Séptima,7,2111,2111,1111
+D#Maj7,D#,Re#,Mayor 7,Maj7,3111,3111,1111
+D#m7,D#,Re#,Menor 7,m7,2011,3021,
+D#dim,D#,Re#,Disminuido,dim,4010,4010,
+D#aug,D#,Re#,Aumentado,aug,0112,0213,
+D#sus2,D#,Re#,Suspendida 2,sus2,4431,4321,
+D#sus4,D#,Re#,Suspendida 4,sus4,4211,4211,1111
+D#6,D#,Re#,Sexta,6,1111,1111,
+D#m6,D#,Re#,Menor 6,m6,1011,3012,
+D#9,D#,Re#,Novena,9,4134,4123,
+D#add9,D#,Re#,Add 9,add9,4131,4131,1111
+D#dim7,D#,Re#,Dim7,dim7,1010,2010,
+D#m7b5,D#,Re#,Semidismin.,m7b5,2010,2010,
+Emaj,E,Mi,Mayor,maj,0222,0321,
+Em,E,Mi,Menor,m,0122,0132,
+E7,E,Mi,Séptima,7,3222,4321,
+EMaj7,E,Mi,Mayor 7,Maj7,4222,4321,
+Em7,E,Mi,Menor 7,m7,3122,4132,
+Edim,E,Mi,Disminuido,dim,5121,4121,1111
+Eaug,E,Mi,Aumentado,aug,1223,1324,
+Esus2,E,Mi,Suspendida 2,sus2,0022,0032,
+Esus4,E,Mi,Suspendida 4,sus4,0320,0320,
+E6,E,Mi,Sexta,6,2222,1111,2222
+Em6,E,Mi,Menor 6,m6,2122,4132,
+E9,E,Mi,Novena,9,0065,0032,
+Eadd9,E,Mi,Add 9,add9,5242,4131,2222
+Edim7,E,Mi,Dim7,dim7,2121,4231,
+Em7b5,E,Mi,Semidismin.,m7b5,3121,4321,
+Fmaj,F,Fa,Mayor,maj,1330,1320,
+Fm,F,Fa,Menor,m,1233,1243,
+F7,F,Fa,Séptima,7,4333,4321,
+FMaj7,F,Fa,Mayor 7,Maj7,6677,6677,
+Fm7,F,Fa,Menor 7,m7,5333,4321,
+Fdim,F,Fa,Disminuido,dim,0232,0231,
+Faug,F,Fa,Aumentado,aug,2330,1320,
+Fsus2,F,Fa,Suspendida 2,sus2,1133,1132,1100
+Fsus4,F,Fa,Suspendida 4,sus4,1431,1431,1111
+F6,F,Fa,Sexta,6,3333,1111,3333
+Fm6,F,Fa,Menor 6,m6,3233,4132,
+F9,F,Fa,Novena,9,1110,1110,1110
+Fadd9,F,Fa,Add 9,add9,1130,1130,1100
+Fdim7,F,Fa,Dim7,dim7,3232,4231,
+Fm7b5,F,Fa,Semidismin.,m7b5,4232,3121,2222
+F#maj,F#,Fa#,Mayor,maj,2444,1432,
+F#m,F#,Fa#,Menor,m,2340,1230,
+F#7,F#,Fa#,Séptima,7,2021,3021,
+F#Maj7,F#,Fa#,Mayor 7,Maj7,2031,2031,
+F#m7,F#,Fa#,Menor 7,m7,2020,3020,
+F#dim,F#,Fa#,Disminuido,dim,1340,1230,
+F#aug,F#,Fa#,Aumentado,aug,3001,3001,
+F#sus2,F#,Fa#,Suspendida 2,sus2,2244,1132,2222
+F#sus4,F#,Fa#,Suspendida 4,sus4,2542,1431,2222
+F#6,F#,Fa#,Sexta,6,2011,3021,
+F#m6,F#,Fa#,Menor 6,m6,2010,2010,
+F#9,F#,Fa#,Novena,9,2221,4321,
+F#add9,F#,Fa#,Add 9,add9,2241,3241,
+F#dim7,F#,Fa#,Dim7,dim7,1010,2010,
+F#m7b5,F#,Fa#,Semidismin.,m7b5,1020,1020,
+Gmaj,G,Sol,Mayor,maj,0102,0102,
+Gm,G,Sol,Menor,m,3101,4201,
+G7,G,Sol,Séptima,7,3132,4132,
+GMaj7,G,Sol,Mayor 7,Maj7,3142,3142,
+Gm7,G,Sol,Menor 7,m7,3131,4131,1111
+Gdim,G,Sol,Disminuido,dim,2454,1342,
+Gaug,G,Sol,Aumentado,aug,0112,0213,
+Gsus2,G,Sol,Suspendida 2,sus2,3100,3100,
+Gsus4,G,Sol,Suspendida 4,sus4,3103,3102,
+G6,G,Sol,Sexta,6,3122,4132,
+Gm6,G,Sol,Menor 6,m6,3121,3121,
+G9,G,Sol,Novena,9,0130,0130,
+Gadd9,G,Sol,Add 9,add9,0100,0100,
+Gdim7,G,Sol,Dim7,dim7,2121,4231,
+Gm7b5,G,Sol,Semidismin.,m7b5,2131,2131,1111
+G#maj,G#,Sol#,Mayor,maj,1213,1213,1111
+G#m,G#,Sol#,Menor,m,0212,0312,
+G#7,G#,Sol#,Séptima,7,4243,4132,
+G#Maj7,G#,Sol#,Mayor 7,Maj7,4253,3142,
+G#m7,G#,Sol#,Menor 7,m7,4242,4131,2222
+G#dim,G#,Sol#,Disminuido,dim,0202,0302,
+G#aug,G#,Sol#,Aumentado,aug,1223,1324,
+G#sus2,G#,Sol#,Suspendida 2,sus2,4211,4211,1111
+G#sus4,G#,Sol#,Suspendida 4,sus4,4214,4213,
+G#6,G#,Sol#,Sexta,6,4233,4132,
+G#m6,G#,Sol#,Menor 6,m6,4232,3121,2222
+G#9,G#,Sol#,Novena,9,4443,4321,
+G#add9,G#,Sol#,Add 9,add9,1211,1211,1111
+G#dim7,G#,Sol#,Dim7,dim7,3232,4231,
+G#m7b5,G#,Sol#,Semidismin.,m7b5,3242,2131,2222
+Amaj,A,La,Mayor,maj,2320,2310,
+Am,A,La,Menor,m,1320,1320,
+A7,A,La,Séptima,7,2120,3120,
+AMaj7,A,La,Mayor 7,Maj7,2220,1110,2220
+Am7,A,La,Menor 7,m7,1120,1120,1100
+Adim,A,La,Disminuido,dim,1310,1310,1111
+Aaug,A,La,Aumentado,aug,2330,1320,
+Asus2,A,La,Suspendida 2,sus2,0320,0320,
+Asus4,A,La,Suspendida 4,sus4,3320,3210,
+A6,A,La,Sexta,6,2020,3020,
+Am6,A,La,Menor 6,m6,1020,1020,
+A9,A,La,Novena,9,0124,0124,
+Aadd9,A,La,Add 9,add9,0324,0213,
+Adim7,A,La,Dim7,dim7,1010,2010,
+Am7b5,A,La,Semidismin.,m7b5,1110,1110,1110
+A#maj,A#,La#,Mayor,maj,3435,1213,3333
+A#m,A#,La#,Menor,m,2431,2431,
+A#7,A#,La#,Séptima,7,3231,4231,
+A#Maj7,A#,La#,Mayor 7,Maj7,3430,2310,
+A#m7,A#,La#,Menor 7,m7,2231,3241,
+A#dim,A#,La#,Disminuido,dim,2424,1312,2222
+A#aug,A#,La#,Aumentado,aug,3001,3001,
+A#sus2,A#,La#,Suspendida 2,sus2,1431,1431,1111
+A#sus4,A#,La#,Suspendida 4,sus4,4431,4321,
+A#6,A#,La#,Sexta,6,3131,4131,1111
+A#m6,A#,La#,Menor 6,m6,2131,2131,1111
+A#9,A#,La#,Novena,9,1201,2301,
+A#add9,A#,La#,Add 9,add9,3433,1211,3333
+A#dim7,A#,La#,Dim7,dim7,2121,4231,
+A#m7b5,A#,La#,Semidismin.,m7b5,2221,4321,
+Bmaj,B,Si,Mayor,maj,0012,0012,
+Bm,B,Si,Menor,m,0002,0002,
+B7,B,Si,Séptima,7,0010,0010,
+BMaj7,B,Si,Mayor 7,Maj7,0011,0021,
+Bm7,B,Si,Menor 7,m7,0000,0000,
+Bdim,B,Si,Disminuido,dim,0535,0312,
+Baug,B,Si,Aumentado,aug,0112,0213,
+Bsus2,B,Si,Suspendida 2,sus2,0044,0032,
+Bsus4,B,Si,Suspendida 4,sus4,0022,0032,
+B6,B,Si,Sexta,6,4242,4131,2222
+Bm6,B,Si,Menor 6,m6,3242,2131,2222
+B9,B,Si,Novena,9,2010,3020,
+Badd9,B,Si,Add 9,add9,2012,3012,
+Bdim7,B,Si,Dim7,dim7,3232,4231,
+Bm7b5,B,Si,Semidismin.,m7b5,3332,4324,
