@@ -202,14 +202,27 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
+FLAT_TO_SHARP_ROOT = {'db': 'C#', 'eb': 'D#', 'gb': 'F#', 'ab': 'G#', 'bb': 'A#'}
+
+def _enharmonic(name):
+    """Return sharp-root equivalent of a flat-root chord name, or None.
+    e.g. 'Bbm7b5' → 'A#m7b5',  'Eb' → 'D#'
+    """
+    if len(name) >= 2 and name[:2].lower() in FLAT_TO_SHARP_ROOT:
+        return FLAT_TO_SHARP_ROOT[name[:2].lower()] + name[2:]
+    return None
+
+
 def _load_chord(name):
-    """Return (frets, fingers, barre) in A,D,F#,B order from chords_v2.csv, or None."""
+    """Case-insensitive lookup with enharmonic fallback.
+    Returns (frets, fingers, barre) in A,D,F#,B order, or None if not found.
+    """
+    enh = _enharmonic(name)
     with open(CSV_PATH, newline='', encoding='utf-8') as f:
         for row in csv.DictReader(f):
-            if row['Chord'] == name:
-                fr = row['Fret']
-                fg = row['Fingering']
-                ba = row['Barre']
+            chord = row['Chord'].lower()
+            if chord == name.lower() or (enh and chord == enh.lower()):
+                fr, fg, ba = row['Fret'], row['Fingering'], row['Barre']
                 frets   = [int(fr[3]), int(fr[2]), int(fr[1]), int(fr[0])]
                 fingers = [int(fg[3]), int(fg[2]), int(fg[1]), int(fg[0])]
                 if ba:
@@ -270,7 +283,9 @@ if __name__ == '__main__':
         if result is None:
             p.error(f'chord {args.name!r} not found in chords_v2.csv')
         frets, fingers, barre = result
-        display_name = args.chord_name or args.name
+        # Capitalise first letter so 'bbm7b5' displays as 'Bbm7b5'
+        auto_name = args.name[0].upper() + args.name[1:]
+        display_name = args.chord_name or auto_name
     else:
         if not args.fret:
             p.error('--fret is required when --name is not given')
