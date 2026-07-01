@@ -7,13 +7,18 @@ Usage:
     python3 make_chord_diagram.py "Bb"  bb.jpg  --fret 5343 --finger 3121 --barre 3333
     python3 make_chord_diagram.py "Bø"  bm7b5.jpg --fret 2333
     python3 make_chord_diagram.py "C"   c.jpg   --fret 0003 --nfrets 6
+    python3 make_chord_diagram.py --name G7
+    python3 make_chord_diagram.py --name Cmaj --nfrets 6
 
 Arguments
 ---------
-chord_name   Display label shown at top of diagram (e.g. "G7", "Bø", "Bb")
+chord_name   Display label shown at top of diagram (e.g. "G7", "Bø", "Bb").
+             Optional when --name is used (defaults to the chord name from CSV).
 output       Output filename.  If no directory given, saved to chord files folder.
              Defaults to chord_name.jpg in that folder.
 
+--name CHORD    Look up chord in chords_v2.csv and use its fret/fingering/barre.
+                --fret, --finger, and --barre are not needed when --name is given.
 --fret  ADFSB   4 fret numbers in A-D-F#-B string order.  0 = open string.
 --finger ADFSB  (optional) 4 finger numbers in A-D-F#-B order.  0 = open/unused.
                 If omitted, fingers are auto-assigned 1→4 sorted by fret ASC.
@@ -29,12 +34,14 @@ output       Output filename.  If no directory given, saved to chord files folde
 String order on the cuatro neck (left → right):  A  D  F#  B
 """
 
-import argparse
+import argparse, csv
 from PIL import Image, ImageDraw, ImageFont, ImageColor
 import os, sys
 
 CHORD_DIR   = "/home/eklein/Documents/Cuatro/CuatroAcordes/Lista de acordes_files/"
 CREATED_DIR = "/home/eklein/Documents/Cuatro/CuatroAcordes/CreatedDiagrams/"
+SCRIPT_DIR  = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH    = os.path.join(SCRIPT_DIR, 'chords_v2.csv')
 
 SHARP_NOTES  = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 STRING_OPEN  = [9, 2, 6, 11]   # open-string semitones for A, D, F#, B (C=0)
@@ -195,6 +202,25 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
 
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
+def _load_chord(name):
+    """Return (frets, fingers, barre) in A,D,F#,B order from chords_v2.csv, or None."""
+    with open(CSV_PATH, newline='', encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            if row['Chord'] == name:
+                fr = row['Fret']
+                fg = row['Fingering']
+                ba = row['Barre']
+                frets   = [int(fr[3]), int(fr[2]), int(fr[1]), int(fr[0])]
+                fingers = [int(fg[3]), int(fg[2]), int(fg[1]), int(fg[0])]
+                if ba:
+                    barre = [int(ba[3]), int(ba[2]), int(ba[1]), int(ba[0])]
+                    barre = barre if any(b > 0 for b in barre) else None
+                else:
+                    barre = None
+                return frets, fingers, barre
+    return None
+
+
 def _parse4(s):
     """Accept '2313' or '2 3 1 3' or '2,3,1,3' → [2, 3, 1, 3]."""
     s = s.strip()
@@ -210,14 +236,17 @@ if __name__ == '__main__':
     p = argparse.ArgumentParser(description="Cuatro chord diagram generator",
                                 formatter_class=argparse.RawDescriptionHelpFormatter,
                                 epilog=__doc__)
-    p.add_argument('chord_name', help='Chord label, e.g. "G7" or "Bø"')
+    p.add_argument('chord_name', nargs='?', default=None,
+                   help='Display label (optional when --name is used)')
     p.add_argument('output', nargs='?', default=None,
-                   help='Output filename (default: chord_name.jpg in chord files folder)')
-    p.add_argument('--fret',   required=True, type=_parse4,
+                   help='Output filename (default: chord_name.jpg in CreatedDiagrams/)')
+    p.add_argument('--name',   default=None, metavar='CHORD',
+                   help='Look up chord in chords_v2.csv (e.g. G7, Cmaj, Bm7b5)')
+    p.add_argument('--fret',   default=None, type=_parse4,
                    help='4-digit fret numbers A-D-F#-B, e.g. 2313')
-    p.add_argument('--finger', default=None,  type=_parse4,
+    p.add_argument('--finger', default=None, type=_parse4,
                    help='4-digit finger numbers A-D-F#-B, e.g. 2314')
-    p.add_argument('--barre',  default=None,  type=_parse4,
+    p.add_argument('--barre',  default=None, type=_parse4,
                    help='4-digit barre frets A-D-F#-B, e.g. 3333')
     p.add_argument('--nfrets', type=int, default=4, metavar='N',
                    help='Number of frets to draw (default 4, min 4, max 15)')
@@ -235,12 +264,24 @@ if __name__ == '__main__':
                    help='Hide note names below the diagram')
     args = p.parse_args()
 
-    if args.R:
-        args.fret = args.fret[::-1]
-        if args.finger:
-            args.finger = args.finger[::-1]
-        if args.barre:
-            args.barre = args.barre[::-1]
+    # ── Resolve fret/finger/barre from CSV or CLI args ─────────────────────────
+    if args.name:
+        result = _load_chord(args.name)
+        if result is None:
+            p.error(f'chord {args.name!r} not found in chords_v2.csv')
+        frets, fingers, barre = result
+        display_name = args.chord_name or args.name
+    else:
+        if not args.fret:
+            p.error('--fret is required when --name is not given')
+        if not args.chord_name:
+            p.error('chord_name is required when --name is not given')
+        if args.R:
+            args.fret = args.fret[::-1]
+            if args.finger: args.finger = args.finger[::-1]
+            if args.barre:  args.barre  = args.barre[::-1]
+        frets, fingers, barre = args.fret, args.finger, args.barre
+        display_name = args.chord_name
 
     if not (4 <= args.nfrets <= 15):
         p.error(f'--nfrets must be between 4 and 15, got {args.nfrets}')
@@ -251,12 +292,12 @@ if __name__ == '__main__':
 
     out = args.output
     if out is None:
-        safe = args.chord_name.lower().replace('#', 's').replace('ø', 'o').replace(' ', '_')
+        safe = display_name.lower().replace('#', 's').replace('ø', 'o').replace(' ', '_')
         out  = safe + '.jpg'
     if os.path.dirname(out) == '':
         out = os.path.join(CREATED_DIR, out)
 
-    make_chord_diagram(args.chord_name, args.fret, args.finger, args.barre, out, args.scale,
+    make_chord_diagram(display_name, frets, fingers, barre, out, args.scale,
                        n_frets=args.nfrets, name_color=args.color,
                        show_notes=args.show_notes)
     print(f"Saved: {out}")
