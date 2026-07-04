@@ -78,7 +78,7 @@ Fmaj,F,Fa,Mayor,maj,1330,1320,
 Fm,F,Fa,Menor,m,1233,1243,
 F7,F,Fa,Séptima,7,4333,4321,
 FMaj7,F,Fa,Mayor 7,Maj7,5333,3111,3333
-Fm7,F,Fa,Menor 7,m7,5333,4321,
+Fm7,F,Fa,Menor 7,m7,4233,4321,
 Fdim,F,Fa,Disminuido,dim,0232,0231,
 Faug,F,Fa,Aumentado,aug,2330,1320,
 Fsus2,F,Fa,Suspendida 2,sus2,1133,1132,1100
@@ -137,7 +137,7 @@ G#m7b5,G#,Sol#,Semidismin.,m7b5,3242,2131,2222
 Amaj,A,La,Mayor,maj,2320,2310,
 Am,A,La,Menor,m,1320,1320,
 A7,A,La,Séptima,7,2120,3120,
-AMaj7,A,La,Mayor 7,Maj7,2220,1110,2220
+AMaj7,A,La,Mayor 7,Maj7,2220,4320,
 Am7,A,La,Menor 7,m7,1120,1120,1100
 Adim,A,La,Disminuido,dim,1310,1310,1111
 Aaug,A,La,Aumentado,aug,2330,1320,
