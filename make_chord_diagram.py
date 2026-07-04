@@ -46,6 +46,12 @@ CSV_PATH    = os.path.join(SCRIPT_DIR, 'chords_v2.csv')
 SHARP_NOTES  = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
 STRING_OPEN  = [9, 2, 6, 11]   # open-string semitones for A, D, F#, B (C=0)
 
+INTERVAL_TO_GRADE = {
+    0: '1',  1: '♭2', 2: '2',  3: '♭3', 4: '3',
+    5: '4',  6: '♭5', 7: '5',  8: '♭6', 9: '6',
+    10: '♭7', 11: '7',
+}
+
 
 # ── Drawing helpers ────────────────────────────────────────────────────────────
 
@@ -65,7 +71,7 @@ def _try_font(path, size):
 
 def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
                        output_path=None, scale=2, n_frets=4, name_color='black',
-                       show_notes=True):
+                       show_notes=True, root=None):
     """
     Parameters
     ----------
@@ -77,6 +83,8 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     scale      : int   size multiplier (base 55×75 px)
     n_frets    : int   number of frets to draw (4–15); image grows taller to keep cell size constant
     name_color : str   color name for the chord label (e.g. 'black', 'red', 'navy')
+    root       : int | None  root semitone 0–11 (C=0); when given, draws interval grades
+                             above the fretboard (below chord name), same font as note labels
     """
     BG     = (255, 255, 255)
     LINE   = (45,  45,  45)
@@ -113,14 +121,16 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
         )
 
     # ── Layout — image height grows with n_frets to keep cell height constant ─
-    SANS_B   = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
-    SANS_R   = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
-    name_h   = int(13 * scale)
-    nut_t    = max(2, int(2.5 * scale))
-    cell_h   = int(13 * scale)   # fixed cell height from original 4-fret design
-    fb_left  = int(10 * scale)
-    fb_top   = name_h + int(3 * scale) + (nut_t if from_nut else 0)
-    fb_h     = n_frets * cell_h
+    SANS_B    = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+    SANS_R    = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+    DEJAVU_R  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
+    name_h       = int(13 * scale)
+    nut_t        = max(2, int(2.5 * scale))
+    cell_h       = int(13 * scale)   # fixed cell height from original 4-fret design
+    fb_left      = int(10 * scale)
+    grade_area_h = max(8, int(6 * scale)) if root is not None else 0
+    fb_top       = name_h + grade_area_h + int(3 * scale) + (nut_t if from_nut else 0)
+    fb_h         = n_frets * cell_h
     fb_bot       = fb_top + fb_h
     note_area_h  = max(12, int(10 * scale)) if show_notes else 0
     W        = 58 * scale          # 3 extra units on right so B-string dots don't clip
@@ -128,10 +138,11 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     fb_right = W - int(7 * scale)  # keeps fretboard at same position as original
     fb_w     = fb_right - fb_left
 
-    f_name = _try_font(SANS_B, int(13 * scale))
-    f_fr   = _try_font(SANS_R, int(9 * scale))   # was 6.5 — larger fret indicator
-    f_dot  = _try_font(SANS_B, int(8 * scale))   # was 6.5 — larger finger numbers
-    f_note = _try_font(SANS_R, max(9, int(7 * scale)))
+    f_name  = _try_font(SANS_B, int(13 * scale))
+    f_fr    = _try_font(SANS_R, int(9 * scale))   # was 6.5 — larger fret indicator
+    f_dot   = _try_font(SANS_B, int(8 * scale))   # was 6.5 — larger finger numbers
+    f_note  = _try_font(SANS_R, max(9, int(7 * scale)))
+    f_grade = _try_font(DEJAVU_R, max(6, int(5 * scale)))
 
     # ── Canvas ────────────────────────────────────────────────────────────────
     img  = Image.new('RGB', (W, H), BG)
@@ -145,6 +156,14 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     # ── Chord name ────────────────────────────────────────────────────────────
     draw.text((W // 2, int(2 * scale) + name_h // 2),
               chord_name, fill=name_color, font=f_name, anchor='mm')
+
+    # ── Interval grades ───────────────────────────────────────────────────────
+    if root is not None:
+        grade_y = fb_top - nut_t - int(1 * scale)   # sits flush above the nut
+        for i, f in enumerate(frets):
+            note_semi = (STRING_OPEN[i] + f) % 12
+            grade = INTERVAL_TO_GRADE[(note_semi - root) % 12]
+            draw.text((str_xs[i], grade_y), grade, fill=TEXT_C, font=f_grade, anchor='mb')
 
     # ── Nut or fret indicator ─────────────────────────────────────────────────
     if from_nut:
@@ -203,6 +222,24 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
 # ── CLI ───────────────────────────────────────────────────────────────────────
 
 FLAT_TO_SHARP_ROOT = {'db': 'C#', 'eb': 'D#', 'gb': 'F#', 'ab': 'G#', 'bb': 'A#'}
+
+_FLAT_ROOTS = {'Db':'C#','Eb':'D#','Fb':'E','Gb':'F#','Ab':'G#','Bb':'A#','Cb':'B'}
+
+def _parse_root(s):
+    """Accept a root note name (C, C#, Bb, …) or integer 0–11."""
+    try:
+        v = int(s)
+        if 0 <= v <= 11:
+            return v
+        raise argparse.ArgumentTypeError(f'root integer must be 0–11, got {v}')
+    except ValueError:
+        pass
+    name = s[0].upper() + s[1:] if len(s) > 1 else s.upper()
+    if name in SHARP_NOTES:
+        return SHARP_NOTES.index(name)
+    if name in _FLAT_ROOTS:
+        return SHARP_NOTES.index(_FLAT_ROOTS[name])
+    raise argparse.ArgumentTypeError(f'unknown root note: {s!r}')
 
 def _enharmonic(name):
     """Return sharp-root equivalent of a flat-root chord name, or None.
@@ -275,6 +312,9 @@ if __name__ == '__main__':
                    help='Show note names below the diagram (default: on)')
     p.add_argument('--no-names', dest='show_notes', action='store_false',
                    help='Hide note names below the diagram')
+    p.add_argument('--root', default=None, type=_parse_root, metavar='NOTE',
+                   help='Root note (e.g. D, C#, Bb or integer 0-11); '
+                        'draws interval grades above the fretboard')
     args = p.parse_args()
 
     # ── Resolve fret/finger/barre from CSV or CLI args ─────────────────────────
@@ -314,5 +354,5 @@ if __name__ == '__main__':
 
     make_chord_diagram(display_name, frets, fingers, barre, out, args.scale,
                        n_frets=args.nfrets, name_color=args.color,
-                       show_notes=args.show_notes)
+                       show_notes=args.show_notes, root=args.root)
     print(f"Saved: {out}")

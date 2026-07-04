@@ -31,7 +31,7 @@ MINOR_DEGREES = [
     (2,  'm7b5', 'IIø',  True),
     (3,  'maj',  'bIII', False),
     (5,  'm',    'IVm',  False),
-    (7,  '7',    'V',    False),
+    (7,  'maj',  'V',    False),
     (8,  'maj',  'bVI',  False),
     (10, 'maj',  'bVII', False),
 ]
