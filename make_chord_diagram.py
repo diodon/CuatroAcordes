@@ -154,6 +154,12 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     dot_r   = int(5 * scale)
 
     # ── Chord name ────────────────────────────────────────────────────────────
+    # Shrink the font if the label is too wide for the canvas (e.g. "C#m(Maj7)").
+    name_max_w = W - int(4 * scale)
+    name_size  = int(13 * scale)
+    while name_size > int(7 * scale) and draw.textlength(chord_name, font=f_name) > name_max_w:
+        name_size -= 1
+        f_name = _try_font(SANS_B, name_size)
     draw.text((W // 2, int(2 * scale) + name_h // 2),
               chord_name, fill=name_color, font=f_name, anchor='mm')
 

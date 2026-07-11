@@ -4,6 +4,7 @@ Cm,C,Do,Menor,m,1113,1113,1111
 C7,C,Do,Séptima,7,1121,1121,1111
 CMaj7,C,Do,Mayor 7,Maj7,0123,0123,
 Cm7,C,Do,Menor 7,m7,1111,1111,1111
+CmMaj7,C,Do,Menor Maj7,mMaj7,0113,0214,
 Cdim,C,Do,Disminuido,dim,1010,3020,
 Caug,C,Do,Aumentado,aug,1223,1324,
 Csus2,C,Do,Suspendida 2,sus2,1103,1103,1111
@@ -19,6 +20,7 @@ C#m,C#,Do#,Menor,m,2224,1113,2222
 C#7,C#,Do#,Séptima,7,2232,1121,2222
 C#Maj7,C#,Do#,Mayor 7,Maj7,1234,1234,
 C#m7,C#,Do#,Menor 7,m7,0224,0214,
+C#mMaj7,C#,Do#,Menor Maj7,mMaj7,2223,1112,2220
 C#dim,C#,Do#,Disminuido,dim,2120,3120,
 C#aug,C#,Do#,Aumentado,aug,2330,1320,
 C#sus2,C#,Do#,Suspendida 2,sus2,2210,3210,
@@ -34,6 +36,7 @@ Dm,D,Re,Menor,m,3330,4320,
 D7,D,Re,Séptima,7,1000,2000,
 DMaj7,D,Re,Mayor 7,Maj7,2000,2000,
 Dm7,D,Re,Menor 7,m7,3333,1111,3333
+DmMaj7,D,Re,Menor Maj7,mMaj7,3334,1112,3330
 Ddim,D,Re,Disminuido,dim,3230,3120,
 Daug,D,Re,Aumentado,aug,3001,3001,
 Dsus2,D,Re,Suspendida 2,sus2,5300,3100,
@@ -49,6 +52,7 @@ D#m,D#,Re#,Menor,m,4011,4021,
 D#7,D#,Re#,Séptima,7,2111,2111,1111
 D#Maj7,D#,Re#,Mayor 7,Maj7,3111,3111,1111
 D#m7,D#,Re#,Menor 7,m7,2011,3021,
+D#mMaj7,D#,Re#,Menor Maj7,mMaj7,3011,4021,
 D#dim,D#,Re#,Disminuido,dim,4010,4010,
 D#aug,D#,Re#,Aumentado,aug,0112,0213,
 D#sus2,D#,Re#,Suspendida 2,sus2,4431,4321,
@@ -64,6 +68,7 @@ Em,E,Mi,Menor,m,0122,0132,
 E7,E,Mi,Séptima,7,3222,4321,
 EMaj7,E,Mi,Mayor 7,Maj7,4222,4321,
 Em7,E,Mi,Menor 7,m7,3122,4132,
+EmMaj7,E,Mi,Menor Maj7,mMaj7,0112,0112,0110
 Edim,E,Mi,Disminuido,dim,5121,4121,1111
 Eaug,E,Mi,Aumentado,aug,1223,1324,
 Esus2,E,Mi,Suspendida 2,sus2,0022,0032,
@@ -79,6 +84,7 @@ Fm,F,Fa,Menor,m,1233,1243,
 F7,F,Fa,Séptima,7,4333,4321,
 FMaj7,F,Fa,Mayor 7,Maj7,5333,3111,3333
 Fm7,F,Fa,Menor 7,m7,4233,4321,
+FmMaj7,F,Fa,Menor Maj7,mMaj7,5233,4132,
 Fdim,F,Fa,Disminuido,dim,0232,0231,
 Faug,F,Fa,Aumentado,aug,2330,1320,
 Fsus2,F,Fa,Suspendida 2,sus2,1133,1132,1100
@@ -94,6 +100,7 @@ F#m,F#,Fa#,Menor,m,2340,1230,
 F#7,F#,Fa#,Séptima,7,2021,3021,
 F#Maj7,F#,Fa#,Mayor 7,Maj7,2031,2031,
 F#m7,F#,Fa#,Menor 7,m7,2020,3020,
+F#mMaj7,F#,Fa#,Menor Maj7,mMaj7,2030,1020,
 F#dim,F#,Fa#,Disminuido,dim,1340,1230,
 F#aug,F#,Fa#,Aumentado,aug,3001,3001,
 F#sus2,F#,Fa#,Suspendida 2,sus2,2244,1132,2222
@@ -109,6 +116,7 @@ Gm,G,Sol,Menor,m,3101,4201,
 G7,G,Sol,Séptima,7,3132,4132,
 GMaj7,G,Sol,Mayor 7,Maj7,3142,3142,
 Gm7,G,Sol,Menor 7,m7,3131,4131,1111
+GmMaj7,G,Sol,Menor Maj7,mMaj7,3141,3141,0101
 Gdim,G,Sol,Disminuido,dim,2454,1342,
 Gaug,G,Sol,Aumentado,aug,0112,0213,
 Gsus2,G,Sol,Suspendida 2,sus2,3100,3100,
@@ -124,6 +132,7 @@ G#m,G#,Sol#,Menor,m,0212,0312,
 G#7,G#,Sol#,Séptima,7,4243,4132,
 G#Maj7,G#,Sol#,Mayor 7,Maj7,4253,3142,
 G#m7,G#,Sol#,Menor 7,m7,4242,4131,2222
+G#mMaj7,G#,Sol#,Menor Maj7,mMaj7,4252,3141,0202
 G#dim,G#,Sol#,Disminuido,dim,0202,0302,
 G#aug,G#,Sol#,Aumentado,aug,1223,1324,
 G#sus2,G#,Sol#,Suspendida 2,sus2,4211,4211,1111
@@ -139,6 +148,7 @@ Am,A,La,Menor,m,1320,1320,
 A7,A,La,Séptima,7,2120,3120,
 AMaj7,A,La,Mayor 7,Maj7,2220,4320,
 Am7,A,La,Menor 7,m7,1120,1120,1100
+AmMaj7,A,La,Menor Maj7,mMaj7,1220,1320,
 Adim,A,La,Disminuido,dim,1310,1310,1111
 Aaug,A,La,Aumentado,aug,2330,1320,
 Asus2,A,La,Suspendida 2,sus2,0320,0320,
@@ -154,6 +164,7 @@ A#m,A#,La#,Menor,m,2431,2431,
 A#7,A#,La#,Séptima,7,3231,4231,
 A#Maj7,A#,La#,Mayor 7,Maj7,3430,2310,
 A#m7,A#,La#,Menor 7,m7,2231,3241,
+A#mMaj7,A#,La#,Menor Maj7,mMaj7,2331,2431,
 A#dim,A#,La#,Disminuido,dim,2424,1312,2222
 A#aug,A#,La#,Aumentado,aug,3001,3001,
 A#sus2,A#,La#,Suspendida 2,sus2,1431,1431,1111
@@ -169,6 +180,7 @@ Bm,B,Si,Menor,m,0002,0002,
 B7,B,Si,Séptima,7,0010,0010,
 BMaj7,B,Si,Mayor 7,Maj7,0011,0021,
 Bm7,B,Si,Menor 7,m7,0000,0000,
+BmMaj7,B,Si,Menor Maj7,mMaj7,0001,0001,
 Bdim,B,Si,Disminuido,dim,0535,0312,
 Baug,B,Si,Aumentado,aug,0112,0213,
 Bsus2,B,Si,Suspendida 2,sus2,0044,0032,

@@ -45,6 +45,7 @@
     "7":    { "nombre": "Séptima",      "simbolo": "7",    "intervalos": [0, 4, 7, 10] },
     "maj7": { "nombre": "Mayor 7",      "simbolo": "Maj7", "intervalos": [0, 4, 7, 11] },
     "min7": { "nombre": "Menor 7",      "simbolo": "m7",   "intervalos": [0, 3, 7, 10] },
+    "minMaj7": { "nombre": "Menor Maj7", "simbolo": "mMaj7", "intervalos": [0, 3, 7, 11] },
     "dim":  { "nombre": "Disminuido",   "simbolo": "dim",  "intervalos": [0, 3, 6] },
     "aug":  { "nombre": "Aumentado",    "simbolo": "aug",  "intervalos": [0, 4, 8] },
     "sus2": { "nombre": "Suspendida 2", "simbolo": "sus2", "intervalos": [0, 2, 7] },
