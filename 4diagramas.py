@@ -83,6 +83,7 @@ QUALITIES = {
     'add9': ([0,4,7,2],     'add9'),
     'dim7': ([0,3,6,9],     'dim7'),
     'm7b5': ([0,3,6,10],    'm7b5'),
+    'mMaj7': ([0,3,7,11],   'mMaj7'),
 }
 
 # Calidad interna → sufijo usado en el nombre de acorde de chords_v2.csv
@@ -90,6 +91,7 @@ CALIDAD_TO_CSV_SUFFIX = {
     'maj': 'maj', 'm': 'm', '7': '7', 'maj7': 'Maj7', 'M7': 'Maj7',
     'm7': 'm7', 'dim': 'dim', 'aug': 'aug', 'sus2': 'sus2', 'sus4': 'sus4',
     '6': '6', 'm6': 'm6', '9': '9', 'add9': 'add9', 'dim7': 'dim7', 'm7b5': 'm7b5',
+    'mMaj7': 'mMaj7',
 }
 
 # ── Digitaciones desde chords_v2.csv ─────────────────────────────────────────
@@ -308,23 +310,23 @@ def imprimir_lista():
         print(f'  {key:12s}  {esc["nombre"]}{alias_str}')
     print()
     print('Ejemplos de uso:')
-    print('  python cuatro_diagramas.py Am')
-    print('  python cuatro_diagramas.py C G Am F')
-    print('  python cuatro_diagramas.py Dm7 G7 Cmaj7')
+    print('  python 4diagramas.py Am')
+    print('  python 4diagramas.py C G Am F')
+    print('  python 4diagramas.py Dm7 G7 Cmaj7')
     print()
-    print('  python cuatro_diagramas.py --escala C                    (mayor, tríadas)')
-    print('  python cuatro_diagramas.py --escala A --tipo menor       (menor natural)')
-    print('  python cuatro_diagramas.py --escala A --tipo armonica    (menor armónica)')
-    print('  python cuatro_diagramas.py --escala D --tipo dorica      (modo dórico)')
-    print('  python cuatro_diagramas.py --escala G --tipo mixolidia   (modo mixolidio)')
-    print('  python cuatro_diagramas.py --escala E --tipo frigia      (modo frigio)')
-    print('  python cuatro_diagramas.py --escala C --sep              (con 7ªs)')
-    print('  python cuatro_diagramas.py --escala G --dom              (+ dominantes sec.)')
-    print('  python cuatro_diagramas.py --escala Bb --tipo menor --sep --dom')
+    print('  python 4diagramas.py --escala C                    (mayor, tríadas)')
+    print('  python 4diagramas.py --escala A --tipo menor       (menor natural)')
+    print('  python 4diagramas.py --escala A --tipo armonica    (menor armónica)')
+    print('  python 4diagramas.py --escala D --tipo dorica      (modo dórico)')
+    print('  python 4diagramas.py --escala G --tipo mixolidia   (modo mixolidio)')
+    print('  python 4diagramas.py --escala E --tipo frigia      (modo frigio)')
+    print('  python 4diagramas.py --escala C --sep              (con 7ªs)')
+    print('  python 4diagramas.py --escala G --dom              (+ dominantes sec.)')
+    print('  python 4diagramas.py --escala Bb --tipo menor --sep --dom')
     print()
-    print('  python cuatro_diagramas.py --todos maj   (los 12 acordes mayores)')
-    print('  python cuatro_diagramas.py --todos m7    (los 12 acordes m7)')
-    print('  python cuatro_diagramas.py --ancho Bb7   (diagrama más grande)')
+    print('  python 4diagramas.py --todos maj   (los 12 acordes mayores)')
+    print('  python 4diagramas.py --todos m7    (los 12 acordes m7)')
+    print('  python 4diagramas.py --ancho Bb7   (diagrama más grande)')
 
 
 def imprimir_todos_calidad(calidad_key, columnas=4, estilo='normal'):
