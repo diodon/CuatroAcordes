@@ -165,6 +165,21 @@ Los diagramas se guardan por defecto en `CreatedDiagrams/`.
 
 ---
 
+## Material de referencia y práctica — `Referencia/`
+
+Carpeta con hojas en PDF listas para imprimir o descargar:
+
+| Archivo | Contenido |
+|---|---|
+| `acordes_all.pdf` | Tabla de referencia completa: 12 notas × 9 calidades (Mayor, m, 7, 6, m6, m7, 7M, dim7, aug) |
+| `acordes_por_tonalidad_mayor.pdf` | Acordes de las 7 tonalidades mayores con dominantes secundarios (generado por `generar_mayor_pdf.py`) |
+| `acordes_por_tonalidad_menor.pdf` | Acordes de las 7 tonalidades menores naturales con dominantes secundarios (generado por `generar_menor_pdf.py`) |
+| `ciclo4tas_I_ii7_V7_IMaj7.pdf` | Ejercicio de ciclo de cuartas: I·ii7·V7·IMaj7 en las 12 tonalidades (generado por `generar_ciclo4tas_pdf.py`) |
+| `ciclo_septimas.pdf` | Serie de séptimas por tonalidad en las 7 notas naturales (generado por `generar_ciclo_septimas_pdf.py`) |
+| `degrade_menor.pdf` | Degradé del acorde menor: m·m(Maj7)·m7·m6 en los 12 tonos (generado por `generar_degrade_menor_pdf.py`) |
+
+---
+
 ## Archivos
 
 | Archivo | Descripción |
