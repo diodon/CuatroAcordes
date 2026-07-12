@@ -13,7 +13,7 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 - **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano, acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de trastes en un popup.
 - **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos para la tonalidad y escala seleccionadas.
 - **Diagramas de trastes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
-- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 15 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Dim, Aug, sus2, sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
+- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 16 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
 - **Reproducción de audio** — Escucha cualquier acorde con un clic: síntesis Web Audio API con tres armónicos y envolvente de decaimiento para imitar el sonido del cuatro. Botón ▶ Tocar en cada diagrama individual.
 - **Reproducción de secuencias** — Toca toda la progresión detectada o las columnas de diagramas originales y transpuestos en secuencia, con control de tempo (Lento / Normal / Rápido / Muy rápido) y resaltado de acorde activo.
@@ -57,49 +57,57 @@ index.html
 
 O visita la versión en línea: https://diodon.github.io/CuatroAcordes/
 
-## Herramienta de línea de comandos — `cuatro_diagramas.py`
+## Herramienta de línea de comandos — `4diagramas.py`
 
-Script Python (sin dependencias externas) que genera diagramas ASCII de acordes y escalas para el cuatro venezolano directamente en la terminal.
+Script Python (sin dependencias externas) que genera diagramas ASCII de acordes y escalas para el cuatro venezolano directamente en la terminal. Las digitaciones se leen de `chords_v2.csv`, la misma base de datos que usa la aplicación web.
 
 ### Uso básico
 
 ```bash
 # Un acorde
-python cuatro_diagramas.py Am
+python 4diagramas.py Am
 
 # Varios acordes
-python cuatro_diagramas.py C G Am F
+python 4diagramas.py C G Am F
 
 # Acordes de 7ª
-python cuatro_diagramas.py Dm7 G7 Cmaj7
+python 4diagramas.py Dm7 G7 Cmaj7
 
 # Diagrama más grande
-python cuatro_diagramas.py --ancho Bb7
+python 4diagramas.py --ancho Bb7
 
 # Los 12 acordes de una calidad
-python cuatro_diagramas.py --todos m7
+python 4diagramas.py --todos m7
 
 # Ver calidades disponibles
-python cuatro_diagramas.py --lista
+python 4diagramas.py --lista
+
+# Digitación en orden A D F# B en vez del orden por defecto B F# D A
+python 4diagramas.py -R Bb7
+
+# Salida envuelta en bloque de código Markdown, lista para pegar en un .md
+python 4diagramas.py --md C G Am F
 ```
 
 ### Escalas y modos
 
 ```bash
 # Escala mayor (tríadas)
-python cuatro_diagramas.py --escala C
+python 4diagramas.py --escala C
 
 # Menor natural
-python cuatro_diagramas.py --escala A --tipo menor
+python 4diagramas.py --escala A --tipo menor
 
 # Menor armónica con 7ªs y dominantes secundarios
-python cuatro_diagramas.py --escala A --tipo armonica --sep --dom
+python 4diagramas.py --escala A --tipo armonica --sep --dom
 
 # Modo dórico
-python cuatro_diagramas.py --escala D --tipo dorica
+python 4diagramas.py --escala D --tipo dorica
 ```
 
 Tipos de escala disponibles: `mayor`, `menor`, `armonica`, `melodica`, `dorica`, `frigia`, `lidia`, `mixolidia`, `locria` (también acepta nombres en inglés: `major`, `minor`, `dorian`, etc.)
+
+Con `--dom`, los grados diatónicos y sus dominantes secundarios se muestran en una sola tabla combinada (columna `Dominante` junto a `Acorde`, digitación de tónica y dominante por separado) y los diagramas se dibujan en pares tónica-dominante, uno por línea. Los grados disminuidos/semidisminuidos (ej. el VII de la escala mayor) no tienen un V7 propio — se marcan con `*` en vez de mostrar un dominante.
 
 ### Opciones
 
@@ -108,10 +116,12 @@ Tipos de escala disponibles: `mayor`, `menor`, `armonica`, `melodica`, `dorica`,
 | `--escala NOTA` | Muestra los acordes diatónicos de la escala |
 | `--tipo TIPO` | Tipo de escala o modo (default: `mayor`) |
 | `--sep` | Con `--escala`: usa acordes de 7ª en lugar de tríadas |
-| `--dom` | Con `--escala`: añade dominantes secundarios |
+| `--dom` | Con `--escala`: añade dominantes secundarios (V7 de cada grado) |
 | `--ancho` | Diagrama más grande con más detalle |
 | `--todos CALIDAD` | Los 12 acordes de una calidad (ej: `--todos m7`) |
-| `--columnas N` | Número de columnas en el display (default: 4) |
+| `--columnas N` | Número de columnas en el display (default: 4; con `--md`: 2) |
+| `-R`, `--reverse` | Muestra la "Digitación" en orden A D F# B en vez del orden por defecto B F# D A |
+| `--md` | Envuelve la salida en un bloque de código Markdown, listo para pegar en un `.md` |
 | `--lista` | Muestra todas las calidades y tipos disponibles |
 
 ---
@@ -122,8 +132,9 @@ Tipos de escala disponibles: `mayor`, `menor`, `armonica`, `melodica`, `dorica`,
 |---|---|
 | `index.html` | Aplicación web completa (HTML + CSS + JS) |
 | `cuatro_acordes.json` | Base de datos de acordes, calidades y progresiones |
-| `cuatro_diagramas.py` | Herramienta CLI: diagramas ASCII de acordes y escalas |
+| `chords_v2.csv` | Base de datos maestra de digitaciones (192 acordes), usada por `index.html` y `4diagramas.py` |
+| `4diagramas.py` | Herramienta CLI: diagramas ASCII de acordes y escalas |
 
 ## Créditos
 
-Desarrollado por **Eduardo Klein** con asistencia de [Claude](https://claude.ai) (claude-sonnet-4-6).
+Desarrollado por **Eduardo Klein** con asistencia de [Claude](https://claude.ai) (claude-sonnet-5).
