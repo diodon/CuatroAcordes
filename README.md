@@ -126,14 +126,54 @@ Con `--dom`, los grados diatónicos y sus dominantes secundarios se muestran en 
 
 ---
 
+## Generador de diagramas JPEG — `make_chord_diagram.py`
+
+Script Python (requiere [Pillow](https://pillow.readthedocs.io/)) que genera diagramas de acordes individuales en formato JPEG, estilo micuatro.com. Sirve tanto como herramienta de línea de comandos como librería interna de los generadores de PDF de práctica (tonalidades, ciclos, degradés).
+
+### Uso básico
+
+```bash
+# Buscar el acorde en chords_v2.csv y generar su diagrama
+python make_chord_diagram.py --name G7
+
+# Digitación manual, orden B-F#-D-A (igual que chords_v2.csv)
+python make_chord_diagram.py "Bb" bb.jpg --fret 3435 --finger 1213 --barre 3333
+
+# Con grados de intervalo (1, ♭3, 5…) dibujados sobre el diapasón
+python make_chord_diagram.py --name Am7 --root A
+
+# Diagrama con más trastes visibles
+python make_chord_diagram.py --name Cmaj --nfrets 6
+```
+
+Los diagramas se guardan por defecto en `CreatedDiagrams/`.
+
+### Opciones
+
+| Opción | Descripción |
+|---|---|
+| `--name CHORD` | Busca el acorde en `chords_v2.csv` (no requiere `--fret`/`--finger`/`--barre`) |
+| `--fret BFDA` | 4 números de traste en orden B-F#-D-A (0 = cuerda al aire) |
+| `--finger BFDA` | Número de dedo por cuerda (opcional; se asigna automáticamente si se omite) |
+| `--barre BFDA` | Traste de cejilla por cuerda (0 = cuerda no cejillada) |
+| `--nfrets N` | Número de trastes a dibujar (default 4, mín 4, máx 15) |
+| `--color NOMBRE` | Color del nombre del acorde (default: `black`) |
+| `--scale N` | Multiplicador de tamaño (default 2 → ~116×200 px) |
+| `--names` / `--no-names` | Muestra/oculta los nombres de las notas debajo del diagrama (default: mostrar) |
+| `--root NOTA` | Dibuja los grados de intervalo (1, ♭3, 5, etc.) sobre el diapasón |
+| `-R` | Interpreta `--fret`/`--finger`/`--barre` en el orden antiguo A-D-F#-B en vez del default B-F#-D-A |
+
+---
+
 ## Archivos
 
 | Archivo | Descripción |
 |---|---|
 | `index.html` | Aplicación web completa (HTML + CSS + JS) |
 | `cuatro_acordes.json` | Base de datos de acordes, calidades y progresiones |
-| `chords_v2.csv` | Base de datos maestra de digitaciones (192 acordes), usada por `index.html` y `4diagramas.py` |
+| `chords_v2.csv` | Base de datos maestra de digitaciones (192 acordes), usada por `index.html`, `4diagramas.py` y `make_chord_diagram.py` |
 | `4diagramas.py` | Herramienta CLI: diagramas ASCII de acordes y escalas |
+| `make_chord_diagram.py` | Generador de diagramas de acordes en JPEG |
 
 ## Créditos
 
