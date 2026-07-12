@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Genera acordes_por_tonalidad_mayor.pdf — mismo estilo que el original,
-   diagramas generados desde chords.csv con make_chord_diagram (6 trastes)."""
+   diagramas generados desde chords_v2.csv con make_chord_diagram (6 trastes)."""
 
 import csv, io, os, sys
 from reportlab.pdfgen import canvas
