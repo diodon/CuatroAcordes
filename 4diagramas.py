@@ -1,50 +1,61 @@
 #!/usr/bin/env python3
 """
-cuatro_diagramas.py — Diagramas ASCII de acordes para Cuatro Venezolano
+4diagramas.py — Diagramas ASCII de acordes para Cuatro Venezolano
+Las digitaciones se leen de chords_v2.csv (debe estar en el mismo directorio).
 
 Uso básico:
-    python cuatro_diagramas.py Am
-    python cuatro_diagramas.py C G Am F
-    python cuatro_diagramas.py Dm7 G7 Cmaj7
+    python 4diagramas.py Am
+    python 4diagramas.py C G Am F
+    python 4diagramas.py Dm7 G7 Cmaj7
 
 Escalas y modos  (--escala NOTA  --tipo TIPO):
-    python cuatro_diagramas.py --escala C                      (mayor, tríadas)
-    python cuatro_diagramas.py --escala A --tipo menor         (menor natural)
-    python cuatro_diagramas.py --escala A --tipo armonica      (menor armónica)
-    python cuatro_diagramas.py --escala A --tipo melodica      (menor melódica)
-    python cuatro_diagramas.py --escala D --tipo dorica        (modo dórico)
-    python cuatro_diagramas.py --escala E --tipo frigia        (modo frigio)
-    python cuatro_diagramas.py --escala F --tipo lidia         (modo lidio)
-    python cuatro_diagramas.py --escala G --tipo mixolidia     (modo mixolidio)
-    python cuatro_diagramas.py --escala B --tipo locria        (modo locrio)
+    python 4diagramas.py --escala C                      (mayor, tríadas)
+    python 4diagramas.py --escala A --tipo menor         (menor natural)
+    python 4diagramas.py --escala A --tipo armonica      (menor armónica)
+    python 4diagramas.py --escala A --tipo melodica      (menor melódica)
+    python 4diagramas.py --escala D --tipo dorica        (modo dórico)
+    python 4diagramas.py --escala E --tipo frigia        (modo frigio)
+    python 4diagramas.py --escala F --tipo lidia         (modo lidio)
+    python 4diagramas.py --escala G --tipo mixolidia     (modo mixolidio)
+    python 4diagramas.py --escala B --tipo locria        (modo locrio)
 
 Opciones combinables con --escala:
     --sep   usa acordes de 7ª en lugar de tríadas
     --dom   añade sección de dominantes secundarios
 
-    python cuatro_diagramas.py --escala Bb --tipo menor --sep --dom
+    python 4diagramas.py --escala Bb --tipo menor --sep --dom
 
 Otras opciones:
-    python cuatro_diagramas.py --lista             (calidades y tipos disponibles)
-    python cuatro_diagramas.py --todos m7          (los 12 acordes m7)
-    python cuatro_diagramas.py --ancho Bb7         (diagrama más grande)
+    python 4diagramas.py --lista             (calidades y tipos disponibles)
+    python 4diagramas.py --todos m7          (los 12 acordes m7)
+    python 4diagramas.py --ancho Bb7         (diagrama más grande)
+    python 4diagramas.py -R Bb7              (Digitación en orden A D F# B)
 
 Cuerdas (izquierda a derecha en el diagrama): A3  D4  F#4  B
-Orden de los dígitos en el código:  dígito[0]=B  dígito[1]=F#  dígito[2]=D  dígito[3]=A
+Orden de los dígitos en el código "Digitación": B F# D A (igual que chords_v2.csv)
+                                    por defecto — usa -R para A D F# B.
 """
 
 import sys
+import os
+import csv
+import io
+import contextlib
 import argparse
-from itertools import product as iproduct
 
 # ── Afinación ─────────────────────────────────────────────────────────────────
-# Orden interno: [B, F#, D, A]  (semitonos desde C=0)
-STRING_BASES = [11, 6, 2, 9]
-
-# Orden de visualización izquierda→derecha: A  D  F#  B
-# Índice en STRING_BASES:                    3  2   1  0
+# Orden de visualización del diagrama (grilla de trastes), izquierda→derecha: A  D  F#  B
+# Esto no cambia con -R — es la disposición física real de las cuerdas.
 DISPLAY_ORDER = [3, 2, 1, 0]
-STRING_LABELS = ['A3 ', 'D4 ', 'F#4', 'B  ']   # etiquetas visuales
+
+# Orden del texto "Digitación": por defecto B F# D A (igual que en chords_v2.csv).
+# Se reasigna a DISPLAY_ORDER (A D F# B) en main() cuando se pasa -R.
+ORDEN_CODIGO = [0, 1, 2, 3]
+
+
+def codigo_str(dig):
+    """Código numérico de digitación como texto, según ORDEN_CODIGO."""
+    return ''.join(str(dig[i]) for i in ORDEN_CODIGO)
 
 # ── Notas ─────────────────────────────────────────────────────────────────────
 SHARP_NAMES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B']
@@ -54,6 +65,7 @@ NOTE_TO_NUM = {n: i for i, n in enumerate(SHARP_NAMES)}
 NOTE_TO_NUM.update({n: i for i, n in enumerate(FLAT_NAMES)})
 
 # ── Calidades de acordes ──────────────────────────────────────────────────────
+# (intervalos: solo informativo/documental — las digitaciones vienen de chords_v2.csv)
 QUALITIES = {
     'maj':  ([0,4,7],       ''),
     'm':    ([0,3,7],       'm'),
@@ -73,26 +85,27 @@ QUALITIES = {
     'm7b5': ([0,3,6,10],    'm7b5'),
 }
 
-# ── Overrides manuales ────────────────────────────────────────────────────────
-# Casos irresolubles por el algoritmo de puntuación
-OVERRIDES = {
-    'Am':  (1,3,2,0),
-    'F':   (1,3,3,0),
-    'F#m': (2,3,4,4),
-    'Gbm': (2,3,4,4),
+# Calidad interna → sufijo usado en el nombre de acorde de chords_v2.csv
+CALIDAD_TO_CSV_SUFFIX = {
+    'maj': 'maj', 'm': 'm', '7': '7', 'maj7': 'Maj7', 'M7': 'Maj7',
+    'm7': 'm7', 'dim': 'dim', 'aug': 'aug', 'sus2': 'sus2', 'sus4': 'sus4',
+    '6': '6', 'm6': 'm6', '9': '9', 'add9': 'add9', 'dim7': 'dim7', 'm7b5': 'm7b5',
 }
 
-# ── Pesos del algoritmo ───────────────────────────────────────────────────────
-W = dict(
-    nota_faltante = 10000,
-    distintas     =    20,
-    escala_guia   =    25,
-    arrastre      =     5,
-    medio         =    35,
-    barre_puro    =    16,
-    amplitud      =   100,
-    maximo        =    40,
-)
+# ── Digitaciones desde chords_v2.csv ─────────────────────────────────────────
+CSV_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'chords_v2.csv')
+
+
+def _cargar_chords_csv():
+    chords = {}
+    with open(CSV_PATH, newline='', encoding='utf-8') as f:
+        for row in csv.DictReader(f):
+            fr = row['Fret']
+            chords[row['Chord']] = (int(fr[0]), int(fr[1]), int(fr[2]), int(fr[3]))
+    return chords
+
+
+CHORDS_CSV = _cargar_chords_csv()
 
 # ── Parser de nombre de acorde ────────────────────────────────────────────────
 def parsear_acorde(nombre):
@@ -121,66 +134,20 @@ def parsear_acorde(nombre):
     return raiz_num, calidad_key
 
 
-# ── Algoritmo de digitación ───────────────────────────────────────────────────
-def calcular_digitacion(raiz_num, calidad_key, max_traste=9):
-    """Devuelve tupla (B, F#, D, A) con el traste de cada cuerda."""
+# ── Digitación (lookup en chords_v2.csv) ─────────────────────────────────────
+def calcular_digitacion(raiz_num, calidad_key):
+    """Devuelve tupla (B, F#, D, A) leyendo la digitación desde chords_v2.csv."""
+    suffix = CALIDAD_TO_CSV_SUFFIX.get(calidad_key)
+    if suffix is None:
+        print(f'⚠  Calidad sin equivalente en chords_v2.csv: {calidad_key}', file=sys.stderr)
+        return (0, 0, 0, 0)
 
-    # Override manual
-    # Reconstruir nombre para buscar en overrides
-    raiz_sharp = SHARP_NAMES[raiz_num]
-    raiz_flat  = FLAT_NAMES[raiz_num]
-    _, simbolo = QUALITIES[calidad_key]
-    for raiz in [raiz_sharp, raiz_flat]:
-        nombre_acorde = raiz + (simbolo if simbolo != '' else '')
-        if calidad_key == 'maj':
-            nombre_acorde = raiz
-        if nombre_acorde in OVERRIDES:
-            return OVERRIDES[nombre_acorde]
-
-    intervalos, _ = QUALITIES[calidad_key]
-    notas_acorde  = {(raiz_num + i) % 12 for i in intervalos}
-
-    # Opciones por cuerda (orden interno B F# D A)
-    opciones = []
-    for base in STRING_BASES:
-        ops = [f for f in range(max_traste + 1) if (base + f) % 12 in notas_acorde]
-        opciones.append(ops if ops else [0])
-
-    mejor, mejor_puntaje = None, float('inf')
-
-    for combo in iproduct(*opciones):
-        cubiertas = {(STRING_BASES[s] + combo[s]) % 12 for s in range(4)}
-        if raiz_num % 12 not in cubiertas:
-            continue
-
-        faltantes   = len(notas_acorde - cubiertas)
-        presionados = [f for f in combo if f > 0]
-        distintas   = len(set(presionados))
-        fspan       = (max(presionados) - min(presionados)) if presionados else 0
-        fp          = [s for s in range(4) if combo[s] > 0]
-        op          = [s for s in range(4) if combo[s] == 0]
-        guia        = sum(1 for s in op if not fp or s < fp[0])
-        arrastre    = sum(1 for s in op if not fp or s > fp[-1])
-        medio       = sum(1 for s in op if fp and fp[0] < s < fp[-1])
-        min_traste  = min(presionados) if presionados else 0
-        barre_puro  = presionados[0] if presionados and len(set(presionados)) == 1 else 0
-        mx, sm      = max(combo), sum(combo)
-
-        puntaje = (
-            faltantes  * W['nota_faltante']
-            + distintas  * W['distintas']
-            + guia * min_traste * W['escala_guia']
-            + arrastre   * W['arrastre']
-            + medio      * W['medio']
-            + barre_puro * W['barre_puro']
-            + fspan      * W['amplitud']
-            + mx         * W['maximo']
-            + sm
-        )
-        if puntaje < mejor_puntaje:
-            mejor_puntaje, mejor = puntaje, combo
-
-    return mejor if mejor else (0, 0, 0, 0)
+    key = SHARP_NAMES[raiz_num % 12] + suffix
+    dig = CHORDS_CSV.get(key)
+    if dig is None:
+        print(f'⚠  Acorde no encontrado en chords_v2.csv: {key}', file=sys.stderr)
+        return (0, 0, 0, 0)
+    return dig
 
 
 # ── Renderizado ASCII ─────────────────────────────────────────────────────────
@@ -211,21 +178,6 @@ def diagrama_ascii(nombre, dig, compact=False):
     lines.append(nombre.center(ancho_nombre))
     lines.append('─' * ancho_nombre)
 
-    # ── Etiquetas de cuerdas ──
-    etiquetas = [STRING_LABELS[DISPLAY_ORDER.index(i)] for i in range(4)]
-    # Display order: A D F# B → labels
-    etiq_line = '  '.join(STRING_LABELS)
-    lines.append('  ' + etiq_line)
-
-    # ── Fila de abiertos/mudos ──
-    fila_nut = '  '
-    for f in frets_display:
-        if f == 0:
-            fila_nut += ' ○  '
-        else:
-            fila_nut += '    '
-    lines.append(fila_nut.rstrip())
-
     # ── Cejilla (nut) ──
     lines.append('  ╔═══╦═══╦═══╦═══╗')
 
@@ -247,8 +199,7 @@ def diagrama_ascii(nombre, dig, compact=False):
     lines.append('  ╚═══╩═══╩═══╩═══╝')
 
     # ── Código numérico ──
-    codigo = ''.join(str(dig[i]) for i in DISPLAY_ORDER)
-    lines.append(f'  {codigo}  ({dig[0]}{dig[1]}{dig[2]}{dig[3]})'.center(ancho_nombre))
+    lines.append(codigo_str(dig).center(ancho_nombre))
 
     return lines
 
@@ -266,15 +217,6 @@ def diagrama_ancho(nombre, dig):
     lines.append(titulo)
     lines.append('━' * (len(titulo) + 4))
 
-    # Etiquetas
-    lines.append('     A3   D4   F#4  B')
-
-    # Abiertos
-    row = '    '
-    for f in frets_display:
-        row += (' ◯   ' if f == 0 else '     ')
-    lines.append(row)
-
     # Nut
     lines.append('    ┌────┬────┬────┬────┐')
 
@@ -287,8 +229,7 @@ def diagrama_ancho(nombre, dig):
             lines.append('    ├────┼────┼────┼────┤')
 
     lines.append('    └────┴────┴────┴────┘')
-    codigo_display = ''.join(str(dig[i]) for i in DISPLAY_ORDER)
-    lines.append(f'    {codigo_display}  [B:{dig[0]} F#:{dig[1]} D:{dig[2]} A:{dig[3]}]')
+    lines.append(f'    {codigo_str(dig)}')
     return lines
 
 
@@ -318,6 +259,35 @@ def imprimir_acordes(acordes_data, columnas=4, estilo='normal'):
         for fila_idx in range(alto):
             linea = '   '.join(d[fila_idx].ljust(col_w) for d in bloque)
             print(linea.rstrip())
+        print()
+
+
+def imprimir_acordes_pares(items, estilo='normal'):
+    """
+    Imprime un bloque tónica+dominante por línea (dos diagramas lado a lado).
+    Si el grado no tiene dominante (disminuido/semidisminuido), se muestra
+    solo el diagrama de la tónica.
+
+    items = lista de dicts de acordes_escala(), cada uno con 'etiqueta',
+            'dig' y 'dominante' (dict con 'etiqueta'/'dig', o None).
+    """
+    diagrama_fn = diagrama_ancho if estilo == 'ancho' else diagrama_ascii
+
+    for item in items:
+        izq = diagrama_fn(item['etiqueta'], item['dig'])
+        dom = item['dominante']
+        der = diagrama_fn(dom['etiqueta'], dom['dig']) if dom else []
+
+        if der:
+            col_w = max(len(l) for l in izq)
+            alto  = max(len(izq), len(der))
+            izq   = izq + [''] * (alto - len(izq))
+            der   = der + [''] * (alto - len(der))
+            for i in range(alto):
+                print((izq[i].ljust(col_w) + '   ' + der[i]).rstrip())
+        else:
+            for linea in izq:
+                print(linea)
         print()
 
 
@@ -357,7 +327,7 @@ def imprimir_lista():
     print('  python cuatro_diagramas.py --ancho Bb7   (diagrama más grande)')
 
 
-def imprimir_todos_calidad(calidad_key):
+def imprimir_todos_calidad(calidad_key, columnas=4, estilo='normal'):
     """Muestra los 12 acordes de una calidad dada."""
     if calidad_key not in QUALITIES:
         print(f'Calidad desconocida: {calidad_key}')
@@ -369,7 +339,7 @@ def imprimir_todos_calidad(calidad_key):
         dig = calcular_digitacion(num, calidad_key)
         acordes.append((nota + simbolo, dig))
     print(f'\n── Todos los acordes {calidad_key} ──\n')
-    imprimir_acordes(acordes, columnas=4)
+    imprimir_acordes(acordes, columnas=columnas, estilo=estilo)
 
 
 # ── Teoría de escalas ─────────────────────────────────────────────────────────
@@ -386,7 +356,7 @@ ESCALAS = {
             {'romano': 'IV',   'triada': 'maj',  'septima': 'maj7', 'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'maj',  'septima': '7',    'nombre': 'Dominante'},
             {'romano': 'VI',   'triada': 'm',    'septima': 'm7',   'nombre': 'Superdominante'},
-            {'romano': 'VII',  'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Sensible'},
+            {'romano': 'VII',  'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Sensible'},
         ],
     },
     'menor': {
@@ -394,7 +364,7 @@ ESCALAS = {
         'semis': [0, 2, 3, 5, 7, 8, 10],
         'grados': [
             {'romano': 'I',    'triada': 'm',    'septima': 'm7',   'nombre': 'Tónica'},
-            {'romano': 'II',   'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Supertónica'},
+            {'romano': 'II',   'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Supertónica'},
             {'romano': 'bIII', 'triada': 'maj',  'septima': 'maj7', 'nombre': 'Mediante'},
             {'romano': 'IV',   'triada': 'm',    'septima': 'm7',   'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'm',    'septima': 'm7',   'nombre': 'Dominante'},
@@ -407,7 +377,7 @@ ESCALAS = {
         'semis': [0, 2, 3, 5, 7, 8, 11],
         'grados': [
             {'romano': 'I',    'triada': 'm',    'septima': 'm7',   'nombre': 'Tónica'},
-            {'romano': 'II',   'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Supertónica'},
+            {'romano': 'II',   'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Supertónica'},
             {'romano': 'bIII', 'triada': 'aug',  'septima': 'maj7', 'nombre': 'Mediante (aum.)'},
             {'romano': 'IV',   'triada': 'm',    'septima': 'm7',   'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'maj',  'septima': '7',    'nombre': 'Dominante'},
@@ -424,8 +394,8 @@ ESCALAS = {
             {'romano': 'bIII', 'triada': 'aug',  'septima': 'maj7', 'nombre': 'Mediante (aum.)'},
             {'romano': 'IV',   'triada': 'maj',  'septima': '7',    'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'maj',  'septima': '7',    'nombre': 'Dominante'},
-            {'romano': 'VI',   'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Superdominante'},
-            {'romano': 'VII',  'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Sensible'},
+            {'romano': 'VI',   'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Superdominante'},
+            {'romano': 'VII',  'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Sensible'},
         ],
     },
     'dorica': {
@@ -437,7 +407,7 @@ ESCALAS = {
             {'romano': 'bIII', 'triada': 'maj',  'septima': 'maj7', 'nombre': 'Mediante'},
             {'romano': 'IV',   'triada': 'maj',  'septima': '7',    'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'm',    'septima': 'm7',   'nombre': 'Dominante'},
-            {'romano': 'VI',   'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Superdominante'},
+            {'romano': 'VI',   'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Superdominante'},
             {'romano': 'bVII', 'triada': 'maj',  'septima': 'maj7', 'nombre': 'Subtónica'},
         ],
     },
@@ -449,7 +419,7 @@ ESCALAS = {
             {'romano': 'bII',  'triada': 'maj',  'septima': 'maj7', 'nombre': 'Supertónica'},
             {'romano': 'bIII', 'triada': 'maj',  'septima': '7',    'nombre': 'Mediante'},
             {'romano': 'IV',   'triada': 'm',    'septima': 'm7',   'nombre': 'Subdominante'},
-            {'romano': 'V',    'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Dominante'},
+            {'romano': 'V',    'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Dominante'},
             {'romano': 'bVI',  'triada': 'maj',  'septima': 'maj7', 'nombre': 'Superdominante'},
             {'romano': 'bVII', 'triada': 'm',    'septima': 'm7',   'nombre': 'Subtónica'},
         ],
@@ -461,7 +431,7 @@ ESCALAS = {
             {'romano': 'I',    'triada': 'maj',  'septima': 'maj7', 'nombre': 'Tónica'},
             {'romano': 'II',   'triada': 'maj',  'septima': '7',    'nombre': 'Supertónica'},
             {'romano': 'III',  'triada': 'm',    'septima': 'm7',   'nombre': 'Mediante'},
-            {'romano': '#IV',  'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Tritono'},
+            {'romano': '#IV',  'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Tritono'},
             {'romano': 'V',    'triada': 'maj',  'septima': 'maj7', 'nombre': 'Dominante'},
             {'romano': 'VI',   'triada': 'm',    'septima': 'm7',   'nombre': 'Superdominante'},
             {'romano': 'VII',  'triada': 'm',    'septima': 'm7',   'nombre': 'Sensible'},
@@ -473,7 +443,7 @@ ESCALAS = {
         'grados': [
             {'romano': 'I',    'triada': 'maj',  'septima': '7',    'nombre': 'Tónica'},
             {'romano': 'II',   'triada': 'm',    'septima': 'm7',   'nombre': 'Supertónica'},
-            {'romano': 'III',  'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Mediante'},
+            {'romano': 'III',  'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Mediante'},
             {'romano': 'IV',   'triada': 'maj',  'septima': 'maj7', 'nombre': 'Subdominante'},
             {'romano': 'V',    'triada': 'm',    'septima': 'm7',   'nombre': 'Dominante'},
             {'romano': 'VI',   'triada': 'm',    'septima': 'm7',   'nombre': 'Superdominante'},
@@ -484,7 +454,7 @@ ESCALAS = {
         'nombre': 'Modo Locrio',
         'semis': [0, 1, 3, 5, 6, 8, 10],
         'grados': [
-            {'romano': 'I',    'triada': 'dim',  'septima': 'm7b5', 'nombre': 'Tónica'},
+            {'romano': 'I',    'triada': 'm7b5', 'septima': 'm7b5', 'nombre': 'Tónica'},
             {'romano': 'bII',  'triada': 'maj',  'septima': 'maj7', 'nombre': 'Supertónica'},
             {'romano': 'bIII', 'triada': 'm',    'septima': 'm7',   'nombre': 'Mediante'},
             {'romano': 'IV',   'triada': 'm',    'septima': 'm7',   'nombre': 'Subdominante'},
@@ -536,57 +506,47 @@ def nota_display(num, modo):
 def acordes_escala(raiz_num, tonalidad_str, tipo='mayor',
                    con_septimas=False, con_dominantes=False):
     """
-    Devuelve la lista de secciones para la escala dada.
+    Devuelve los acordes diatónicos de la escala dada. Cada grado incluye su
+    dominante secundario (V7) cuando con_dominantes=True y el grado no es
+    disminuido/semidisminuido (esos no se tonicizan con un V7 propio).
 
     tipo: clave de ESCALAS ('mayor', 'menor', 'armonica', 'dorica', …)
     """
     escala = ESCALAS[tipo]
     modo   = modo_notacion(tonalidad_str)
-    secciones = []
 
-    # ── Sección 1: acordes diatónicos ──
-    diatonicos = []
+    items = []
     for i, grado in enumerate(escala['grados']):
         grado_num = (raiz_num + escala['semis'][i]) % 12
         calidad   = grado['septima'] if con_septimas else grado['triada']
         nota_nom  = nota_display(grado_num, modo)
         _, simbolo = QUALITIES[calidad]
-        nombre_disp = nota_nom + simbolo
+        sin_dominante = grado['triada'] in ('dim', 'm7b5')
+        nombre_disp = nota_nom + simbolo + ('*' if sin_dominante else '')
         dig = calcular_digitacion(grado_num, calidad)
         etiqueta = f"{grado['romano']:5s} {nombre_disp}"
-        diatonicos.append((etiqueta, dig, grado, i))
 
-    tipo_acordes = 'con 7ªs' if con_septimas else 'tríadas'
-    secciones.append({
-        'titulo':  f'Acordes diatónicos — {tipo_acordes}',
-        'acordes': [(n, d) for n, d, _, _ in diatonicos],
-        'grados':  [(g, idx) for _, _, g, idx in diatonicos],
-        'escala':  escala,
-    })
+        dominante = None
+        if con_dominantes and not sin_dominante:
+            dom_num      = (grado_num + 7) % 12
+            nota_dom     = nota_display(dom_num, modo)
+            dom_nombre   = f'{nota_dom}7'
+            dom_dig      = calcular_digitacion(dom_num, '7')
+            dom_etiqueta = f"V7/{grado['romano']}  {dom_nombre}"
+            dominante = {'etiqueta': dom_etiqueta, 'nombre': dom_nombre, 'dig': dom_dig}
 
-    # ── Sección 2: dominantes secundarios ──
-    if con_dominantes:
-        dominantes = []
-        for i, grado in enumerate(escala['grados']):
-            grado_num  = (raiz_num + escala['semis'][i]) % 12
-            dom_num    = (grado_num + 7) % 12
-            nota_dom   = nota_display(dom_num, modo)
-            nombre_disp = f'{nota_dom}7'
-            dig = calcular_digitacion(dom_num, '7')
-            resuelve_a = nota_display(grado_num, modo)
-            _, sim_grado = QUALITIES[grado['triada']]
-            etiqueta = f"V7/{grado['romano']} → {resuelve_a}{sim_grado}"
-            dominantes.append((etiqueta, dig, grado, i))
-
-        secciones.append({
-            'titulo':  'Dominantes secundarios  (V7 de cada grado)',
-            'acordes': [(n, d) for n, d, _, _ in dominantes],
-            'grados':  None,
-            'dom_data': [(g, idx, raiz_num) for _, _, g, idx in dominantes],
-            'escala':  escala,
+        items.append({
+            'grado': grado, 'idx': i,
+            'etiqueta': etiqueta, 'nombre_disp': nombre_disp, 'dig': dig,
+            'dominante': dominante,
         })
 
-    return secciones
+    tipo_acordes = 'con 7ªs' if con_septimas else 'tríadas'
+    return {
+        'titulo': f'Acordes diatónicos — {tipo_acordes}',
+        'items':  items,
+        'escala': escala,
+    }
 
 
 def imprimir_escala(tonalidad_str, tipo='mayor', con_septimas=False,
@@ -618,41 +578,49 @@ def imprimir_escala(tonalidad_str, tipo='mayor', con_septimas=False,
         print(f'  (incluye dominantes secundarios)')
     print(separador)
 
-    secciones = acordes_escala(raiz_num, tonalidad_str, tipo,
-                               con_septimas, con_dominantes)
+    sec   = acordes_escala(raiz_num, tonalidad_str, tipo, con_septimas, con_dominantes)
+    items = sec['items']
 
-    for sec in secciones:
-        print(f'\n  ── {sec["titulo"]} ──\n')
+    print(f'\n  ── {sec["titulo"]} ──\n')
 
-        if sec['grados'] is not None:
-            # Tabla de acordes diatónicos
-            esc = sec['escala']
-            print(f'  {"Semi":>4}  {"Romano":<6} {"Acorde":<10} {"Función":<18} {"Digitación"}')
-            print(f'  {"────":>4}  {"──────":<6} {"──────────":<10} {"──────────────────":<18} {"──────────"}')
-            for (etiq, dig), (grado, idx) in zip(sec['acordes'], sec['grados']):
-                acorde_nom = etiq.split(None, 1)[1] if ' ' in etiq else etiq
-                codigo = ''.join(str(dig[i]) for i in DISPLAY_ORDER)
-                print(f'  {esc["semis"][idx]:>4}  {grado["romano"]:<6} {acorde_nom:<10} '
-                      f'{grado["nombre"]:<18} {codigo}')
-            print()
-        else:
-            # Tabla de dominantes secundarios
-            esc = sec['escala']
-            print(f'  {"Función":<22} {"Acorde":<8} {"Resuelve a":<14} {"Digitación"}')
-            print(f'  {"──────────────────────":<22} {"──────":<8} {"──────────────":<14} {"──────────"}')
-            for (etiq, dig), (grado, idx, rn) in zip(sec['acordes'], sec['dom_data']):
-                grado_num = (rn + esc['semis'][idx]) % 12
-                dom_num   = (grado_num + 7) % 12
-                nota_dom  = nota_display(dom_num, modo)
-                resuelve  = nota_display(grado_num, modo)
-                _, sim    = QUALITIES[grado['triada']]
-                codigo    = ''.join(str(dig[i2]) for i2 in DISPLAY_ORDER)
-                print(f'  {"V7/"+grado["romano"]:<22} {nota_dom+"7":<8} '
-                      f'{resuelve+sim:<14} {codigo}')
-            print()
+    hay_sin_dominante = False
+    if con_dominantes:
+        print(f'  {"Semi":>4}  {"Romano":<6} {"Acorde":<10} {"Dominante":<10} '
+              f'{"Función":<18} {"Digitación Tónica":<18} {"Digitación Dominante"}')
+        print(f'  {"────":>4}  {"──────":<6} {"──────────":<10} {"──────────":<10} '
+              f'{"──────────────────":<18} {"─────────────────":<18} {"────────────────────"}')
+        for item in items:
+            grado, idx = item['grado'], item['idx']
+            if item['nombre_disp'].endswith('*'):
+                hay_sin_dominante = True
+            codigo = codigo_str(item['dig'])
+            if item['dominante']:
+                dom_nombre = item['dominante']['nombre']
+                dom_codigo = codigo_str(item['dominante']['dig'])
+            else:
+                dom_nombre = '—'
+                dom_codigo = '—'
+            print(f'  {escala["semis"][idx]:>4}  {grado["romano"]:<6} {item["nombre_disp"]:<10} '
+                  f'{dom_nombre:<10} {grado["nombre"]:<18} {codigo:<18} {dom_codigo}')
+    else:
+        print(f'  {"Semi":>4}  {"Romano":<6} {"Acorde":<10} {"Función":<18} {"Digitación"}')
+        print(f'  {"────":>4}  {"──────":<6} {"──────────":<10} {"──────────────────":<18} {"──────────"}')
+        for item in items:
+            grado, idx = item['grado'], item['idx']
+            if item['nombre_disp'].endswith('*'):
+                hay_sin_dominante = True
+            codigo = codigo_str(item['dig'])
+            print(f'  {escala["semis"][idx]:>4}  {grado["romano"]:<6} {item["nombre_disp"]:<10} '
+                  f'{grado["nombre"]:<18} {codigo}')
+    print()
+    if hay_sin_dominante:
+        print('  * Disminuido/semidisminuido: sin dominante secundario propio.\n')
 
+    if con_dominantes:
+        imprimir_acordes_pares(items, estilo=estilo)
+    else:
         imprimir_acordes(
-            [(etiq, dig) for etiq, dig in sec['acordes']],
+            [(item['etiqueta'], item['dig']) for item in items],
             columnas=min(columnas, 4),
             estilo=estilo,
         )
@@ -663,49 +631,93 @@ def imprimir_escala(tonalidad_str, tipo='mayor', con_septimas=False,
 # ── Main ──────────────────────────────────────────────────────────────────────
 def main():
     parser = argparse.ArgumentParser(
-        description='Diagramas ASCII de acordes para Cuatro Venezolano',
+        prog='4diagramas.py',
+        description='Diagramas ASCII de acordes para Cuatro Venezolano '
+                     '(digitaciones desde chords_v2.csv).',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__
     )
-    parser.add_argument('acordes', nargs='*',
-                        help='Nombre(s) de acorde: Am, F#m7, Bbsus4, …')
-    parser.add_argument('--lista', action='store_true',
-                        help='Muestra todas las calidades disponibles')
-    parser.add_argument('--todos', metavar='CALIDAD',
-                        help='Muestra los 12 acordes de una calidad (ej: --todos m7)')
-    parser.add_argument('--escala', metavar='NOTA',
-                        help='Muestra todos los acordes de la escala (ej: --escala G)')
-    parser.add_argument('--tipo', metavar='TIPO', default='mayor',
-                        help='Tipo de escala: mayor, menor, armonica, melodica, '
-                             'dorica, frigia, lidia, mixolidia, locria '
-                             '(default: mayor)')
-    parser.add_argument('--sep', action='store_true',
-                        help='Con --escala: usa acordes de 7ª en lugar de tríadas')
-    parser.add_argument('--dom', action='store_true',
-                        help='Con --escala: incluye dominantes secundarios (V7 de cada grado)')
-    parser.add_argument('--ancho', action='store_true',
-                        help='Diagrama más grande con más detalle')
-    parser.add_argument('--columnas', type=int, default=4,
-                        help='Número de columnas en el display (default: 4)')
+
+    modo = parser.add_argument_group(
+        'Modo de uso (elige uno)',
+        'Sin ninguna de estas opciones se muestra esta ayuda.'
+    )
+    modo.add_argument('acordes', nargs='*', metavar='ACORDE',
+                       help='Uno o más nombres de acorde a mostrar, ej: Am F#m7 Bbsus4')
+    modo.add_argument('--lista', action='store_true',
+                       help='Lista todas las calidades de acorde y tipos de escala disponibles')
+    modo.add_argument('--todos', metavar='CALIDAD', choices=sorted(QUALITIES),
+                       help='Muestra los 12 acordes (todas las raíces) de una calidad. '
+                            f'Opciones: {", ".join(sorted(QUALITIES))}')
+    modo.add_argument('--escala', metavar='NOTA',
+                       help='Muestra los acordes diatónicos de una escala/modo, ej: --escala G')
+
+    esc = parser.add_argument_group(
+        'Opciones de escala',
+        'Solo tienen efecto junto con --escala.'
+    )
+    esc.add_argument('--tipo', metavar='TIPO', default='mayor',
+                      help='Tipo de escala o modo (default: mayor). Opciones: '
+                           + ', '.join(ESCALAS) + '. Acepta alias en inglés '
+                           '(major, minor, dorian, …) — ver --lista.')
+    esc.add_argument('--sep', action='store_true',
+                      help='Usa acordes de séptima en lugar de tríadas')
+    esc.add_argument('--dom', action='store_true',
+                      help='Añade una sección con los dominantes secundarios (V7 de cada grado)')
+
+    pres = parser.add_argument_group('Presentación')
+    pres.add_argument('--ancho', action='store_true',
+                       help='Dibuja diagramas más grandes, uno debajo del otro '
+                            '(en vez de en columnas)')
+    pres.add_argument('--columnas', type=int, metavar='N', default=None,
+                       help='Cuántos diagramas mostrar por fila (default: 4; '
+                            'con --md: 2)')
+    pres.add_argument('-R', '--reverse', action='store_true',
+                       help='Muestra la "Digitación" en orden A D F# B en vez '
+                            'del orden por defecto B F# D A (igual que en '
+                            'chords_v2.csv)')
+    pres.add_argument('--md', action='store_true',
+                       help='Envuelve la salida en un bloque de código Markdown '
+                            '(```) para pegarla en un documento .md. Usa 2 '
+                            'columnas por defecto, más angostas para que se '
+                            'lean bien sin scroll horizontal.')
 
     args = parser.parse_args()
 
+    if args.reverse:
+        global ORDEN_CODIGO
+        ORDEN_CODIGO = DISPLAY_ORDER
+
+    columnas = args.columnas if args.columnas is not None else (2 if args.md else 4)
+    estilo   = 'ancho' if args.ancho else 'normal'
+
+    if args.md:
+        buf = io.StringIO()
+        with contextlib.redirect_stdout(buf):
+            _ejecutar(parser, args, columnas, estilo)
+        print('```')
+        print(buf.getvalue().strip('\n'))
+        print('```')
+    else:
+        _ejecutar(parser, args, columnas, estilo)
+
+
+def _ejecutar(parser, args, columnas, estilo):
     if args.lista:
         imprimir_lista()
         return
 
     if args.todos:
-        imprimir_todos_calidad(args.todos)
+        imprimir_todos_calidad(args.todos, columnas=columnas, estilo=estilo)
         return
 
     if args.escala:
-        estilo = 'ancho' if args.ancho else 'normal'
         imprimir_escala(
             args.escala,
             tipo=args.tipo,
             con_septimas=args.sep,
             con_dominantes=args.dom,
-            columnas=args.columnas,
+            columnas=columnas,
             estilo=estilo,
         )
         return
@@ -732,8 +744,7 @@ def main():
         sys.exit(1)
 
     print()
-    estilo = 'ancho' if args.ancho else 'normal'
-    imprimir_acordes(acordes_validos, columnas=args.columnas, estilo=estilo)
+    imprimir_acordes(acordes_validos, columnas=columnas, estilo=estilo)
 
 
 if __name__ == '__main__':
