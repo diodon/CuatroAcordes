@@ -3,10 +3,10 @@
 Cuatro chord diagram generator — matches micuatro.com style.
 
 Usage:
-    python3 make_chord_diagram.py "G7"  g7.jpg  --fret 2313 --finger 2314
-    python3 make_chord_diagram.py "Bb"  bb.jpg  --fret 5343 --finger 3121 --barre 3333
-    python3 make_chord_diagram.py "Bø"  bm7b5.jpg --fret 2333
-    python3 make_chord_diagram.py "C"   c.jpg   --fret 0003 --nfrets 6
+    python3 make_chord_diagram.py "G7"  g7.jpg  --fret 3132 --finger 4132
+    python3 make_chord_diagram.py "Bb"  bb.jpg  --fret 3435 --finger 1213 --barre 3333
+    python3 make_chord_diagram.py "Bø"  bm7b5.jpg --fret 3332
+    python3 make_chord_diagram.py "C"   c.jpg   --fret 3000 --nfrets 6
     python3 make_chord_diagram.py --name G7
     python3 make_chord_diagram.py --name Cmaj --nfrets 6
 
@@ -19,17 +19,18 @@ output       Output filename.  If no directory given, saved to chord files folde
 
 --name CHORD    Look up chord in chords_v2.csv and use its fret/fingering/barre.
                 --fret, --finger, and --barre are not needed when --name is given.
---fret  ADFSB   4 fret numbers in A-D-F#-B string order.  0 = open string.
---finger ADFSB  (optional) 4 finger numbers in A-D-F#-B order.  0 = open/unused.
+--fret  BFDA    4 fret numbers in B-F#-D-A string order (matches chords_v2.csv).
+                0 = open string.
+--finger BFDA   (optional) 4 finger numbers in B-F#-D-A order.  0 = open/unused.
                 If omitted, fingers are auto-assigned 1→4 sorted by fret ASC.
---barre ADFSB   (optional) Barre fret for each string; 0 = string not in barre.
+--barre BFDA    (optional) Barre fret for each string; 0 = string not in barre.
                 All non-zero values must be the same fret number.
                 e.g. --barre 3333 → full barre at fret 3 across all strings.
 --nfrets N      Number of frets to draw (default 4, min 4, max 15).
                 Image height grows to keep cell size constant.
 --scale N       Size multiplier (default 2 → ~116×200 px JPEG).
--R              Reverse input order: treat --fret/--finger/--barre as B-F#-D-A
-                instead of the default A-D-F#-B.
+-R              Reverse input order: treat --fret/--finger/--barre as A-D-F#-B
+                instead of the default B-F#-D-A.
 
 String order on the cuatro neck (left → right):  A  D  F#  B
 """
@@ -76,9 +77,9 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     Parameters
     ----------
     chord_name : str
-    frets      : list[int]  length-4, A-D-F#-B order; 0 = open
-    fingers    : list[int] | None   finger number per string (0 = unused)
-    barre      : list[int] | None   barre fret per string   (0 = not in barre)
+    frets      : list[int]  length-4, B-F#-D-A order (matches chords_v2.csv); 0 = open
+    fingers    : list[int] | None   finger number per string, B-F#-D-A order (0 = unused)
+    barre      : list[int] | None   barre fret per string, B-F#-D-A order (0 = not in barre)
     output_path: str | None
     scale      : int   size multiplier (base 55×75 px)
     n_frets    : int   number of frets to draw (4–15); image grows taller to keep cell size constant
@@ -92,6 +93,12 @@ def make_chord_diagram(chord_name, frets, fingers=None, barre=None,
     DOT_F  = (35,  35,  35)
     DOT_T  = (255, 255, 255)
     TEXT_C = (0,   0,   0)
+
+    # El resto de esta función dibuja en orden físico izquierda→derecha A D F# B;
+    # se invierte aquí una sola vez desde el orden de entrada B F# D A.
+    frets   = list(reversed(frets))
+    fingers = list(reversed(fingers)) if fingers else None
+    barre   = list(reversed(barre)) if barre else None
 
     non_zero = [f for f in frets if f > 0]
     max_fret = max(non_zero) if non_zero else 0
@@ -258,7 +265,7 @@ def _enharmonic(name):
 
 def _load_chord(name):
     """Case-insensitive lookup with enharmonic fallback.
-    Returns (frets, fingers, barre) in A,D,F#,B order, or None if not found.
+    Returns (frets, fingers, barre) in B,F#,D,A order, or None if not found.
     """
     enh = _enharmonic(name)
     with open(CSV_PATH, newline='', encoding='utf-8') as f:
@@ -266,10 +273,10 @@ def _load_chord(name):
             chord = row['Chord'].lower()
             if chord == name.lower() or (enh and chord == enh.lower()):
                 fr, fg, ba = row['Fret'], row['Fingering'], row['Barre']
-                frets   = [int(fr[3]), int(fr[2]), int(fr[1]), int(fr[0])]
-                fingers = [int(fg[3]), int(fg[2]), int(fg[1]), int(fg[0])]
+                frets   = [int(c) for c in fr]
+                fingers = [int(c) for c in fg]
                 if ba:
-                    barre = [int(ba[3]), int(ba[2]), int(ba[1]), int(ba[0])]
+                    barre = [int(c) for c in ba]
                     barre = barre if any(b > 0 for b in barre) else None
                 else:
                     barre = None
@@ -299,11 +306,11 @@ if __name__ == '__main__':
     p.add_argument('--name',   default=None, metavar='CHORD',
                    help='Look up chord in chords_v2.csv (e.g. G7, Cmaj, Bm7b5)')
     p.add_argument('--fret',   default=None, type=_parse4,
-                   help='4-digit fret numbers A-D-F#-B, e.g. 2313')
+                   help='4-digit fret numbers B-F#-D-A (matches chords_v2.csv), e.g. 3132')
     p.add_argument('--finger', default=None, type=_parse4,
-                   help='4-digit finger numbers A-D-F#-B, e.g. 2314')
+                   help='4-digit finger numbers B-F#-D-A, e.g. 4132')
     p.add_argument('--barre',  default=None, type=_parse4,
-                   help='4-digit barre frets A-D-F#-B, e.g. 3333')
+                   help='4-digit barre frets B-F#-D-A, e.g. 3333')
     p.add_argument('--nfrets', type=int, default=4, metavar='N',
                    help='Number of frets to draw (default 4, min 4, max 15)')
     p.add_argument('--color',  default='black', metavar='COLOR',
@@ -312,8 +319,8 @@ if __name__ == '__main__':
     p.add_argument('--scale',  type=int, default=2,
                    help='Size multiplier (default 2 → 116×200 px approx)')
     p.add_argument('-R', action='store_true',
-                   help='Reverse string order: read --fret/--finger/--barre as B-F#-D-A '
-                        'instead of the default A-D-F#-B')
+                   help='Reverse string order: read --fret/--finger/--barre as A-D-F#-B '
+                        'instead of the default B-F#-D-A')
     p.add_argument('--names', dest='show_notes', action='store_true', default=True,
                    help='Show note names below the diagram (default: on)')
     p.add_argument('--no-names', dest='show_notes', action='store_false',

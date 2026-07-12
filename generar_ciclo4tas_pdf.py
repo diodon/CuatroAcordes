@@ -89,11 +89,12 @@ def load_chords():
 
 
 def csv_to_params(row):
+    """B,F#,D,A order — matches chords_v2.csv and make_chord_diagram directly."""
     fr, fg, ba = row['Fret'], row['Fingering'], row['Barre']
-    frets   = [int(fr[3]), int(fr[2]), int(fr[1]), int(fr[0])]
-    fingers = [int(fg[3]), int(fg[2]), int(fg[1]), int(fg[0])]
+    frets   = [int(c) for c in fr]
+    fingers = [int(c) for c in fg]
     if ba:
-        barre = [int(ba[3]), int(ba[2]), int(ba[1]), int(ba[0])]
+        barre = [int(c) for c in ba]
         barre = barre if any(b > 0 for b in barre) else None
     else:
         barre = None
