@@ -168,15 +168,16 @@ def print_progression(prog_name, escala_str):
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 
-parser = argparse.ArgumentParser(
-    description='Progresiones armónicas del Cuatro Venezolano (sistema de Ángel Martínez)'
-)
-parser.add_argument('--prog', required=True, help='Progresión (P1, P2, P3, P4, P5, P6, P6.1)')
-parser.add_argument('--escala', required=True, help='Tonalidad, ej: D, Dm, F#, Bbm')
-args = parser.parse_args()
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description='Progresiones armónicas del Cuatro Venezolano (sistema de Ángel Martínez)'
+    )
+    parser.add_argument('--prog', required=True, help='Progresión (P1, P2, P3, P4, P5, P6, P6.1)')
+    parser.add_argument('--escala', required=True, help='Tonalidad, ej: D, Dm, F#, Bbm')
+    args = parser.parse_args()
 
-try:
-    print_progression(args.prog, args.escala)
-except ValueError as e:
-    print(f"Error: {e}", file=sys.stderr)
-    sys.exit(1)
+    try:
+        print_progression(args.prog, args.escala)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
