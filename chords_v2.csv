@@ -57,7 +57,7 @@ D#dim,D#,Re#,Disminuido,dim,4010,4010,
 D#aug,D#,Re#,Aumentado,aug,0112,0213,
 D#sus2,D#,Re#,Suspendida 2,sus2,4431,4321,
 D#sus4,D#,Re#,Suspendida 4,sus4,4211,4211,1111
-D#6,D#,Re#,Sexta,6,1111,1111,
+D#6,D#,Re#,Sexta,6,1111,1111,1111
 D#m6,D#,Re#,Menor 6,m6,1011,3012,
 D#9,D#,Re#,Novena,9,4134,4123,
 D#add9,D#,Re#,Add 9,add9,4131,4131,1111
