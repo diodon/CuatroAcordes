@@ -13,7 +13,7 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 - **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano, acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de trastes en un popup.
 - **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos para la tonalidad y escala seleccionadas.
 - **Diagramas de trastes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
-- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 16 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
+- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 17 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 7ª sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
 - **Reproducción de audio** — Escucha cualquier acorde con un clic: síntesis Web Audio API con tres armónicos y envolvente de decaimiento para imitar el sonido del cuatro. Botón ▶ Tocar en cada diagrama individual.
 - **Reproducción de secuencias** — Toca toda la progresión detectada o las columnas de diagramas originales y transpuestos en secuencia, con control de tempo (Lento / Normal / Rápido / Muy rápido) y resaltado de acorde activo.
@@ -63,7 +63,18 @@ O visita la versión en línea: https://diodon.github.io/CuatroAcordes/
 |---|---|
 | `index.html` | Aplicación web completa (HTML + CSS + JS) |
 | `cuatro_acordes.json` | Base de datos de acordes, calidades y progresiones (embebida en `index.html` como `DATOS_ACORDES`) |
-| `chords_v2.csv` | Base de datos maestra de digitaciones (192 acordes), embebida en `index.html` como `CHORDS_V2` |
+| `chords_v2.csv` | Base de datos maestra de digitaciones (204 acordes), embebida en `index.html` como `CHORDS_V2` |
+
+## Tablas de referencia — `Referencia/`
+
+Hojas en PDF, listas para imprimir o descargar, con los diagramas de todos los acordes:
+
+| Archivo | Contenido |
+|---|---|
+| `acordes_completo.pdf` | Las 12 tonalidades × 12 calidades de acorde en una sola página vertical |
+| `acordes_completo_landscape.pdf` | La misma tabla en formato horizontal, repartida en 2 páginas (Do–Fa / Fa#–Si), con diagramas más grandes (6 trastes) |
+
+Generadas con las herramientas de desarrollo internas del proyecto (repositorio privado, no público).
 
 ## Créditos
 
