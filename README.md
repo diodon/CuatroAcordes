@@ -9,9 +9,9 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 ## Características
 
 - **Transposición** — Selecciona tonalidad de origen y destino; todos los acordes se transponen automáticamente mostrando el intervalo en semitonos.
-- **Escala Mayor / Menor** — Cambia entre escala mayor (jónica) y menor armónica; afecta las calidades de los acordes generados por las progresiones.
-- **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano, acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de trastes en un popup.
-- **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos para la tonalidad y escala seleccionadas.
+- **Escala Mayor / Menor** — Cambia entre escala mayor (jónica) y menor armónica; determina si la columna Grado y la detección de progresiones usan los grados diatónicos de la escala mayor o de la menor armónica. Al aplicar una progresión del menú, el toggle se ajusta automáticamente al modo de esa progresión (cada una ya trae su propia calidad de acorde codificada).
+- **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano (mayúscula = tríada mayor, minúscula = menor/disminuida, V7 = dominante con séptima), acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de trastes en un popup.
+- **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos (calidad incluida) para la tonalidad seleccionada.
 - **Diagramas de trastes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
 - **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 17 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 7ª sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
@@ -23,21 +23,37 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 
 ## Progresiones incluidas
 
+Cada numeral romano refleja la calidad real del acorde: **mayúscula** = tríada mayor, **minúscula** = menor o disminuida, **V7** = dominante con séptima (siempre). Por eso una misma progresión de posiciones puede dar dos entradas distintas, una en Mayor y otra en menor (p. ej. Seis Corrido vs. Pajarillo).
+
 | Progresión | Género |
 |---|---|
-| Pop — I·V·VI·IV | Pop internacional |
-| Blues básico — I·IV·V | Blues |
-| Do-Wop / 50s — I·VI·IV·V | Doo-wop |
-| Jazz (cadencia) — II·V·I | Jazz |
-| Canon de Pachelbel — I·V·VI·III·IV | Clásico |
-| Tradicional / Folk — I·IV·I·V | Folk |
-| Paso doble — I·III·IV·V | Paso doble |
-| Rock clásico — I·IV·V·IV | Rock |
-| Blues de 12 compases — I·I·IV·IV·V·IV | Blues |
-| Cadencia Andaluza I — i·VII·VI·V | Flamenco |
-| Cadencia Andaluza II — iv·III·II·I | Flamenco |
+| Pop — I·V7·vi·IV | Pop internacional |
+| Blues básico — I·IV·V7 | Blues |
+| Do-Wop / 50s — I·vi·IV·V7 | Doo-wop |
+| Jazz (cadencia) — ii·V7·I | Jazz |
+| Canon de Pachelbel — I·V7·vi·iii·IV | Clásico |
+| Tradicional / Folk — I·IV·I·V7 | Folk |
+| Seis Corrido / Seis por Derecho — I·IV·V7·I | Joropo (Mayor) |
+| Pajarillo / Catira — i·iv·V7·i | Joropo (menor) |
+| Paso doble — I·iii·IV·V7 | Paso doble |
+| Variante pop menor — vi·IV·I·V7 | Pop |
+| Valse Venezolano / Turnaround jazz — I·vi·ii·V7 | Vals venezolano |
+| Rock clásico — I·IV·V7·IV | Rock |
+| Blues de 12 compases — I·I·IV·IV·V7·IV | Blues |
+| Gabán — i·V7·V7·i | Joropo (menor) |
+| Paloma / Gabana — I·V7·V7·I | Joropo (Mayor) |
+| Guacharaca — I·IV·IV·I·I·V7·V7·I | Joropo (Mayor) |
+| Seis Numerao — I·I·IV·V7 | Joropo (Mayor) |
+| Nuevo Callao — I·V7·I·iii·vi·iii·vi·vi·V7·V7·I·IV·I·V7·I·I | Joropo (Mayor) |
+| Periquera — I·I·V7·I·I·I·I·IV·IV·IV·ii·V7·IV·I·V7·I | Joropo (Mayor) |
+| Zumba que zumba — i·i·V7·i·i·i·i·iv·iv·iv·ii·V7·iv·i·V7·i | Joropo (menor) |
+| Merengue Venezolano — I·bVII·IV·I | Merengue caraqueño |
+| Gaita Zuliana — I·V7·IV·I | Gaita de furro |
+| Polo Llanero — I·IV·bVII·I | Polo |
+| Cadencia Andaluza I / Tonada Llanera — i·bVII·bVI·V7 | Flamenco / Llanera |
+| Cadencia Andaluza II — iv·bIII·ii·i | Flamenco |
 
-> Los géneros venezolanos (Joropo, Merengue, Tonada Llanera, Gaita, Polo, Valse) están temporalmente deshabilitados en el menú de progresiones — el código se conserva comentado para reactivarlos más adelante.
+Los ciclos de golpes de joropo (Seis Corrido, Gabán/Paloma, Guacharaca, Seis Numerao, Nuevo Callao, Periquera, Zumba que zumba) provienen de: Calderón Sáenz, C. (2015). "Aspectos musicales del Joropo de Venezuela y Colombia". *Música Oral del Sur*, N° 12, ISSN 1138-8579, pp. 436–438 — ver tabla completa en [`Referencia/golpes_joropo_calderon.md`](Referencia/golpes_joropo_calderon.md).
 
 ## Afinación
 
@@ -69,8 +85,9 @@ Hojas en PDF, listas para imprimir o descargar, con los diagramas de todos los a
 |---|---|
 | `acordes_completo.pdf` | Las 12 tonalidades × 12 calidades de acorde en una sola página vertical |
 | `acordes_completo_landscape.pdf` | La misma tabla en formato horizontal, repartida en 2 páginas (Do–Fa / Fa#–Si), con diagramas más grandes (6 trastes) |
+| [`golpes_joropo_calderon.md`](Referencia/golpes_joropo_calderon.md) | Catálogo de golpes del joropo venezolano y sus ciclos armónicos, tomado de Calderón Sáenz, C. (2015), *Música Oral del Sur* N°12, pp. 436–438 — base de las progresiones de joropo incluidas en la app |
 
-Generadas con las herramientas de desarrollo internas del proyecto (repositorio privado, no público).
+Los PDF se generan con las herramientas de desarrollo internas del proyecto (repositorio privado, no público).
 
 ## Licencia
 

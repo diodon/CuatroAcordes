@@ -1199,141 +1199,157 @@ const DATOS_ACORDES = {
       4
     ]
   },
+  "_comment_grados_romanos": "Numeral en mayúscula = tríada mayor; minúscula = menor o disminuida; V siempre se muestra como V7 (dominante con séptima). mayor = grados de la escala mayor (jónica); menor = grados de la escala menor armónica.",
   "grados_romanos": {
     "0": {
       "mayor": "I",
-      "menor": "Im"
+      "menor": "i"
     },
     "1": {
       "mayor": "bII",
-      "menor": "bIIm"
+      "menor": "bII"
     },
     "2": {
-      "mayor": "II",
-      "menor": "IIm"
+      "mayor": "ii",
+      "menor": "ii"
     },
     "3": {
       "mayor": "bIII",
-      "menor": "bIIIm"
+      "menor": "bIII"
     },
     "4": {
-      "mayor": "III",
-      "menor": "IIIm"
+      "mayor": "iii",
+      "menor": "III"
     },
     "5": {
       "mayor": "IV",
-      "menor": "IVm"
+      "menor": "iv"
     },
     "6": {
-      "mayor": "bV",
-      "menor": "bVm"
+      "mayor": "bv",
+      "menor": "bV"
     },
     "7": {
-      "mayor": "V",
-      "menor": "Vm"
+      "mayor": "V7",
+      "menor": "V7"
     },
     "8": {
       "mayor": "bVI",
-      "menor": "bVIm"
+      "menor": "bVI"
     },
     "9": {
-      "mayor": "VI",
-      "menor": "VIm"
+      "mayor": "vi",
+      "menor": "vi"
     },
     "10": {
       "mayor": "bVII",
-      "menor": "bVIIm"
+      "menor": "bVII"
     },
     "11": {
-      "mayor": "VII",
-      "menor": "VIIm"
+      "mayor": "vii",
+      "menor": "vii"
     }
   },
+  "_comment_progresiones": "Cada numeral refleja la calidad real del acorde (mayúscula = mayor, minúscula = menor/disminuida, V7 = dominante con séptima); por eso una misma progresión de posiciones puede dar dos entradas distintas (Mayor y menor).",
   "progresiones": [
     {
-      "patron": "I-V-VI-IV",
+      "patron": "I-V7-vi-IV",
       "nombre": "Pop (La de los 4 acordes)"
     },
     {
-      "patron": "I-IV-V",
+      "patron": "I-IV-V7",
       "nombre": "Blues básico"
     },
     {
-      "patron": "I-VI-IV-V",
+      "patron": "I-vi-IV-V7",
       "nombre": "Do-Wop / 50s"
     },
     {
-      "patron": "II-V-I",
+      "patron": "ii-V7-I",
       "nombre": "Jazz (cadencia)"
     },
     {
-      "patron": "I-V-VI-III-IV",
+      "patron": "I-V7-vi-iii-IV",
       "nombre": "Canon de Pachelbel"
     },
     {
-      "patron": "I-IV-I-V",
+      "patron": "I-IV-I-V7",
       "nombre": "Tradicional / Folk"
     },
-    /* -- Géneros venezolanos: deshabilitados temporalmente, no borrar --
     {
-      "patron": "I-II-IV-I",
-      "nombre": "Joropo básico"
+      "patron": "I-IV-V7-I",
+      "nombre": "Seis Corrido / Seis por Derecho (Joropo, Mayor)"
     },
-    */
     {
-      "patron": "I-III-IV-V",
+      "patron": "i-iv-V7-i",
+      "nombre": "Pajarillo / Catira (Joropo, menor)"
+    },
+    {
+      "patron": "I-iii-IV-V7",
       "nombre": "Paso doble"
     },
     {
-      "patron": "VI-IV-I-V",
+      "patron": "vi-IV-I-V7",
       "nombre": "Variante pop menor"
     },
-    /* -- Géneros venezolanos: deshabilitados temporalmente, no borrar --
     {
-      "patron": "I-VI-II-V",
+      "patron": "I-vi-ii-V7",
       "nombre": "Valse Venezolano / Turnaround jazz"
     },
-    */
     {
-      "patron": "I-IV-V-IV",
+      "patron": "I-IV-V7-IV",
       "nombre": "Rock clásico"
     },
     {
-      "patron": "I-I-IV-IV-V-IV",
+      "patron": "I-I-IV-IV-V7-IV",
       "nombre": "Blues de 12 compases"
     },
-    /* -- Géneros venezolanos: deshabilitados temporalmente, no borrar --
     {
-      "patron": "I-IV-V-I",
-      "nombre": "Joropo en Seis"
+      "patron": "i-V7-V7-i",
+      "nombre": "Gabán (Joropo, menor)"
     },
     {
-      "patron": "I-V-I-V",
-      "nombre": "Joropo Recio"
+      "patron": "I-V7-V7-I",
+      "nombre": "Paloma / Gabana (Joropo, Mayor)"
+    },
+    {
+      "patron": "I-IV-IV-I-I-V7-V7-I",
+      "nombre": "Guacharaca (Joropo)"
+    },
+    {
+      "patron": "I-I-IV-V7",
+      "nombre": "Seis Numerao (Joropo)"
+    },
+    {
+      "patron": "I-V7-I-iii-vi-iii-vi-vi-V7-V7-I-IV-I-V7-I-I",
+      "nombre": "Nuevo Callao (Joropo)"
+    },
+    {
+      "patron": "I-I-V7-I-I-I-I-IV-IV-IV-ii-V7-IV-I-V7-I",
+      "nombre": "Periquera (Joropo, Mayor)"
+    },
+    {
+      "patron": "i-i-V7-i-i-i-i-iv-iv-iv-ii-V7-iv-i-V7-i",
+      "nombre": "Zumba que zumba (Joropo, menor)"
     },
     {
       "patron": "I-bVII-IV-I",
       "nombre": "Merengue Venezolano"
     },
     {
-      "patron": "I-bVII-bVI-V",
-      "nombre": "Tonada Llanera"
-    },
-    {
-      "patron": "I-V-IV-I",
+      "patron": "I-V7-IV-I",
       "nombre": "Gaita Zuliana"
     },
     {
       "patron": "I-IV-bVII-I",
       "nombre": "Polo Llanero"
     },
-    */
     {
-      "patron": "I-bVII-bVI-V",
-      "nombre": "Cadencia Andaluza I"
+      "patron": "i-bVII-bVI-V7",
+      "nombre": "Cadencia Andaluza I / Tonada Llanera"
     },
     {
-      "patron": "IV-bIII-II-I",
+      "patron": "iv-bIII-ii-i",
       "nombre": "Cadencia Andaluza II"
     }
   ],
@@ -1695,7 +1711,8 @@ function crearSelectCalidad(idx, valorActual) {
 
 function calcularGradoSimple(numRaiz, numOrigen) {
   const semis = ((numRaiz - numOrigen) % 12 + 12) % 12;
-  return CFG.grados_romanos[String(semis)]?.mayor || '?';
+  const entrada = CFG.grados_romanos[String(semis)];
+  return (escala === 'menor' ? entrada?.menor : entrada?.mayor) || '?';
 }
 
 // ── Fret Diagrams ─────────────────────────────────────────────────────────────
@@ -1912,9 +1929,9 @@ const HELP_SECTIONS = [
     <p>Cada fila representa un acorde con los siguientes campos:</p>
     <ul>
       <li><strong>Nota</strong> — La nota raíz del acorde.</li>
-      <li><strong>Calidad</strong> — Mayor, Menor, 7ª, Maj7, Dim, etc. (15 calidades disponibles).</li>
+      <li><strong>Calidad</strong> — Mayor, Menor, 7ª, Maj7, Dim, etc. (17 calidades disponibles).</li>
       <li><strong>Acorde</strong> — Nombre completo en la tonalidad original. <em>Clic para ver el diagrama.</em></li>
-      <li><strong>Grado</strong> — Grado romano del acorde respecto a la tonalidad origen (I, II, bVII…).</li>
+      <li><strong>Grado</strong> — Grado romano del acorde respecto a la tonalidad origen y a la escala Mayor/menor activa. Mayúscula = tríada mayor, minúscula = menor/disminuida, V7 = dominante con séptima (I, ii, bVII, V7…).</li>
       <li><strong>Transpuesto</strong> — Nombre del acorde en la tonalidad destino. <em>Clic para ver el diagrama.</em></li>
       <li><strong>Digitación / Dig. Trans.</strong> — Posición de los dedos en formato <span class="help-badge">XXXX</span> (cuerdas A·D·F#·B).</li>
       <li><strong>Notas</strong> — Campo libre para anotaciones personales.</li>
@@ -2094,42 +2111,45 @@ function cerrarHelp(e) {
 }
 
 // ── Progression Selector ──────────────────────────────────────────────────────
-const DEGREE_MAP = { // Major scale (Ionian)
+// Each patron numeral carries its own quality: uppercase = major triad,
+// lowercase = minor/diminished triad, "V7" = dominant seventh. Self-describing,
+// so building a progression no longer depends on the Mayor/menor toggle.
+const DEGREE_MAP = {
   'I':    { semi: 0,  calidad: 'maj' },
+  'i':    { semi: 0,  calidad: 'min' },
   'bII':  { semi: 1,  calidad: 'maj' },
-  'II':   { semi: 2,  calidad: 'min' },
+  'bii':  { semi: 1,  calidad: 'min' },
+  'II':   { semi: 2,  calidad: 'maj' },
+  'ii':   { semi: 2,  calidad: 'min' },
   'bIII': { semi: 3,  calidad: 'maj' },
-  'III':  { semi: 4,  calidad: 'min' },
-  'IV':   { semi: 5,  calidad: 'maj' },
-  'bV':   { semi: 6,  calidad: 'dim' },
-  'V':    { semi: 7,  calidad: '7'   },
-  'bVI':  { semi: 8,  calidad: 'maj' },
-  'VI':   { semi: 9,  calidad: 'min' },
-  'bVII': { semi: 10, calidad: 'maj' },
-  'VII':  { semi: 11, calidad: 'dim' },
-};
-
-const DEGREE_MAP_MENOR = { // Harmonic minor scale
-  'I':    { semi: 0,  calidad: 'min' },
-  'bII':  { semi: 1,  calidad: 'maj' },
-  'II':   { semi: 2,  calidad: 'dim' },
-  'bIII': { semi: 3,  calidad: 'maj' },
+  'biii': { semi: 3,  calidad: 'min' },
   'III':  { semi: 4,  calidad: 'maj' },
-  'IV':   { semi: 5,  calidad: 'min' },
+  'iii':  { semi: 4,  calidad: 'min' },
+  'IV':   { semi: 5,  calidad: 'maj' },
+  'iv':   { semi: 5,  calidad: 'min' },
   'bV':   { semi: 6,  calidad: 'maj' },
-  'V':    { semi: 7,  calidad: '7'   },  // dominant 7th (raised 7th of harmonic minor)
+  'bv':   { semi: 6,  calidad: 'dim' },
+  'V7':   { semi: 7,  calidad: '7'   },
   'bVI':  { semi: 8,  calidad: 'maj' },
-  'VI':   { semi: 9,  calidad: 'min' },
+  'bvi':  { semi: 8,  calidad: 'min' },
+  'VI':   { semi: 9,  calidad: 'maj' },
+  'vi':   { semi: 9,  calidad: 'min' },
   'bVII': { semi: 10, calidad: 'maj' },
-  'VII':  { semi: 11, calidad: 'dim' },
+  'bvii': { semi: 10, calidad: 'min' },
+  'VII':  { semi: 11, calidad: 'maj' },
+  'vii':  { semi: 11, calidad: 'dim' },
 };
 
-function toggleEscala() {
-  escala = escala === 'mayor' ? 'menor' : 'mayor';
+function fijarEscala(nueva) {
+  escala = nueva;
   const btn = document.getElementById('btnEscala');
   btn.textContent = escala === 'mayor' ? 'M' : 'm';
   btn.classList.toggle('menor', escala === 'menor');
-  if (ultimaProgresion) aplicarProgresion(ultimaProgresion);
+}
+
+function toggleEscala() {
+  fijarEscala(escala === 'mayor' ? 'menor' : 'mayor');
+  actualizar();
 }
 
 function construirSelProgresion() {
@@ -2143,15 +2163,22 @@ function construirSelProgresion() {
   });
 }
 
+// Every patron includes an unambiguous tonic token ("I" or "i") that reveals
+// whether the progression is built from the major or the harmonic minor scale.
+function inferirEscalaDePatron(patron) {
+  const tonica = patron.split('-').find(g => g === 'I' || g === 'i');
+  return tonica === 'i' ? 'menor' : 'mayor';
+}
+
 function aplicarProgresion(patron) {
   if (!patron) return;
   ultimaProgresion = patron;
-  const map = escala === 'menor' ? DEGREE_MAP_MENOR : DEGREE_MAP;
+  fijarEscala(inferirEscalaDePatron(patron));
   const origen = document.getElementById('selOrigen').value;
   const modo   = document.getElementById('selModo').value;
   const numOrigen = notaANum(origen);
   filas = patron.split('-').map(g => {
-    const entry = map[g];
+    const entry = DEGREE_MAP[g];
     if (!entry) return { nota: 'C', calidad: 'maj', notas: '' };
     const numNota = (numOrigen + entry.semi + 12) % 12;
     return { nota: numANota(numNota, modo), calidad: entry.calidad, notas: '' };
