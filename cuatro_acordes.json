@@ -50,6 +50,7 @@
     "aug":  { "nombre": "Aumentado",    "simbolo": "aug",  "intervalos": [0, 4, 8] },
     "sus2": { "nombre": "Suspendida 2", "simbolo": "sus2", "intervalos": [0, 2, 7] },
     "sus4": { "nombre": "Suspendida 4", "simbolo": "sus4", "intervalos": [0, 5, 7] },
+    "7sus4": { "nombre": "Séptima Sus4", "simbolo": "7sus4", "intervalos": [0, 5, 7, 10] },
     "6":    { "nombre": "Sexta",        "simbolo": "6",    "intervalos": [0, 4, 7, 9] },
     "m6":   { "nombre": "Menor 6",      "simbolo": "m6",   "intervalos": [0, 3, 7, 9] },
     "9":    { "nombre": "Novena",       "simbolo": "9",     "intervalos": [0, 4, 7, 10, 2] },
