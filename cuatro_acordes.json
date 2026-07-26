@@ -88,12 +88,18 @@
     { "patron": "II-V-I",       "nombre": "Jazz (cadencia)" },
     { "patron": "I-V-VI-III-IV","nombre": "Canon de Pachelbel" },
     { "patron": "I-IV-I-V",     "nombre": "Tradicional / Folk" },
-    { "patron": "I-II-IV-I",    "nombre": "Joropo básico" },
     { "patron": "I-III-IV-V",   "nombre": "Paso doble" },
     { "patron": "VI-IV-I-V",    "nombre": "Variante pop menor" },
-    { "patron": "I-VI-II-V",    "nombre": "Valse Venezolano / Turnaround jazz" },
     { "patron": "I-IV-V-IV",    "nombre": "Rock clásico" },
     { "patron": "I-I-IV-IV-V-IV","nombre": "Blues de 12 compases" },
+    { "patron": "I-bVII-bVI-V", "nombre": "Cadencia Andaluza I" },
+    { "patron": "IV-bIII-II-I", "nombre": "Cadencia Andaluza II" }
+  ],
+
+  "_comment_progresiones_deshabilitadas": "Géneros venezolanos, deshabilitados temporalmente (no borrar, se reactivarán más adelante)",
+  "progresiones_deshabilitadas": [
+    { "patron": "I-II-IV-I",    "nombre": "Joropo básico" },
+    { "patron": "I-VI-II-V",    "nombre": "Valse Venezolano / Turnaround jazz" },
     { "patron": "I-IV-V-I",     "nombre": "Joropo en Seis" },
     { "patron": "I-V-I-V",      "nombre": "Joropo Recio" },
     { "patron": "I-bVII-IV-I",  "nombre": "Merengue Venezolano" },

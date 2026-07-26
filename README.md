@@ -31,17 +31,13 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 | Jazz (cadencia) — II·V·I | Jazz |
 | Canon de Pachelbel — I·V·VI·III·IV | Clásico |
 | Tradicional / Folk — I·IV·I·V | Folk |
-| Joropo básico — I·II·IV·I | Joropo venezolano |
-| Joropo en Seis — I·IV·V·I | Joropo venezolano |
-| Joropo Recio — I·V·I·V | Joropo venezolano |
-| Merengue Venezolano — I·bVII·IV·I | Merengue caraqueño |
-| Tonada Llanera — I·bVII·bVI·V | Llanera |
-| Gaita Zuliana — I·V·IV·I | Gaita de furro |
-| Polo Llanero — I·IV·bVII·I | Polo |
-| Valse Venezolano — I·VI·II·V | Vals venezolano |
 | Paso doble — I·III·IV·V | Paso doble |
 | Rock clásico — I·IV·V·IV | Rock |
 | Blues de 12 compases — I·I·IV·IV·V·IV | Blues |
+| Cadencia Andaluza I — i·VII·VI·V | Flamenco |
+| Cadencia Andaluza II — iv·III·II·I | Flamenco |
+
+> Los géneros venezolanos (Joropo, Merengue, Tonada Llanera, Gaita, Polo, Valse) están temporalmente deshabilitados en el menú de progresiones — el código se conserva comentado para reactivarlos más adelante.
 
 ## Afinación
 
@@ -76,6 +72,31 @@ Hojas en PDF, listas para imprimir o descargar, con los diagramas de todos los a
 
 Generadas con las herramientas de desarrollo internas del proyecto (repositorio privado, no público).
 
+## Licencia
+
+Este proyecto (código, datos y tablas de referencia) se distribuye bajo **[Creative Commons Atribución-NoComercial 4.0 Internacional (CC BY-NC 4.0)](https://creativecommons.org/licenses/by-nc/4.0/deed.es)**.
+
+**Permitido:**
+- Copiar y redistribuir el material en cualquier medio o formato.
+- Adaptar, remezclar, transformar y crear a partir del material.
+- Usarlo para fines personales, educativos o de estudio.
+
+**No permitido:**
+- Uso con fines comerciales (venta, inclusión en productos de pago, monetización, etc.) sin autorización expresa del autor.
+- Aplicar términos legales o medidas tecnológicas que restrinjan a otros hacer cualquier cosa que la licencia permite.
+
+**Condición:**
+- Se debe dar crédito apropiado, indicar si se hicieron cambios, e incluir un enlace a la licencia.
+
 ## Créditos
 
 Desarrollado por **Eduardo Klein** con asistencia de [Claude](https://claude.ai) (claude-sonnet-5).
+
+### Cómo citar
+
+Si usas o adaptas este material (código, datos o tablas de referencia), por favor da crédito así:
+
+```
+Klein, E. (2026). Acordes del Cuatro Venezolano [Software].
+https://github.com/diodon/CuatroAcordes
+```
