@@ -373,13 +373,6 @@ td:first-child {
   margin-bottom: 8px;
   color: var(--text);
 }
-.diagram-fing {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--text3);
-  margin-top: 5px;
-  letter-spacing: 2px;
-}
 svg.fret-svg { display: block; margin: 0 auto; }
 
 /* ── Progression ───────────────────────────────────── */
@@ -562,14 +555,6 @@ svg.fret-svg { display: block; margin: 0 auto; }
   color: var(--accent);
   margin-bottom: 14px;
 }
-.modal-fing {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text3);
-  margin-top: 8px;
-  letter-spacing: 2px;
-}
-
 /* ── All-qualities Modal ───────────────────────────── */
 .modal-all-card {
   background: var(--surface);
@@ -929,7 +914,6 @@ svg.fret-svg { display: block; margin: 0 auto; }
     <button class="modal-close" onclick="cerrarPopup(null)" title="Cerrar">×</button>
     <div class="modal-chord-name" id="modalNombre"></div>
     <div id="modalDiagrama"></div>
-    <div class="modal-fing" id="modalFing"></div>
     <button class="diagram-play" id="modalPlayBtn" style="margin-top:14px">▶ Tocar</button>
   </div>
 </div>
@@ -1069,6 +1053,16 @@ const DATOS_ACORDES = {
         3,
         7,
         10
+      ]
+    },
+    "minMaj7": {
+      "nombre": "Menor Maj7",
+      "simbolo": "mMaj7",
+      "intervalos": [
+        0,
+        3,
+        7,
+        11
       ]
     },
     "dim": {
@@ -1712,23 +1706,27 @@ function renderDiagCol(containerId, fs, numOrigen, offset, modo) {
     card.className = 'diagram-card';
     card.innerHTML = `
       <div class="diagram-name">${acorde}</div>
-      ${svgDiagrama(cd.fret, cd.finger, cd.barre)}
-      <div class="diagram-fing">${cd.fret.join('')}</div>
+      ${svgDiagrama(cd.fret, cd.finger, cd.barre, numRaiz)}
       <button class="diagram-play" onclick="tocarAcorde('${notaNombre}','${fila.calidad}')">▶ Tocar</button>
     `;
     cont.appendChild(card);
   });
 }
 
-function svgDiagrama(fret, finger, barre) {
+// Open-string semitones in display order A,D,F#,B (C=0), and the interval
+// grade label for each semitone offset from a chord's root.
+const STRING_OPEN_SEMI = [9, 2, 6, 11];
+const GRADE_LABELS = ['1', '♭2', '2', '♭3', '3', '4', '♭5', '5', '♭6', '6', '♭7', '7'];
+
+function svgDiagrama(fret, finger, barre, root) {
   // Arrays in B,F#,D,A order → display left-to-right: A D F# B
   const D = [3, 2, 1, 0];
   const dFret   = D.map(i => fret[i]);
   const dFinger = finger ? D.map(i => finger[i]) : null;
   const dBarre  = barre  ? D.map(i => barre[i])  : null;
 
-  const N = 4, nFrets = 5;
-  const W = 110, padL = 16, padR = 16, padT = 28, padBot = 10;
+  const N = 4, nFrets = 6;
+  const W = 110, padL = 16, padR = 16, padT = 20, padBot = 10;
   const strW = (W - padL - padR) / (N - 1);
   const fretH = 22;
   const nutH = 4;
@@ -1744,15 +1742,18 @@ function svgDiagrama(fret, finger, barre) {
   }
 
   const H = gridT + nFrets * fretH + padBot;
-  const strings = ['A3', 'D4', 'F#4', 'B3'];
 
   let lines = [`<svg class="fret-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">`];
 
-  // String labels
-  strings.forEach((s, si) => {
-    const x = padL + si * strW;
-    lines.push(`<text x="${x}" y="15" text-anchor="middle" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="var(--text2)">${s}</text>`);
-  });
+  // Interval grades, one per string, shown above the nut/fret-position line
+  if (root !== undefined && root !== null) {
+    dFret.forEach((f, si) => {
+      const x = padL + si * strW;
+      const noteSemi = (STRING_OPEN_SEMI[si] + f) % 12;
+      const grade = GRADE_LABELS[((noteSemi - root) % 12 + 12) % 12];
+      lines.push(`<text x="${x}" y="14" text-anchor="middle" font-family="var(--font-mono)" font-size="10" font-weight="700" fill="var(--text2)">${grade}</text>`);
+    });
+  }
 
   // Nut or fret position indicator
   if (startFret === 0) {
@@ -1796,14 +1797,12 @@ function svgDiagrama(fret, finger, barre) {
     }
   }
 
-  // Dots for individual pressed strings
+  // Dots for individual pressed strings (open strings get no marker at all)
   dFret.forEach((f, si) => {
     const x = padL + si * strW;
     const localF = f - startFret;
     const isBarred = dBarre && dBarre[si] === f && f > 0;
-    if (f === 0) {
-      lines.push(`<circle cx="${x}" cy="${padT - 7}" r="5" fill="none" stroke="var(--text)" stroke-width="2"/>`);
-    } else if (localF > 0 && localF <= nFrets && !isBarred) {
+    if (f > 0 && localF > 0 && localF <= nFrets && !isBarred) {
       const dy = gridT + (localF - 0.5) * fretH;
       lines.push(`<circle cx="${x}" cy="${dy}" r="8" fill="var(--accent)"/>`);
       const label = dFinger ? dFinger[si] : f;
@@ -2172,8 +2171,7 @@ function mostrarTodosAcordes(nota) {
     card.innerHTML = `
       <div class="diagram-name">${displayAcorde(nota, key)}</div>
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px">${cal.nombre}</div>
-      ${svgDiagrama(cd.fret, cd.finger, cd.barre)}
-      <div class="diagram-fing">${cd.fret.join('')}</div>
+      ${svgDiagrama(cd.fret, cd.finger, cd.barre, numRaiz)}
       <button class="diagram-play" onclick="tocarAcorde('${nota}','${key}')">▶ Tocar</button>
     `;
     grid.appendChild(card);
@@ -2191,8 +2189,7 @@ function mostrarPopup(nota, calidad) {
   const numRaiz = notaANum(nota);
   const cd = getChordData(numRaiz, calidad);
   document.getElementById('modalNombre').textContent = displayAcorde(nota, calidad);
-  document.getElementById('modalDiagrama').innerHTML = svgDiagrama(cd.fret, cd.finger, cd.barre);
-  document.getElementById('modalFing').textContent = cd.fret.join('');
+  document.getElementById('modalDiagrama').innerHTML = svgDiagrama(cd.fret, cd.finger, cd.barre, numRaiz);
   document.getElementById('modalPlayBtn').onclick = () => tocarAcorde(nota, calidad);
   document.getElementById('modalOverlay').classList.add('open');
 }
