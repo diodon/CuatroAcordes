@@ -203,3 +203,7 @@ B9,B,Si,Novena,9,2010,3020,
 Badd9,B,Si,Add 9,add9,2012,3012,
 Bdim7,B,Si,Dim7,dim7,3232,4231,
 Bm7b5,B,Si,Semidismin.,m7b5,3332,4321,
+Dmaj_2,D,Re,Mayor,maj,3345,1123,3333
+A7_2,A,La,Séptima,7,5354,4123,3333
+D7_2,D,Re,Séptima,7,3343,1121,3333
+Gmaj_2,G,Sol,Mayor,maj,3555,1432,
