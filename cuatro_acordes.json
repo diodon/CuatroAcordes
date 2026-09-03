@@ -108,6 +108,7 @@
     { "patron": "I-V7-IV-I",        "nombre": "Gaita Zuliana" },
     { "patron": "I-IV-bVII-I",      "nombre": "Polo Llanero" },
     { "patron": "i-bVII-bVI-V7",    "nombre": "Cadencia Andaluza I / Tonada Llanera" },
+    { "patron": "vi-V7-IV-III7",    "nombre": "Cadencia Andaluza I (Mayor) / Tonada Llanera" },
     { "patron": "iv-bIII-ii-i",     "nombre": "Cadencia Andaluza II" }
   ],
 

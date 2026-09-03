@@ -51,6 +51,7 @@ Cada numeral romano refleja la calidad real del acorde: **mayúscula** = tríada
 | Gaita Zuliana — I·V7·IV·I | Gaita de furro |
 | Polo Llanero — I·IV·bVII·I | Polo |
 | Cadencia Andaluza I / Tonada Llanera — i·bVII·bVI·V7 | Flamenco / Llanera |
+| Cadencia Andaluza I (Mayor) / Tonada Llanera — vi·V7·IV·III7 | Flamenco / Llanera |
 | Cadencia Andaluza II — iv·bIII·ii·i | Flamenco |
 
 Los ciclos de golpes de joropo (Seis Corrido, Gabán/Paloma, Guacharaca, Seis Numerao, Nuevo Callao, Periquera, Zumba que zumba) provienen de: Calderón Sáenz, C. (2015). "Aspectos musicales del Joropo de Venezuela y Colombia". *Música Oral del Sur*, N° 12, ISSN 1138-8579, pp. 436–438 — ver tabla completa en [`Referencia/golpes_joropo_calderon.md`](Referencia/golpes_joropo_calderon.md).

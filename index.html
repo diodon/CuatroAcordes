@@ -1349,6 +1349,10 @@ const DATOS_ACORDES = {
       "nombre": "Cadencia Andaluza I / Tonada Llanera"
     },
     {
+      "patron": "vi-V7-IV-III7",
+      "nombre": "Cadencia Andaluza I (Mayor) / Tonada Llanera"
+    },
+    {
       "patron": "iv-bIII-ii-i",
       "nombre": "Cadencia Andaluza II"
     }
@@ -1665,7 +1669,7 @@ function renderTabla(numOrigen, offset, modo) {
     if (!fila.nota) return;
     const numRaiz = notaANum(fila.nota);
     const numTrans = (numRaiz + offset + 12) % 12;
-    const grado = calcularGradoSimple(numRaiz, numOrigen);
+    const grado = calcularGradoSimple(numRaiz, numOrigen, fila.calidad);
     const notaTrans = numANota(numTrans, modo);
     const acorde = displayAcorde(fila.nota, fila.calidad);
     const acordeTrans = displayAcorde(notaTrans, fila.calidad);
@@ -1709,10 +1713,18 @@ function crearSelectCalidad(idx, valorActual) {
   return `<select onchange="filas[${idx}].calidad=this.value;actualizar()">${opts}</select>`;
 }
 
-function calcularGradoSimple(numRaiz, numOrigen) {
+function calcularGradoSimple(numRaiz, numOrigen, calidad) {
   const semis = ((numRaiz - numOrigen) % 12 + 12) % 12;
   const entrada = CFG.grados_romanos[String(semis)];
-  return (escala === 'menor' ? entrada?.menor : entrada?.mayor) || '?';
+  let grado = (escala === 'menor' ? entrada?.menor : entrada?.mayor) || '?';
+  // A dominant-7th chord on a degree other than V gets its own "7" and an
+  // uppercase numeral (e.g. III7 in the major Cadencia Andaluza). V is
+  // already shown as "V7" by the table above.
+  if (calidad === '7' && grado !== '?' && !grado.includes('7')) {
+    grado = (grado.startsWith('b') ? 'b' + grado.slice(1).toUpperCase()
+                                   : grado.toUpperCase()) + '7';
+  }
+  return grado;
 }
 
 // ── Fret Diagrams ─────────────────────────────────────────────────────────────
@@ -1851,7 +1863,7 @@ function svgDiagrama(fret, finger, barre, root) {
 function renderProgresion(numOrigen) {
   const grados = filas
     .filter(f => f.nota)
-    .map(f => calcularGradoSimple(notaANum(f.nota), numOrigen));
+    .map(f => calcularGradoSimple(notaANum(f.nota), numOrigen, f.calidad));
 
   document.getElementById('gradosDisplay').textContent =
     grados.length ? grados.join(' — ') : '—';
@@ -2125,6 +2137,7 @@ const DEGREE_MAP = {
   'biii': { semi: 3,  calidad: 'min' },
   'III':  { semi: 4,  calidad: 'maj' },
   'iii':  { semi: 4,  calidad: 'min' },
+  'III7': { semi: 4,  calidad: '7'   },
   'IV':   { semi: 5,  calidad: 'maj' },
   'iv':   { semi: 5,  calidad: 'min' },
   'bV':   { semi: 6,  calidad: 'maj' },
