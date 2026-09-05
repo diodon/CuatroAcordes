@@ -80,7 +80,7 @@ Esus4,E,Mi,Suspendida 4,sus4,0320,0320,
 E7sus4,E,Mi,Séptima Sus4,7sus4,3322,4321,
 E6,E,Mi,Sexta,6,2222,1111,2222
 Em6,E,Mi,Menor 6,m6,2122,4132,
-E9,E,Mi,Novena,9,0065,0032,
+E9,E,Mi,Novena,9,3242,2131,2222
 Eadd9,E,Mi,Add 9,add9,5242,4131,2222
 Edim7,E,Mi,Dim7,dim7,2121,4231,
 Em7b5,E,Mi,Semidismin.,m7b5,3121,4321,
@@ -97,7 +97,7 @@ Fsus4,F,Fa,Suspendida 4,sus4,1431,1431,1111
 F7sus4,F,Fa,Séptima Sus4,7sus4,4433,4321,
 F6,F,Fa,Sexta,6,3333,1111,3333
 Fm6,F,Fa,Menor 6,m6,3233,4132,
-F9,F,Fa,Novena,9,1110,1110,1110
+F9,F,Fa,Novena,9,4353,2131,3333
 Fadd9,F,Fa,Add 9,add9,1130,1130,1100
 Fdim7,F,Fa,Dim7,dim7,3232,4231,
 Fm7b5,F,Fa,Semidismin.,m7b5,4232,3121,2222
@@ -131,7 +131,7 @@ Gsus4,G,Sol,Suspendida 4,sus4,3103,3102,
 G7sus4,G,Sol,Séptima Sus4,7sus4,3133,4132,
 G6,G,Sol,Sexta,6,3122,4132,
 Gm6,G,Sol,Menor 6,m6,3121,3121,
-G9,G,Sol,Novena,9,0130,0130,
+G9,G,Sol,Novena,9,3332,4321,
 Gadd9,G,Sol,Add 9,add9,0100,0100,
 Gdim7,G,Sol,Dim7,dim7,2121,4231,
 Gm7b5,G,Sol,Semidismin.,m7b5,2131,2131,1111
@@ -165,7 +165,7 @@ Asus4,A,La,Suspendida 4,sus4,3320,3210,
 A7sus4,A,La,Séptima Sus4,7sus4,3120,3120,
 A6,A,La,Sexta,6,2020,3020,
 Am6,A,La,Menor 6,m6,1020,1020,
-A9,A,La,Novena,9,0124,0124,
+A9,A,La,Novena,9,2122,4132,
 Aadd9,A,La,Add 9,add9,0324,0213,
 Adim7,A,La,Dim7,dim7,1010,2010,
 Am7b5,A,La,Semidismin.,m7b5,1110,1110,1110
