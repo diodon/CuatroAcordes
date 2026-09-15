@@ -66,7 +66,7 @@ D#sus4,D#,Re#,Suspendida 4,sus4,4211,4211,1111
 D#7sus4,D#,Re#,Séptima Sus4,7sus4,2211,3211,1111
 D#6,D#,Re#,Sexta,6,1111,1111,1111
 D#m6,D#,Re#,Menor 6,m6,1011,3012,
-D#9,D#,Re#,Novena,9,4134,4123,
+D#9,D#,Re#,Novena,9,2131,1231,1111,
 D#(b9),D#,Re#,Novena bemol,(b9),2121,2131,1111
 D#add9,D#,Re#,Add 9,add9,4131,4131,1111
 D#dim7,D#,Re#,Dim7,dim7,1010,2010,
@@ -192,7 +192,7 @@ A#sus4,A#,La#,Suspendida 4,sus4,4431,4321,
 A#7sus4,A#,La#,Séptima Sus4,7sus4,4231,4231,
 A#6,A#,La#,Sexta,6,3131,4131,1111
 A#m6,A#,La#,Menor 6,m6,2131,2131,1111
-A#9,A#,La#,Novena,9,1201,2301,
+A#9,A#,La#,Novena,9,3233,4132,
 A#(b9),A#,La#,Novena bemol,(b9),3232,4231,
 A#add9,A#,La#,Add 9,add9,3433,1211,3333
 A#dim7,A#,La#,Dim7,dim7,2121,4231,
