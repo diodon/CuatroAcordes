@@ -13,6 +13,7 @@ C7sus4,C,Do,Séptima Sus4,7sus4,1131,1121,1111
 C6,C,Do,Sexta,6,1120,1120,1100
 Cm6,C,Do,Menor 6,m6,1110,1110,1110
 C9,C,Do,Novena,9,3121,3121,1111
+C(b9),C,Do,Novena bemol,(b9),2121,3121,1111
 Cadd9,C,Do,Add 9,add9,3123,4123,
 Cdim7,C,Do,Dim7,dim7,1010,2010,
 Cm7b5,C,Do,Semidismin.,m7b5,1011,3021,
@@ -30,6 +31,7 @@ C#7sus4,C#,Do#,Séptima Sus4,7sus4,2242,1121,2222
 C#6,C#,Do#,Sexta,6,2231,3241,
 C#m6,C#,Do#,Menor 6,m6,2221,4321,
 C#9,C#,Do#,Novena,9,4232,3121,2222
+C#(b9),C#,Do#,Novena bemol,(b9),3232,3121,2222
 C#add9,C#,Do#,Add 9,add9,4234,4123,
 C#dim7,C#,Do#,Dim7,dim7,2121,4231,
 C#m7b5,C#,Do#,Semidismin.,m7b5,2122,4132,
@@ -47,6 +49,7 @@ D7sus4,D,Re,Séptima Sus4,7sus4,1100,2100,
 D6,D,Re,Sexta,6,0000,0000,
 Dm6,D,Re,Menor 6,m6,3332,4321,
 D9,D,Re,Novena,9,1020,1020,
+D(b9),D,Re,Novena bemol,(b9),1010,1020,
 Dadd9,D,Re,Add 9,add9,5000,4000,
 Ddim7,D,Re,Dim7,dim7,3232,4231,
 Dm7b5,D,Re,Semidismin.,m7b5,3233,4132,
@@ -64,6 +67,7 @@ D#7sus4,D#,Re#,Séptima Sus4,7sus4,2211,3211,1111
 D#6,D#,Re#,Sexta,6,1111,1111,1111
 D#m6,D#,Re#,Menor 6,m6,1011,3012,
 D#9,D#,Re#,Novena,9,4134,4123,
+D#(b9),D#,Re#,Novena bemol,(b9),2121,2131,1111
 D#add9,D#,Re#,Add 9,add9,4131,4131,1111
 D#dim7,D#,Re#,Dim7,dim7,1010,2010,
 D#m7b5,D#,Re#,Semidismin.,m7b5,2010,2010,
@@ -81,6 +85,7 @@ E7sus4,E,Mi,Séptima Sus4,7sus4,3322,4321,
 E6,E,Mi,Sexta,6,2222,1111,2222
 Em6,E,Mi,Menor 6,m6,2122,4132,
 E9,E,Mi,Novena,9,3242,2131,2222
+E(b9),E,Mi,Novena bemol,(b9),3232,2131,2222
 Eadd9,E,Mi,Add 9,add9,5242,4131,2222
 Edim7,E,Mi,Dim7,dim7,2121,4231,
 Em7b5,E,Mi,Semidismin.,m7b5,3121,4321,
@@ -98,6 +103,7 @@ F7sus4,F,Fa,Séptima Sus4,7sus4,4433,4321,
 F6,F,Fa,Sexta,6,3333,1111,3333
 Fm6,F,Fa,Menor 6,m6,3233,4132,
 F9,F,Fa,Novena,9,4353,2131,3333
+F(b9),F,Fa,Novena bemol,(b9),4343,2131,3333
 Fadd9,F,Fa,Add 9,add9,1130,1130,1100
 Fdim7,F,Fa,Dim7,dim7,3232,4231,
 Fm7b5,F,Fa,Semidismin.,m7b5,4232,3121,2222
@@ -115,6 +121,7 @@ F#7sus4,F#,Fa#,Séptima Sus4,7sus4,2022,3021,
 F#6,F#,Fa#,Sexta,6,2011,3021,
 F#m6,F#,Fa#,Menor 6,m6,2010,2010,
 F#9,F#,Fa#,Novena,9,2221,4321,
+F#(b9),F#,Fa#,Novena bemol,(b9),2121,4231,
 F#add9,F#,Fa#,Add 9,add9,2241,3241,
 F#dim7,F#,Fa#,Dim7,dim7,1010,2010,
 F#m7b5,F#,Fa#,Semidismin.,m7b5,1020,1020,
@@ -132,6 +139,7 @@ G7sus4,G,Sol,Séptima Sus4,7sus4,3133,4132,
 G6,G,Sol,Sexta,6,3122,4132,
 Gm6,G,Sol,Menor 6,m6,3121,3121,
 G9,G,Sol,Novena,9,3332,4321,
+G(b9),G,Sol,Novena bemol,(b9),3232,4231,
 Gadd9,G,Sol,Add 9,add9,0100,0100,
 Gdim7,G,Sol,Dim7,dim7,2121,4231,
 Gm7b5,G,Sol,Semidismin.,m7b5,2131,2131,1111
@@ -149,6 +157,7 @@ G#7sus4,G#,Sol#,Séptima Sus4,7sus4,4244,4132,
 G#6,G#,Sol#,Sexta,6,4233,4132,
 G#m6,G#,Sol#,Menor 6,m6,4232,3121,2222
 G#9,G#,Sol#,Novena,9,4443,4321,
+G#(b9),G#,Sol#,Novena bemol,(b9),4343,4231,
 G#add9,G#,Sol#,Add 9,add9,1211,1211,1111
 G#dim7,G#,Sol#,Dim7,dim7,3232,4231,
 G#m7b5,G#,Sol#,Semidismin.,m7b5,3242,2131,2222
@@ -166,6 +175,7 @@ A7sus4,A,La,Séptima Sus4,7sus4,3120,3120,
 A6,A,La,Sexta,6,2020,3020,
 Am6,A,La,Menor 6,m6,1020,1020,
 A9,A,La,Novena,9,2122,4132,
+A(b9),A,La,Novena bemol,(b9),2121,4231,
 Aadd9,A,La,Add 9,add9,0324,0213,
 Adim7,A,La,Dim7,dim7,1010,2010,
 Am7b5,A,La,Semidismin.,m7b5,1110,1110,1110
@@ -183,6 +193,7 @@ A#7sus4,A#,La#,Séptima Sus4,7sus4,4231,4231,
 A#6,A#,La#,Sexta,6,3131,4131,1111
 A#m6,A#,La#,Menor 6,m6,2131,2131,1111
 A#9,A#,La#,Novena,9,1201,2301,
+A#(b9),A#,La#,Novena bemol,(b9),3232,4231,
 A#add9,A#,La#,Add 9,add9,3433,1211,3333
 A#dim7,A#,La#,Dim7,dim7,2121,4231,
 A#m7b5,A#,La#,Semidismin.,m7b5,2221,4321,
@@ -200,6 +211,7 @@ B7sus4,B,Si,Séptima Sus4,7sus4,0020,0020,
 B6,B,Si,Sexta,6,4242,4131,2222
 Bm6,B,Si,Menor 6,m6,3242,2131,2222
 B9,B,Si,Novena,9,2010,3020,
+B(b9),B,Si,Novena bemol,(b9),1010,2010,
 Badd9,B,Si,Add 9,add9,2012,3012,
 Bdim7,B,Si,Dim7,dim7,3232,4231,
 Bm7b5,B,Si,Semidismin.,m7b5,3332,4321,

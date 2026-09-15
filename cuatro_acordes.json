@@ -54,6 +54,7 @@
     "6":    { "nombre": "Sexta",        "simbolo": "6",    "intervalos": [0, 4, 7, 9] },
     "m6":   { "nombre": "Menor 6",      "simbolo": "m6",   "intervalos": [0, 3, 7, 9] },
     "9":    { "nombre": "Novena",       "simbolo": "9",     "intervalos": [0, 4, 7, 10, 2] },
+    "b9":   { "nombre": "Novena bemol", "simbolo": "(b9)", "intervalos": [0, 4, 7, 10, 1] },
     "add9": { "nombre": "Add 9",        "simbolo": "add9", "intervalos": [0, 4, 7, 2] },
     "dim7": { "nombre": "Dim7",         "simbolo": "dim7", "intervalos": [0, 3, 6, 9] },
     "m7b5": { "nombre": "Semidismin.",  "simbolo": "m7b5", "intervalos": [0, 3, 6, 10] }
