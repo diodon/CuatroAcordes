@@ -13,7 +13,7 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 - **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano (mayúscula = tríada mayor, minúscula = menor/disminuida, V7 = dominante con séptima), acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de acordes en un popup.
 - **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos (calidad incluida) para la tonalidad seleccionada.
 - **Diagramas de acordes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
-- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 17 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 7ª sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
+- **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 18 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 7ª sus4, 6ª, m6, 9ª, (b9), add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
 - **Reproducción de audio** — Escucha cualquier acorde con un clic: síntesis Web Audio API con tres armónicos y envolvente de decaimiento para imitar el sonido del cuatro. Botón ▶ Tocar en cada diagrama individual.
 - **Reproducción de secuencias** — Toca toda la progresión detectada o las columnas de diagramas originales y transpuestos en secuencia, con control de tempo (Lento / Normal / Rápido / Muy rápido) y resaltado de acorde activo.
