@@ -3,7 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analizador de Acordes — Cuatro Venezolano</title>
+<title>Acordes del Cuatro Venezolano — Transposición, digitación y progresiones armónicas</title>
+<meta name="description" content="Acordes del cuatro venezolano: transposición entre tonalidades, digitaciones, diagramas de acordes, progresiones armónicas y audio. Aplicación web gratuita.">
+<link rel="canonical" href="https://diodon.github.io/CuatroAcordes/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="CuatroAcordes">
+<meta property="og:locale" content="es_VE">
+<meta property="og:url" content="https://diodon.github.io/CuatroAcordes/">
+<meta property="og:title" content="Acordes del Cuatro Venezolano — Transposición, digitación y progresiones armónicas">
+<meta property="og:description" content="Acordes del cuatro venezolano: transposición entre tonalidades, digitaciones, diagramas de acordes, progresiones armónicas y audio. Aplicación web gratuita.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Acordes del Cuatro Venezolano — Transposición, digitación y progresiones armónicas">
+<meta name="twitter:description" content="Acordes del cuatro venezolano: transposición entre tonalidades, digitaciones, diagramas de acordes, progresiones armónicas y audio. Aplicación web gratuita.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -456,6 +467,14 @@ svg.fret-svg { display: block; margin: 0 auto; }
   gap: 16px;
   transition: opacity 0.4s;
 }
+.loading-intro {
+  max-width: 560px;
+  padding: 0 20px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text2);
+}
 #loading h2 {
   font-family: var(--font-display);
   color: var(--accent);
@@ -718,6 +737,11 @@ svg.fret-svg { display: block; margin: 0 auto; }
 <div id="loading">
   <div class="spinner"></div>
   <h2>Cargando acordes…</h2>
+  <p class="loading-intro">CuatroAcordes es una aplicación web gratuita para el cuatro venezolano:
+    transpone acordes de una tonalidad a otra, muestra la digitación y el diagrama de cada acorde,
+    explora las 18 calidades de acorde para cualquier nota, aplica progresiones armónicas
+    (incluidas la Cadencia Andaluza y los ciclos del joropo) y reproduce los acordes en audio.</p>
+  <noscript><p class="loading-intro">Esta aplicación necesita JavaScript.</p></noscript>
 </div>
 
 <div class="app-shell" id="app" style="display:none">
@@ -725,8 +749,8 @@ svg.fret-svg { display: block; margin: 0 auto; }
   <!-- Header -->
   <header>
     <div class="header-title">
-      <h1 id="titulo"></h1>
-      <h2 id="subtitulo"></h2>
+      <h1 id="titulo">Acordes del Cuatro Venezolano</h1>
+      <h2 id="subtitulo">Transposición, digitación y progresiones armónicas</h2>
     </div>
     <div class="header-controls">
       <div class="header-acorde-sel">
