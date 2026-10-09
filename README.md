@@ -1,6 +1,6 @@
 # Acordes del Cuatro Venezolano
 
-Aplicación web para músicos del cuatro venezolano: transposición de acordes, digitaciones, diagramas de trastes, exploración de acordes, detección de progresiones armónicas y reproducción de audio.
+Aplicación web para músicos del cuatro venezolano: transposición de acordes, digitaciones, diagramas de acordes, exploración de acordes, detección de progresiones armónicas y reproducción de audio.
 
 **🌐 Live:** https://diodon.github.io/CuatroAcordes/
 
@@ -10,9 +10,9 @@ Aplicación web para músicos del cuatro venezolano: transposición de acordes, 
 
 - **Transposición** — Selecciona tonalidad de origen y destino; todos los acordes se transponen automáticamente mostrando el intervalo en semitonos.
 - **Escala Mayor / Menor** — Cambia entre escala mayor (jónica) y menor armónica; determina si la columna Grado y la detección de progresiones usan los grados diatónicos de la escala mayor o de la menor armónica. Al aplicar una progresión del menú, el toggle se ajusta automáticamente al modo de esa progresión (cada una ya trae su propia calidad de acorde codificada).
-- **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano (mayúscula = tríada mayor, minúscula = menor/disminuida, V7 = dominante con séptima), acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de trastes en un popup.
+- **Tabla de acordes** — Construye una lista de hasta 12 acordes con nota, calidad, grado romano (mayúscula = tríada mayor, minúscula = menor/disminuida, V7 = dominante con séptima), acorde transpuesto y digitación. Los acordes son clicables y muestran el diagrama de acordes en un popup.
 - **Progresiones** — Selecciona una progresión del menú desplegable y la tabla se llena automáticamente con los acordes correctos (calidad incluida) para la tonalidad seleccionada.
-- **Diagramas de trastes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
+- **Diagramas de acordes** — Visualización SVG de la digitación en el cuatro para los acordes originales y transpuestos.
 - **Explorador de acordes** — Selecciona cualquier nota raíz y visualiza los diagramas de las 17 calidades disponibles (Mayor, Menor, 7ª, Maj7, m7, Menor Maj7, Dim, Aug, sus2, sus4, 7ª sus4, 6ª, m6, 9ª, add9, Dim7, m7b5).
 - **Detección de progresiones** — Identifica automáticamente progresiones conocidas a partir de los acordes introducidos.
 - **Reproducción de audio** — Escucha cualquier acorde con un clic: síntesis Web Audio API con tres armónicos y envolvente de decaimiento para imitar el sonido del cuatro. Botón ▶ Tocar en cada diagrama individual.
