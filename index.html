@@ -766,7 +766,7 @@ svg.fret-svg { display: block; margin: 0 auto; }
     <div class="trans-grid">
       <div class="field-group">
         <span class="field-label" id="labelOrigen"></span>
-        <select id="selOrigen" onchange="actualizar()"></select>
+        <select id="selOrigen" onchange="cambiarOrigen()"></select>
       </div>
       <div class="field-group">
         <span class="field-label" id="labelDestino"></span>
@@ -1431,6 +1431,7 @@ function lookupChordData(numRaiz, calidad) {
 // ── App State ─────────────────────────────────────────────────────────────────
 let CFG = null;      // loaded from JSON
 let filas = [];      // [{nota, calidad, notasLibres}]
+let origenPrevio = 'C';  // origin key the rows are written in (see cambiarOrigen)
 let MAX_FILAS = 12;
 let notacion = 'english'; // 'latin' (Do Re Mi) or 'english' (C D E)
 let escala = 'mayor';   // 'mayor' or 'menor'
@@ -1505,6 +1506,21 @@ function construirSelects() {
   // Default: C origin, G destination
   document.getElementById('selOrigen').value = 'C';
   document.getElementById('selDestino').value = 'G';
+  origenPrevio = 'C';
+}
+
+// Changing the origin key moves the original chords into the new key
+// (same degrees); the destination stays put, so the transposed chords
+// don't change.
+function cambiarOrigen() {
+  const nuevo = document.getElementById('selOrigen').value;
+  const delta = notaANum(nuevo) - notaANum(origenPrevio);
+  filas.forEach(fila => {
+    if (!fila.nota) return;
+    fila.nota = CFG.notas.sostenidos[(notaANum(fila.nota) + delta + 12) % 12];
+  });
+  origenPrevio = nuevo;
+  actualizar();
 }
 
 function refrescarSelectsNota() {
